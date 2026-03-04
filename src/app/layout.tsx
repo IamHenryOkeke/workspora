@@ -1,12 +1,14 @@
-import type { Metadata } from "next";
-import { Outfit } from "next/font/google";
-import "./globals.css";
+import React from 'react';
 
-const outfit = Outfit({subsets:['latin'],variable:'--font-sans'});
+import type { Metadata } from 'next';
+import { Outfit } from 'next/font/google';
+import './globals.css';
+
+const outfit = Outfit({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
-  title: "Workspora",
-  description: "Collaborate on your projects with ease using Workspora.",
+  title: 'Workspora',
+  description: 'Collaborate on your projects with ease using Workspora.',
 };
 
 export default function RootLayout({
@@ -16,11 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={outfit.variable}>
-      <body
-        className="antialiased"
-      >
-        {children}
-      </body>
+      <body className="antialiased">{children}</body>
     </html>
   );
 }
