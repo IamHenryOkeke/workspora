@@ -13,7 +13,7 @@ export default async function AuthLayout({
   } = await supabase.auth.getUser();
 
   if (user) {
-    redirect('/dshboard/home');
+    redirect('/dashboard/home');
   }
 
   return <main>{children}</main>;
