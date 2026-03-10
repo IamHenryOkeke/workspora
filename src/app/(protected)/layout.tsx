@@ -1,3 +1,5 @@
+import { AppSidebar } from '@/components/app-sidebar';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 
@@ -15,5 +17,13 @@ export default async function DashboardLayout({
     redirect('/auth/login');
   }
 
-  return <main>{children}</main>;
+  return (
+    <SidebarProvider>
+      <AppSidebar />
+      <main>
+        <SidebarTrigger />
+        <div className="p-4">{children}</div>
+      </main>
+    </SidebarProvider>
+  );
 }

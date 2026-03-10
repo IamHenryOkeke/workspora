@@ -18,5 +18,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
-  return NextResponse.json({ user: data.user }, { status: 201 });
+  return NextResponse.json(
+    { message: 'Signup successful', data: { user: data.user } },
+    { status: 201 },
+  );
 }

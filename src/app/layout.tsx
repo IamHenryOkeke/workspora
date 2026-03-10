@@ -1,5 +1,3 @@
-import React from 'react';
-
 import type { Metadata } from 'next';
 import { Outfit } from 'next/font/google';
 import { Toaster } from 'react-hot-toast';
@@ -21,7 +19,7 @@ export default function RootLayout({
     <html lang="en" className={outfit.variable}>
       <body className="antialiased">
         {children}
-        <Toaster />
+        <Toaster position="top-right" />
       </body>
     </html>
   );

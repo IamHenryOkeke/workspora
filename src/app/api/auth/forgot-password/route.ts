@@ -2,13 +2,12 @@ import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
-  const { email, password } = await req.json();
+  const { email } = await req.json();
 
   const supabase = await createClient();
 
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: 'http://localhost:3000/reset-password',
   });
 
   if (error) {
@@ -16,7 +15,7 @@ export async function POST(req: NextRequest) {
   }
 
   return NextResponse.json(
-    { message: 'Login successful', data: { user: data.user } },
+    { message: 'Password reset link sent' },
     { status: 200 },
   );
 }

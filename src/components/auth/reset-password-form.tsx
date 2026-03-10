@@ -18,11 +18,11 @@ import { Controller, useForm } from 'react-hook-form';
 import { Field, FieldError, FieldLabel } from '../ui/field';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { createClient } from '@/lib/supabase/client';
 
-const signUpSchema = z
+const updatePasswordSchema = z
   .object({
-    name: z.string().min(2, 'Full name must be at least 2 characters'),
-    email: z.email('Invalid email address'),
     password: z.string().min(6, 'Password must be at least 6 characters'),
     confirmPassword: z
       .string()
@@ -33,25 +33,24 @@ const signUpSchema = z
     path: ['confirmPassword'],
   });
 
-export default function SignUpForm() {
+export default function ResetPasswordForm() {
+  const supabase = createClient();
   const router = useRouter();
   const { handleSubmit, control, formState } = useForm<
-    z.infer<typeof signUpSchema>
+    z.infer<typeof updatePasswordSchema>
   >({
-    resolver: zodResolver(signUpSchema),
+    resolver: zodResolver(updatePasswordSchema),
     defaultValues: {
-      name: '',
-      email: '',
       password: '',
       confirmPassword: '',
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof signUpSchema>) => {
-    const res = await fetch('/api/auth/signup', {
+  const onSubmit = async (data: z.infer<typeof updatePasswordSchema>) => {
+    const res = await fetch('/api/auth/reset-password', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      body: JSON.stringify({ password: data.password }),
     });
 
     const resData = await res.json();
@@ -59,17 +58,51 @@ export default function SignUpForm() {
     if (!res.ok) {
       toast.error(resData.error || 'An error occurred during sign up');
     } else {
-      toast.success(resData.message || 'Signup successful');
-      router.push('/auth/verify-email');
+      toast.success(resData.message || 'Password updated successfully');
+      await supabase.auth.signOut();
+      router.push('/auth/login');
     }
   };
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    const message = urlParams.get('error_description');
+
+    if (error) {
+      toast.error(message || 'An error occurred');
+      router.push('/auth/login');
+    }
+  }, []);
+
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (!data.session) {
+        router.push('/auth/login');
+      }
+    };
+
+    checkSession();
+
+    const { data: listener } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        return;
+      }
+      if (event === 'SIGNED_OUT') {
+        router.push('/auth/login');
+      }
+    });
+
+    return () => listener.subscription.unsubscribe();
+  }, [router, supabase]);
 
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>Create your Workspora account</CardTitle>
+        <CardTitle>Reset Your Password</CardTitle>
         <CardDescription>
-          Enter your details below to get started
+          Enter your new password below to reset your password.
         </CardDescription>
         <CardAction>
           <Button variant="link" asChild>
@@ -78,47 +111,8 @@ export default function SignUpForm() {
         </CardAction>
       </CardHeader>
       <CardContent>
-        <form id="signup-form" onSubmit={handleSubmit(onSubmit)}>
+        <form id="reset-password-form" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-6">
-            <Controller
-              name="name"
-              control={control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="name">Full Name</FieldLabel>
-                  <Input
-                    {...field}
-                    id="name"
-                    aria-invalid={fieldState.invalid}
-                    placeholder="Jane Smith"
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-
-            <Controller
-              name="email"
-              control={control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="email">Email</FieldLabel>
-                  <Input
-                    {...field}
-                    id="email"
-                    type="email"
-                    aria-invalid={fieldState.invalid}
-                    placeholder="m@example.com"
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-
             <Controller
               name="password"
               control={control}
@@ -164,30 +158,12 @@ export default function SignUpForm() {
       <CardFooter className="flex-col gap-2">
         <Button
           type="submit"
-          form="signup-form"
+          form="reset-password-form"
           className="w-full"
           disabled={formState.isSubmitting}
         >
-          Create Account
+          Reset Password
         </Button>
-        <Button
-          variant="outline"
-          className="w-full"
-          disabled={formState.isSubmitting}
-        >
-          Sign up with Google
-        </Button>
-        <p className="text-muted-foreground text-center text-xs">
-          By signing up, you agree to our{' '}
-          <Link href="/terms" className="underline-offset-4 hover:underline">
-            Terms of Service
-          </Link>{' '}
-          and{' '}
-          <Link href="/privacy" className="underline-offset-4 hover:underline">
-            Privacy Policy
-          </Link>
-          .
-        </p>
       </CardFooter>
     </Card>
   );

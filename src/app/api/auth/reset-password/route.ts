@@ -2,12 +2,11 @@ import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
-  const { email, password } = await req.json();
+  const { password } = await req.json();
 
   const supabase = await createClient();
 
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
+  const { error } = await supabase.auth.updateUser({
     password,
   });
 
@@ -15,8 +14,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 401 });
   }
 
-  return NextResponse.json(
-    { message: 'Login successful', data: { user: data.user } },
-    { status: 200 },
-  );
+  return NextResponse.json({ message: 'Password updated' }, { status: 200 });
 }

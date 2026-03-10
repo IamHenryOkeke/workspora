@@ -19,25 +19,23 @@ import { Field, FieldError, FieldLabel } from '../ui/field';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 
-const logInSchema = z.object({
+const forgotPasswordSchema = z.object({
   email: z.email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
-export default function LoginForm() {
+export default function ForgotPasswordForm() {
   const router = useRouter();
   const { handleSubmit, control, formState } = useForm<
-    z.infer<typeof logInSchema>
+    z.infer<typeof forgotPasswordSchema>
   >({
-    resolver: zodResolver(logInSchema),
+    resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
       email: '',
-      password: '',
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof logInSchema>) => {
-    const res = await fetch('/api/auth/login', {
+  const onSubmit = async (data: z.infer<typeof forgotPasswordSchema>) => {
+    const res = await fetch('/api/auth/forgot-password', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -48,25 +46,26 @@ export default function LoginForm() {
     if (!res.ok) {
       toast.error(resData.error || 'An error occurred during log in');
     } else {
-      router.push('/dashboard/home');
+      toast.success(resData.message || 'Password reset link sent');
+      router.push('/auth/login');
     }
   };
 
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>Login to Workspora</CardTitle>
+        <CardTitle>Forgot Password to Workspora</CardTitle>
         <CardDescription>
-          Enter your email below to login to your account
+          Enter your email below to request a password reset link.
         </CardDescription>
         <CardAction>
           <Button variant="link" asChild>
-            <Link href="/auth/sign-up">Sign Up</Link>
+            <Link href="/auth/login">Go back</Link>
           </Button>
         </CardAction>
       </CardHeader>
       <CardContent>
-        <form id="login-form" onSubmit={handleSubmit(onSubmit)}>
+        <form id="forgot-password-form" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-6">
             <Controller
               name="email"
@@ -87,47 +86,17 @@ export default function LoginForm() {
                 </Field>
               )}
             />
-
-            <Controller
-              name="password"
-              control={control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <div className="flex items-center">
-                    <FieldLabel htmlFor="password">Password</FieldLabel>
-                    <Link
-                      href="/auth/forgot-password"
-                      className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                    >
-                      Forgot your password?
-                    </Link>
-                  </div>
-                  <Input
-                    {...field}
-                    id="password"
-                    type="password"
-                    aria-invalid={fieldState.invalid}
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
           </div>
         </form>
       </CardContent>
       <CardFooter className="flex-col gap-2">
         <Button
           type="submit"
-          form="login-form"
+          form="forgot-password-form"
           className="w-full"
           disabled={formState.isSubmitting}
         >
-          Login
-        </Button>
-        <Button variant="outline" className="w-full">
-          Login with Google
+          Send Reset Link
         </Button>
       </CardFooter>
     </Card>
