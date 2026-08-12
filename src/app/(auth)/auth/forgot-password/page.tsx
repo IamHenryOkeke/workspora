@@ -1,4 +1,10 @@
 import ForgotPasswordForm from '@/components/auth/forgot-password-form';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Forgot Password | Workspora',
+  description: 'Reset your password',
+};
 
 export default function ForgotPassword() {
   return (

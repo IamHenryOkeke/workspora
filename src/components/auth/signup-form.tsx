@@ -17,52 +17,80 @@ import * as z from 'zod';
 import { Controller, useForm } from 'react-hook-form';
 import { Field, FieldError, FieldLabel } from '../ui/field';
 import toast from 'react-hot-toast';
-import { useRouter } from 'next/navigation';
+import { useTogglePasswordVisibity } from '@/hooks/use-toggle-password-visibility';
+import { Eye, EyeOff } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { useMutation } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
+import { AuthService } from '@/services/auth';
+import { ApiResponse } from '@/lib/types';
 
 const signUpSchema = z
   .object({
-    name: z.string().min(2, 'Full name must be at least 2 characters'),
-    email: z.email('Invalid email address'),
-    password: z.string().min(6, 'Password must be at least 6 characters'),
-    confirmPassword: z
+    fullName: z
+      .string({ error: 'Name is required' })
+      .min(3, { error: 'Name must be at least 3 characters long' })
+      .trim(),
+    email: z.email({ error: 'Email must be valid' }).trim().toLowerCase(),
+    password: z
       .string()
-      .min(6, 'Confirm password must be at least 6 characters'),
+      .min(8, { error: 'Password must be at least 8 characters long' })
+      .regex(/[A-Z]/, {
+        error: 'Password must contain at least one uppercase letter',
+      })
+      .regex(/[a-z]/, {
+        error: 'Password must contain at least one lowercase letter',
+      })
+      .regex(/[0-9]/, { error: 'Password must contain at least one number' })
+      .regex(/[^A-Za-z0-9]/, {
+        error: 'Password must contain at least one special character',
+      }),
+    confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match',
     path: ['confirmPassword'],
   });
 
+type SignUpPayload = z.infer<typeof signUpSchema>;
+
+const signUpUser = async (payload: SignUpPayload): Promise<ApiResponse> => {
+  const { fullName, email, password } = payload;
+  const { data } = await AuthService.register({ fullName, email, password });
+  return data;
+};
+
 export default function SignUpForm() {
-  const router = useRouter();
-  const { handleSubmit, control, formState } = useForm<
-    z.infer<typeof signUpSchema>
-  >({
+  const { showPassword, togglePasswordVisibity } = useTogglePasswordVisibity();
+
+  const { handleSubmit, control, formState, reset } = useForm<SignUpPayload>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
-      name: '',
+      fullName: '',
       email: '',
       password: '',
       confirmPassword: '',
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof signUpSchema>) => {
-    const res = await fetch('/api/auth/signup', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
+  const signUpMutation = useMutation({
+    mutationFn: signUpUser,
+    onSuccess: (data) => {
+      toast.success(data.message || 'Signup successful');
+      reset();
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      toast.error(
+        error.response?.data?.message || 'An error occurred during sign up',
+      );
+    },
+  });
 
-    const resData = await res.json();
-
-    if (!res.ok) {
-      toast.error(resData.error || 'An error occurred during sign up');
-    } else {
-      toast.success(resData.message || 'Signup successful');
-      router.push('/auth/verify-email');
-    }
+  const onSubmit = (data: SignUpPayload) => {
+    signUpMutation.mutate(data);
   };
+
+  const isSubmitting = signUpMutation.isPending || formState.isSubmitting;
 
   return (
     <Card className="w-full max-w-md">
@@ -81,14 +109,14 @@ export default function SignUpForm() {
         <form id="signup-form" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-6">
             <Controller
-              name="name"
+              name="fullName"
               control={control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="name">Full Name</FieldLabel>
+                  <FieldLabel htmlFor="fullName">Full Name</FieldLabel>
                   <Input
                     {...field}
-                    id="name"
+                    id="fullName"
                     aria-invalid={fieldState.invalid}
                     placeholder="Jane Smith"
                   />
@@ -125,12 +153,29 @@ export default function SignUpForm() {
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <Input
-                    {...field}
-                    id="password"
-                    type="password"
-                    aria-invalid={fieldState.invalid}
-                  />
+                  <div className="relative">
+                    <Input
+                      {...field}
+                      id="password"
+                      type={showPassword ? 'text' : 'password'}
+                      aria-invalid={fieldState.invalid}
+                      className="pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={togglePasswordVisibity}
+                      className="absolute inset-y-0 right-3 flex items-center text-muted-foreground hover:text-foreground"
+                      aria-label={
+                        showPassword ? 'Hide password' : 'Show password'
+                      }
+                    >
+                      {showPassword ? (
+                        <HugeiconsIcon icon={EyeOff} size={20} />
+                      ) : (
+                        <HugeiconsIcon icon={Eye} size={20} />
+                      )}
+                    </button>
+                  </div>
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
@@ -146,12 +191,31 @@ export default function SignUpForm() {
                   <FieldLabel htmlFor="confirmPassword">
                     Confirm Password
                   </FieldLabel>
-                  <Input
-                    {...field}
-                    id="confirmPassword"
-                    type="password"
-                    aria-invalid={fieldState.invalid}
-                  />
+                  <div className="relative">
+                    <Input
+                      {...field}
+                      id="confirmPassword"
+                      type={showPassword ? 'text' : 'password'}
+                      aria-invalid={fieldState.invalid}
+                      className="pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={togglePasswordVisibity}
+                      className="absolute inset-y-0 right-3 flex items-center text-muted-foreground hover:text-foreground"
+                      aria-label={
+                        showPassword
+                          ? 'Hide confirm password'
+                          : 'Show confirm password'
+                      }
+                    >
+                      {showPassword ? (
+                        <HugeiconsIcon icon={EyeOff} size={20} />
+                      ) : (
+                        <HugeiconsIcon icon={Eye} size={20} />
+                      )}
+                    </button>
+                  </div>
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
@@ -166,15 +230,37 @@ export default function SignUpForm() {
           type="submit"
           form="signup-form"
           className="w-full"
-          disabled={formState.isSubmitting}
+          disabled={isSubmitting}
         >
-          Create Account
+          {isSubmitting ? (
+            <>
+              <svg
+                className="animate-spin h-5 w-5 mr-3 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              <span>Creating Account. Please wait..</span>
+            </>
+          ) : (
+            'Create Account'
+          )}
         </Button>
-        <Button
-          variant="outline"
-          className="w-full"
-          disabled={formState.isSubmitting}
-        >
+        <Button variant="outline" className="w-full" disabled={isSubmitting}>
           Sign up with Google
         </Button>
         <p className="text-muted-foreground text-center text-xs">

@@ -1,6 +1,5 @@
 'use client';
 
-import { createClient } from '@/lib/supabase/client';
 import {
   ArrowDown01Icon,
   Cancel01Icon,
@@ -12,31 +11,60 @@ import {
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
-import type { User } from '@supabase/supabase-js';
+import { useAuthStore } from '@/stores/auth-store';
+
+function getInitials(name?: string, email?: string) {
+  if (name) {
+    const parts = name.trim().split(/\s+/);
+    const initials =
+      parts.length > 1
+        ? `${parts[0][0]}${parts[parts.length - 1][0]}`
+        : parts[0].slice(0, 2);
+    return initials.toUpperCase();
+  }
+  if (email) return email.slice(0, 2).toUpperCase();
+  return 'WS';
+}
+
+function UserAvatar({
+  name,
+  email,
+  image,
+  className,
+}: {
+  name?: string;
+  email?: string;
+  image?: string | null;
+  className?: string;
+}) {
+  if (image) {
+    return (
+      <Image
+        src={image}
+        alt={name || email || 'User avatar'}
+        width={28}
+        height={28}
+        className={`rounded-full object-cover ${className ?? ''}`}
+      />
+    );
+  }
+
+  return (
+    <div
+      className={`flex items-center justify-center rounded-full bg-accent text-[11px] font-bold text-white ${className ?? ''}`}
+    >
+      {getInitials(name, email)}
+    </div>
+  );
+}
 
 export default function HomeNavbar() {
-  const client = createClient();
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, isHydrated, clearAuth } = useAuthStore();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    client.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    const {
-      data: { subscription },
-    } = client.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, [client]);
 
   useEffect(() => {
     if (!dropdownOpen) return;
@@ -52,13 +80,12 @@ export default function HomeNavbar() {
     return () => document.removeEventListener('mousedown', handler);
   }, [dropdownOpen]);
 
-  const handleSignOut = async () => {
-    await client.auth.signOut();
+  const handleSignOut = () => {
+    clearAuth();
     setDropdownOpen(false);
   };
 
-  const initials = user?.email ? user.email.slice(0, 2).toUpperCase() : 'WS';
-  const displayName = user?.email?.split('@')[0];
+  const displayName = user?.name || user?.email?.split('@')[0];
 
   const navLinks = [
     { label: 'Features', href: '/features' },
@@ -82,23 +109,23 @@ export default function HomeNavbar() {
         <ul className="hidden md:flex items-center gap-7 list-none">
           {navLinks.map(({ label, href }) => (
             <li key={label}>
-              <a
+              <Link
                 href={href}
                 className="text-sm font-medium text-gray-400 transition-colors hover:text-white"
               >
                 {label}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
 
         <div className="hidden md:flex items-center gap-2">
-          {loading ? (
+          {!isHydrated ? (
             <span className="h-2 w-2 rounded-full bg-gray-600 animate-pulse" />
           ) : user ? (
             <>
               <Link
-                href="/dashboard/home"
+                href="/dashboard/org"
                 className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white"
               >
                 <HugeiconsIcon icon={GridTableIcon} />
@@ -110,9 +137,12 @@ export default function HomeNavbar() {
                   onClick={() => setDropdownOpen((v) => !v)}
                   className="flex items-center gap-2 rounded border border-white/10 bg-white/5 py-1 pl-1 pr-3 text-sm font-medium text-white transition hover:border-white/20 hover:bg-white/10"
                 >
-                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-accent text-[11px] font-bold text-white">
-                    {initials}
-                  </div>
+                  <UserAvatar
+                    name={user.name}
+                    email={user.email}
+                    image={user.avatar}
+                    className="h-7 w-7"
+                  />
                   <span className="text-xs text-gray-300">{displayName}</span>
                   <HugeiconsIcon icon={ArrowDown01Icon} />
                 </button>
@@ -120,6 +150,9 @@ export default function HomeNavbar() {
                 {dropdownOpen && (
                   <div className="absolute right-0 mt-2 w-52 overflow-hidden rounded-xl border border-white/8 bg-gray-900 shadow-2xl shadow-black/50">
                     <div className="border-b border-white/[0.07] px-3.5 py-2.5">
+                      <p className="truncate text-sm font-medium text-white">
+                        {user.name}
+                      </p>
                       <p className="truncate text-xs text-gray-500">
                         {user.email}
                       </p>
@@ -152,17 +185,17 @@ export default function HomeNavbar() {
             </>
           ) : (
             <>
-              <a
+              <Link
                 href="/auth/login"
                 className="rounded-lg px-4 py-2 text-sm font-medium text-gray-400 transition hover:bg-white/5 hover:text-white"
               >
                 Log in
-              </a>
+              </Link>
               <Link
                 href="/auth/sign-up"
                 className="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white shadow-md shadow-violet-500/25 transition hover:bg-accent/80 hover:-translate-y-px active:translate-y-0"
               >
-                Sign up free
+                Sign up
               </Link>
             </>
           )}
@@ -186,23 +219,26 @@ export default function HomeNavbar() {
           <ul className="mb-4 flex flex-col gap-1 list-none">
             {navLinks.map(({ label, href }) => (
               <li key={label}>
-                <a
+                <Link
                   href={href}
                   className="block rounded-lg px-3 py-2 text-sm font-medium text-gray-400 transition hover:bg-white/5 hover:text-white"
                 >
                   {label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
 
-          {!loading &&
+          {isHydrated &&
             (user ? (
               <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-3 rounded-lg border border-white/8 bg-white/3 p-3">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-violet-500 to-indigo-500 text-xs font-bold text-white">
-                    {initials}
-                  </div>
+                  <UserAvatar
+                    name={user.name}
+                    email={user.email}
+                    image={user.avatar}
+                    className="h-8 w-8 shrink-0"
+                  />
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium text-white">
                       {displayName}
@@ -213,7 +249,7 @@ export default function HomeNavbar() {
                   </div>
                 </div>
                 <Link
-                  href="/dashboard/home"
+                  href="/dashboard/org"
                   className="flex items-center justify-center gap-2 rounded-lg bg-violet-600 py-2.5 text-sm font-semibold text-white"
                 >
                   <HugeiconsIcon icon={GridTableIcon} /> Dashboard
@@ -249,7 +285,7 @@ export default function HomeNavbar() {
                   href="/auth/sign-up"
                   className="rounded-lg bg-accent py-2.5 text-center text-sm font-semibold text-white"
                 >
-                  Sign up free
+                  Sign up
                 </Link>
               </div>
             ))}

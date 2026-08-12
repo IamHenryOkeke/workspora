@@ -18,24 +18,52 @@ import { Controller, useForm } from 'react-hook-form';
 import { Field, FieldError, FieldLabel } from '../ui/field';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { useTogglePasswordVisibity } from '@/hooks/use-toggle-password-visibility';
+import { Eye, EyeOff } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { useMutation } from '@tanstack/react-query';
+import { ApiResponse } from '@/lib/types';
+import { AuthService } from '@/services/auth';
+import { AxiosError } from 'axios';
+import { useState } from 'react';
 
 const updatePasswordSchema = z
   .object({
-    password: z.string().min(6, 'Password must be at least 6 characters'),
-    confirmPassword: z
+    password: z
       .string()
-      .min(6, 'Confirm password must be at least 6 characters'),
+      .min(8, { error: 'Password must be at least 8 characters long' })
+      .regex(/[A-Z]/, {
+        error: 'Password must contain at least one uppercase letter',
+      })
+      .regex(/[a-z]/, {
+        error: 'Password must contain at least one lowercase letter',
+      })
+      .regex(/[0-9]/, { error: 'Password must contain at least one number' })
+      .regex(/[^A-Za-z0-9]/, {
+        error: 'Password must contain at least one special character',
+      }),
+    confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match',
     path: ['confirmPassword'],
   });
 
-export default function ResetPasswordForm() {
-  const supabase = createClient();
+type ResetPasswordPayload = z.infer<typeof updatePasswordSchema>;
+
+const resetPassword = async (payload: {
+  password: string;
+  token: string;
+}): Promise<ApiResponse> => {
+  const { data } = await AuthService.resetPassword(payload);
+  return data;
+};
+
+export default function ResetPasswordForm({ token }: { token: string }) {
   const router = useRouter();
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const { showPassword, togglePasswordVisibity } = useTogglePasswordVisibity();
+
   const { handleSubmit, control, formState } = useForm<
     z.infer<typeof updatePasswordSchema>
   >({
@@ -46,56 +74,31 @@ export default function ResetPasswordForm() {
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof updatePasswordSchema>) => {
-    const res = await fetch('/api/auth/reset-password', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: data.password }),
-    });
+  const resetPasswordMutation = useMutation({
+    mutationFn: resetPassword,
+    onSuccess: (res) => {
+      toast.success(res.message || 'Password reset successfully');
+      setIsRedirecting(true);
+      setTimeout(() => {
+        router.push('/auth/login');
+      }, 2000);
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      const errMessage = error.response?.data?.message;
+      toast.error(errMessage || 'An error occurred');
+    },
+  });
 
-    const resData = await res.json();
-
-    if (!res.ok) {
-      toast.error(resData.error || 'An error occurred during sign up');
-    } else {
-      toast.success(resData.message || 'Password updated successfully');
-      await supabase.auth.signOut();
-      router.push('/auth/login');
-    }
+  const onSubmit = (data: ResetPasswordPayload) => {
+    const payload = {
+      password: data.password,
+      token,
+    };
+    resetPasswordMutation.mutate(payload);
   };
 
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const error = urlParams.get('error');
-    const message = urlParams.get('error_description');
-
-    if (error) {
-      toast.error(message || 'An error occurred');
-      router.push('/auth/login');
-    }
-  }, []);
-
-  useEffect(() => {
-    const checkSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      if (!data.session) {
-        router.push('/auth/login');
-      }
-    };
-
-    checkSession();
-
-    const { data: listener } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'PASSWORD_RECOVERY') {
-        return;
-      }
-      if (event === 'SIGNED_OUT') {
-        router.push('/auth/login');
-      }
-    });
-
-    return () => listener.subscription.unsubscribe();
-  }, [router, supabase]);
+  const isSubmitting =
+    resetPasswordMutation.isPending || isRedirecting || formState.isSubmitting;
 
   return (
     <Card className="w-full max-w-md">
@@ -119,12 +122,30 @@ export default function ResetPasswordForm() {
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <Input
-                    {...field}
-                    id="password"
-                    type="password"
-                    aria-invalid={fieldState.invalid}
-                  />
+                  <div className="relative">
+                    <Input
+                      {...field}
+                      id="password"
+                      type={showPassword ? 'text' : 'password'}
+                      aria-invalid={fieldState.invalid}
+                      className="pr-10"
+                      disabled={isSubmitting}
+                    />
+                    <button
+                      type="button"
+                      onClick={togglePasswordVisibity}
+                      className="absolute inset-y-0 right-3 flex items-center text-muted-foreground hover:text-foreground"
+                      aria-label={
+                        showPassword ? 'Hide password' : 'Show password'
+                      }
+                    >
+                      {showPassword ? (
+                        <HugeiconsIcon icon={EyeOff} size={20} />
+                      ) : (
+                        <HugeiconsIcon icon={Eye} size={20} />
+                      )}
+                    </button>
+                  </div>
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
@@ -140,12 +161,32 @@ export default function ResetPasswordForm() {
                   <FieldLabel htmlFor="confirmPassword">
                     Confirm Password
                   </FieldLabel>
-                  <Input
-                    {...field}
-                    id="confirmPassword"
-                    type="password"
-                    aria-invalid={fieldState.invalid}
-                  />
+                  <div className="relative">
+                    <Input
+                      {...field}
+                      id="confirmPassword"
+                      type={showPassword ? 'text' : 'password'}
+                      aria-invalid={fieldState.invalid}
+                      className="pr-10"
+                      disabled={isSubmitting}
+                    />
+                    <button
+                      type="button"
+                      onClick={togglePasswordVisibity}
+                      className="absolute inset-y-0 right-3 flex items-center text-muted-foreground hover:text-foreground"
+                      aria-label={
+                        showPassword
+                          ? 'Hide confirm password'
+                          : 'Show confirm password'
+                      }
+                    >
+                      {showPassword ? (
+                        <HugeiconsIcon icon={EyeOff} size={20} />
+                      ) : (
+                        <HugeiconsIcon icon={Eye} size={20} />
+                      )}
+                    </button>
+                  </div>
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
@@ -154,15 +195,46 @@ export default function ResetPasswordForm() {
             />
           </div>
         </form>
+        {isRedirecting && (
+          <p className="text-muted-foreground text-sm mt-4 text-center">
+            Redirecting you to login...
+          </p>
+        )}
       </CardContent>
       <CardFooter className="flex-col gap-2">
         <Button
           type="submit"
           form="reset-password-form"
           className="w-full"
-          disabled={formState.isSubmitting}
+          disabled={isSubmitting}
         >
-          Reset Password
+          {resetPasswordMutation.isPending ? (
+            <>
+              <svg
+                className="animate-spin h-4 w-4"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
+              </svg>
+              Resetting...
+            </>
+          ) : (
+            'Reset Password'
+          )}
         </Button>
       </CardFooter>
     </Card>
