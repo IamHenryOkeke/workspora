@@ -1,3 +1,4 @@
+import { useAuthStore } from '@/stores/auth-store';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
@@ -13,7 +14,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('authToken');
+      const token = useAuthStore.getState().token;
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -30,8 +31,10 @@ axiosInstance.interceptors.response.use(
       const { status } = error.response;
       if (status === 401) {
         if (window.location.pathname !== '/auth/login') {
-          toast.error('Unauthorized access. Please log in again.');
-          localStorage.removeItem('authToken');
+          toast.error(
+            error.response.data?.message || 'JWT expired. Please log in again.',
+          );
+          useAuthStore.getState().clearAuth();
           window.location.href = '/auth/login';
         }
       }

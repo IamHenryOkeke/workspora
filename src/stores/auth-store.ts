@@ -55,7 +55,7 @@ export const useAuthStore = create<AuthState>()(
       setHydrated: () => set({ isHydrated: true }),
     }),
     {
-      name: 'auth-storage',
+      name: 'workspora-auth-storage',
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         user: state.user,

@@ -14,6 +14,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
+import { Modal } from './dashboard/modal';
+import toast from 'react-hot-toast';
 
 function getInitials(name?: string, email?: string) {
   if (name) {
@@ -69,10 +71,11 @@ export default function HomeNavbar() {
   useEffect(() => {
     if (!dropdownOpen) return;
     const handler = (e: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target as Node)
-      ) {
+      const target = e.target as HTMLElement;
+
+      if (target.closest('[role="dialog"]')) return;
+
+      if (dropdownRef.current && !dropdownRef.current.contains(target)) {
         setDropdownOpen(false);
       }
     };
@@ -82,6 +85,7 @@ export default function HomeNavbar() {
 
   const handleSignOut = () => {
     clearAuth();
+    toast.success('Logged out successfully');
     setDropdownOpen(false);
   };
 
@@ -172,12 +176,17 @@ export default function HomeNavbar() {
                       </Link>
                     </div>
                     <div className="border-t border-white/[0.07] py-1">
-                      <button
-                        onClick={handleSignOut}
-                        className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-sm text-red-400 transition hover:bg-red-500/10 hover:text-red-300"
-                      >
-                        <HugeiconsIcon icon={Logout01Icon} /> Sign out
-                      </button>
+                      <Modal
+                        trigger={
+                          <button className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-sm text-red-400 transition hover:bg-red-500/10 hover:text-red-300">
+                            <HugeiconsIcon icon={Logout01Icon} /> Sign out
+                          </button>
+                        }
+                        title="Sign out"
+                        description="Are you sure you want to sign out? You will be redirected to the login page."
+                        confirmText="Yes, sign out"
+                        onConfirm={handleSignOut}
+                      />
                     </div>
                   </div>
                 )}

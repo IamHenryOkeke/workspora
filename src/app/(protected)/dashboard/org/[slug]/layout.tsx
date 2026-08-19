@@ -1,0 +1,18 @@
+// import { AppSidebar } from '@/components/app-sidebar';
+import { SidebarProvider } from '@/components/ui/sidebar';
+
+export default function OrganizationLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <SidebarProvider>
+      {/* <AppSidebar /> */}
+      <main>
+        {/* <SidebarTrigger /> */}
+        <div className="p-4">{children}</div>
+      </main>
+    </SidebarProvider>
+  );
+}

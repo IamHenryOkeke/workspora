@@ -1,17 +1,16 @@
-import Organisations from '@/components/dashboard/organization';
+import Organizations from '@/components/dashboard/organizations';
 
-export default function page() {
+export default async function page({
+  searchParams,
+}: {
+  searchParams: { page?: string; query?: string };
+}) {
+  const page = (await searchParams).page;
+  const query = (await searchParams).query;
+
   return (
     <main>
-      <div className="h-screen flex flex-col items-center justify-center">
-        <h1 className="text-4xl font-bold">Welcome to the Dashboard</h1>
-        <p className="mt-4 text-lg text-gray-600">
-          This is the protected home page.
-        </p>
-        <div>
-          <Organisations />
-        </div>
-      </div>
+      <Organizations page={Number(page) || 1} query={query || ''} />
     </main>
   );
 }
