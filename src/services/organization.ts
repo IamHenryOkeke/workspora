@@ -30,6 +30,13 @@ export const OrganizationService = {
     return response;
   },
 
+  getOrganizationByStats: async (organizationId: string) => {
+    const response = await axiosInstance.get(
+      `/organizations/${organizationId}/stats`,
+    );
+    return response;
+  },
+
   getOrganizationBySlug: async (slug: string) => {
     const response = await axiosInstance.get(`/organizations/slug/${slug}`);
     return response;

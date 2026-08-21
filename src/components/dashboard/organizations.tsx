@@ -1,10 +1,9 @@
 'use client';
 
-import { ApiResponse } from '@/lib/types';
+import { ApiResponse, Organization, PaginationType } from '@/lib/types';
 import { OrganizationService } from '@/services/organization';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
-import Image from 'next/image';
 import { HugeiconsIcon } from '@hugeicons/react';
 import {
   Building03Icon,
@@ -14,30 +13,13 @@ import {
 } from '@hugeicons/core-free-icons';
 import Search from './search';
 import Pagination from './pagination';
+import RoleBadge from './role-badge';
+import OrganizationOrUserLogo from './organization-user-logo';
 
-type OrgRole = 'OWNER' | 'ADMIN' | 'MEMBER';
-
-interface Organization {
-  id: string;
-  name: string;
-  slug: string;
-  description: string;
-  logo: string;
-  ownerId: string;
-  role: OrgRole;
-}
-
-interface Pagination {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
-}
-
-interface OrganizationsResponse {
+type OrganizationsResponse = {
   organizations: Organization[];
-  pagination: Pagination;
-}
+  pagination: PaginationType;
+};
 
 const fetchOrganizations = async (
   page?: number,
@@ -49,49 +31,6 @@ const fetchOrganizations = async (
   });
   return data;
 };
-
-const ROLE_STYLES = {
-  OWNER: 'bg-accent/10 text-accent',
-  ADMIN: 'bg-blue-500/10 text-blue-400',
-  MEMBER: 'bg-white/8 text-gray-400',
-};
-
-const ROLE_LABELS = {
-  OWNER: 'Owner',
-  ADMIN: 'Admin',
-  MEMBER: 'Member',
-};
-
-function RoleBadge({ role }: { role: OrgRole }) {
-  return (
-    <span
-      className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium ${ROLE_STYLES[role]}`}
-    >
-      {ROLE_LABELS[role]}
-    </span>
-  );
-}
-
-function OrgLogo({
-  name,
-  logo,
-  size = 44,
-}: {
-  name: string;
-  logo: string;
-  size?: number;
-}) {
-  return (
-    <Image
-      src={logo}
-      alt={name}
-      width={size}
-      height={size}
-      className="shrink-0 rounded-lg object-cover"
-      style={{ width: size, height: size }}
-    />
-  );
-}
 
 function Header({ count }: { count: number }) {
   return (
@@ -221,7 +160,7 @@ export default function Organizations({
                   href={`/dashboard/org/${org.slug}/home`}
                   className="group flex h-full items-center gap-3 rounded-xl border border-white/8 bg-white/3 p-4 transition hover:border-white/15 hover:bg-white/6"
                 >
-                  <OrgLogo name={org.name} logo={org.logo} />
+                  <OrganizationOrUserLogo name={org.name} logo={org.logo} />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <p className="truncate text-sm font-semibold text-white">
