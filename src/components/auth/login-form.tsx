@@ -62,10 +62,11 @@ export default function LoginForm() {
     mutationFn: loginUser,
     onSuccess: (res) => {
       toast.success('Login successful');
-      if (res.token && res.user) {
+      console.log('Login response:', res); // Log the response for debugging
+      if (res.accessToken && res.user) {
         setAuth({
           user: res.user,
-          token: res.token,
+          accessToken: res.accessToken,
         });
       }
     },

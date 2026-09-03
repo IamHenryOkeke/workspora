@@ -4,13 +4,13 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 
 interface AuthState {
   user: User | null;
-  token: string | null;
+  accessToken: string | null;
   isAuthenticated: boolean;
   isHydrated: boolean;
 
-  setAuth: (payload: { user: User; token: string }) => void;
+  setAuth: (payload: { user: User; accessToken: string }) => void;
   setUser: (user: User) => void;
-  setToken: (token: string) => void;
+  setAccessToken: (accessToken: string) => void;
   clearAuth: () => void;
   setHydrated: () => void;
 }
@@ -31,25 +31,25 @@ export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       user: null,
-      token: null,
+      accessToken: null,
       isAuthenticated: false,
       isHydrated: false,
 
-      setAuth: ({ user, token }) => {
-        setCookie(token);
-        set({ user, token, isAuthenticated: true });
+      setAuth: ({ user, accessToken }) => {
+        setCookie(accessToken);
+        set({ user, accessToken, isAuthenticated: true });
       },
 
       setUser: (user) => set({ user }),
 
-      setToken: (token) => {
-        setCookie(token);
-        set({ token });
+      setAccessToken: (accessToken) => {
+        setCookie(accessToken);
+        set({ accessToken });
       },
 
       clearAuth: () => {
         clearCookie();
-        set({ user: null, token: null, isAuthenticated: false });
+        set({ user: null, accessToken: null, isAuthenticated: false });
       },
 
       setHydrated: () => set({ isHydrated: true }),
@@ -59,7 +59,7 @@ export const useAuthStore = create<AuthState>()(
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         user: state.user,
-        token: state.token,
+        accessToken: state.accessToken,
         isAuthenticated: state.isAuthenticated,
       }),
       onRehydrateStorage: () => (state) => {

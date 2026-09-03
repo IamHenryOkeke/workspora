@@ -2,7 +2,7 @@ export type ApiResponse<T = unknown> = {
   message: string;
   data?: T;
   user?: User;
-  token?: string;
+  accessToken?: string;
 };
 
 export type User = {

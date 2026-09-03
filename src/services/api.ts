@@ -9,12 +9,18 @@ const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
+});
+
+const refreshClient = axios.create({
+  baseURL,
+  withCredentials: true,
 });
 
 axiosInstance.interceptors.request.use(
   (config) => {
     if (typeof window !== 'undefined') {
-      const token = useAuthStore.getState().token;
+      const token = useAuthStore.getState().accessToken;
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -26,21 +32,41 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   (response) => response,
+
   async (error) => {
-    if (error.response) {
-      const { status } = error.response;
-      if (status === 401) {
+    const originalRequest = error.config;
+
+    if (!error.response) {
+      toast.error('Network error. Please check your internet connection.');
+      return Promise.reject(error);
+    }
+
+    if (error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      const toastId = toast.loading('Refreshing session...');
+      try {
+        const { data } = await refreshClient.post('/auth/refresh');
+
+        const { accessToken } = data;
+        toast.dismiss(toastId);
+        useAuthStore.getState().setAccessToken(accessToken);
+
+        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+
+        return axiosInstance(originalRequest);
+      } catch (refreshError) {
+        toast.dismiss(toastId);
+        useAuthStore.getState().clearAuth();
+
         if (window.location.pathname !== '/auth/login') {
-          toast.error(
-            error.response.data?.message || 'JWT expired. Please log in again.',
-          );
-          useAuthStore.getState().clearAuth();
+          toast.error('Your session has expired. Please log in again.');
           window.location.href = '/auth/login';
         }
+
+        return Promise.reject(refreshError);
       }
-    } else {
-      toast.error('Network error. Please check your internet connection.');
     }
+
     return Promise.reject(error);
   },
 );
