@@ -21,7 +21,7 @@ type OrganizationsResponse = {
   pagination: PaginationType;
 };
 
-const fetchOrganizations = async (
+export const fetchOrganizations = async (
   page?: number,
   query?: string,
 ): Promise<ApiResponse<OrganizationsResponse>> => {
@@ -35,13 +35,13 @@ const fetchOrganizations = async (
 function Header({ count }: { count: number }) {
   return (
     <div className="mb-8">
-      <h1 className="text-3xl font-bold text-white">Your organisations</h1>
+      <h1 className="text-3xl font-bold text-white">Your organizations</h1>
       <p className="mt-1 text-sm text-gray-500">
         {count === null ? (
           <span className="inline-block h-4 w-16 animate-pulse rounded bg-white/5 align-middle" />
         ) : (
           <>
-            {count} {count === 1 ? 'organisation' : 'organisations'}
+            {count} {count === 1 ? 'organization' : 'organizations'}
           </>
         )}
       </p>
@@ -55,7 +55,7 @@ function Header({ count }: { count: number }) {
           className="flex shrink-0 items-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-accent/25 transition hover:bg-accent/80 hover:-translate-y-px active:translate-y-0"
         >
           <HugeiconsIcon icon={PlusSignIcon} size={16} />
-          New organisation
+          New organization
         </Link>
       </div>
     </div>
@@ -69,6 +69,7 @@ export default function Organizations({
   page: number;
   query: string;
 }) {
+  console.log(page, query);
   const { isPending, error, data } = useQuery({
     queryKey: ['organizations', { page, query }],
     queryFn: () => fetchOrganizations(page, query),
@@ -97,7 +98,7 @@ export default function Organizations({
       {!isPending && error && (
         <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-8 text-center">
           <p className="text-sm font-medium text-red-400">
-            Couldn&apos;t load your organisations
+            Couldn&apos;t load your organizations
           </p>
           <p className="mt-1 text-xs text-red-400/70">{error.message}</p>
         </div>
@@ -136,10 +137,10 @@ export default function Organizations({
             </div>
             <div>
               <h3 className="text-base font-semibold text-white">
-                No organisations yet
+                No organizations yet
               </h3>
               <p className="mt-1 text-sm text-gray-400">
-                Create your first organisation to get started.
+                Create your first organization to get started.
               </p>
             </div>
             <Link
@@ -147,7 +148,7 @@ export default function Organizations({
               className="mt-2 flex items-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-accent/25 transition hover:bg-accent/80 hover:-translate-y-px active:translate-y-0"
             >
               <HugeiconsIcon icon={PlusSignIcon} size={18} />
-              Create Organisation
+              Create Organization
             </Link>
           </div>
         ))}

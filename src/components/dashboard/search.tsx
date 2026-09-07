@@ -34,7 +34,7 @@ export default function Search() {
           handleSearch(e.target.value.trim());
         }}
         defaultValue={searchParams.get('query')?.toString()}
-        placeholder="Search organisations..."
+        placeholder="Search organizations..."
         className="h-10 w-full pl-9 pr-3 lg:h-11"
       />
     </div>

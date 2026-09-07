@@ -4,13 +4,11 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { useAuthStore } from '@/stores/auth-store';
-import { useOrganizationStore } from '@/stores/org-store';
 import {
   DashboardSquare02Icon,
   ChartNoAxesGanttIcon,
@@ -24,7 +22,6 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import Link from 'next/link';
 import { usePathname, useParams } from 'next/navigation';
-import { useEffect } from 'react';
 import { UserAvatar } from './home-navbar';
 import { ROLE_LABELS } from './dashboard/role-badge';
 import {
@@ -32,9 +29,12 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
   DropdownMenuItem,
+  DropdownMenuSeparator,
 } from './ui/dropdown-menu';
 import OrganizationOrUserLogo from './dashboard/organization-user-logo';
 import { Logout } from './logout';
+import { useQuery } from '@tanstack/react-query';
+import { fetchOrganizations } from './dashboard/organizations';
 
 const navLinks = [
   { label: 'Dashboard', segment: 'home', icon: DashboardSquare02Icon },
@@ -46,12 +46,15 @@ const navLinks = [
 export function AppSidebar() {
   const { slug } = useParams<{ slug: string }>();
   const { user } = useAuthStore();
-  const { organizations, fetchOrganizations } = useOrganizationStore();
 
-  useEffect(() => {
-    fetchOrganizations();
-  }, []);
+  const { isPending, data } = useQuery({
+    queryKey: ['organizations', { page: 1, query: '' }],
+    queryFn: () => fetchOrganizations(1, ''),
+  });
+  const organizations = data?.data?.organizations || [];
+
   const currentOrganization = organizations.find((org) => org.slug === slug);
+
   return (
     <Sidebar>
       <SidebarHeader>
@@ -59,59 +62,73 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuItem className="flex items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-white hover:bg-gray-700/50">
-                  <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  className="flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-white hover:bg-gray-700/50"
+                >
+                  <div className="flex min-w-0 items-center gap-2">
                     <OrganizationOrUserLogo
                       name={currentOrganization?.name || 'Select organization'}
                       logo={currentOrganization?.logo}
                       size={34}
                     />
-                    <span>
-                      {currentOrganization?.name || 'Select organization'}
+                    <span className="truncate">
+                      {isPending
+                        ? 'Loading...'
+                        : currentOrganization?.name || 'Select organization'}
                     </span>
                   </div>
-                  <HugeiconsIcon icon={ArrowDown01Icon} />
-                </SidebarMenuItem>
+                  <HugeiconsIcon icon={ArrowDown01Icon} className="shrink-0" />
+                </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="border border-white/10 space-y-1">
-                <DropdownMenuItem className="flex flex-col gap-1.5 border-b border-white/10 px-3 py-2.5">
-                  {organizations.map((org) => (
+              <DropdownMenuContent className="w-64 space-y-1 border border-white/10">
+                {organizations.map((org) => (
+                  <DropdownMenuItem key={org.id} asChild>
                     <Link
-                      key={org.id}
                       href={`/dashboard/org/${org.slug}/home`}
-                      className="flex w-full items-center justify-between gap-2 rounded-lg text-sm font-medium text-white"
+                      className="flex w-full items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-sm font-medium text-white"
                     >
                       <div
-                        className={`flex items-center gap-2 ${currentOrganization?.id === org.id ? 'text-accent' : ''}`}
+                        className={`flex min-w-0 items-center gap-2 ${
+                          currentOrganization?.id === org.id
+                            ? 'text-accent'
+                            : ''
+                        }`}
                       >
                         <OrganizationOrUserLogo
                           name={org.name}
                           logo={org.logo}
                           size={24}
                         />
-                        <span>{org.name}</span>
+                        <span className="truncate">{org.name}</span>
                       </div>
                       {currentOrganization?.id === org.id && (
                         <HugeiconsIcon
                           icon={CheckIcon}
-                          size={40}
+                          size={16}
                           strokeWidth={3}
-                          className="text-accent"
+                          className="shrink-0 text-accent"
                         />
                       )}
                     </Link>
-                  ))}
+                  </DropdownMenuItem>
+                ))}
+                <DropdownMenuSeparator className="border-white/10" />
+                <DropdownMenuItem asChild>
+                  <Link
+                    href="/dashboard/create-org"
+                    className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-medium text-white"
+                  >
+                    <HugeiconsIcon icon={Settings02Icon} size={16} />
+                    <span>New Organization</span>
+                  </Link>
                 </DropdownMenuItem>
-                <SidebarLinkItem
-                  href="/dashboard/create-org"
-                  label="New Organization"
-                  icon={Settings02Icon}
-                />
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+
       <SidebarContent className="pt-10 px-2 bg-background/50 border-y border-white/10">
         <SidebarMenu className="space-y-4">
           {navLinks.map((link) => {
@@ -127,15 +144,13 @@ export function AppSidebar() {
             );
           })}
         </SidebarMenu>
-        <SidebarGroup />
-        <SidebarGroup />
       </SidebarContent>
 
       <SidebarFooter className="px-2 bg-background/50">
         <SidebarMenu className="space-y-3">
           <SidebarMenuItem>
             <SidebarLinkItem
-              href="settings"
+              href={`/dashboard/org/${slug}/settings`}
               label="Settings"
               icon={Settings02Icon}
             />
@@ -195,10 +210,10 @@ export const SidebarLinkItem = ({
     <Link
       href={href}
       aria-current={isActive ? 'page' : undefined}
-      className={`flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-white ${
+      className={`flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium ${
         isActive
           ? 'text-accent border-l-2 border-accent bg-accent/20'
-          : 'hover:bg-gray-700/50'
+          : 'hover:bg-gray-700/50 text-white'
       }`}
     >
       <HugeiconsIcon icon={icon} />
