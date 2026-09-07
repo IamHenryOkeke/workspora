@@ -8,7 +8,7 @@ export type ApiResponse<T = unknown> = {
 export type User = {
   id: string;
   email: string;
-  name: string;
+  fullName: string;
   avatar?: string;
 };
 

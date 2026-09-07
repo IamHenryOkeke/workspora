@@ -1,5 +1,5 @@
-// import { AppSidebar } from '@/components/app-sidebar';
-import { SidebarProvider } from '@/components/ui/sidebar';
+import { AppSidebar } from '@/components/app-sidebar';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 
 export default function OrganizationLayout({
   children,
@@ -8,9 +8,9 @@ export default function OrganizationLayout({
 }) {
   return (
     <SidebarProvider>
-      {/* <AppSidebar /> */}
+      <AppSidebar />
       <main>
-        {/* <SidebarTrigger /> */}
+        <SidebarTrigger />
         <div className="p-4">{children}</div>
       </main>
     </SidebarProvider>

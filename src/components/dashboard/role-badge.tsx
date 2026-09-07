@@ -6,7 +6,7 @@ const ROLE_STYLES = {
   MEMBER: 'bg-white/8 text-gray-400',
 };
 
-const ROLE_LABELS = {
+export const ROLE_LABELS = {
   OWNER: 'Owner',
   ADMIN: 'Admin',
   MEMBER: 'Member',

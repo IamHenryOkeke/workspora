@@ -47,4 +47,9 @@ export const AuthService = {
     const response = await axiosInstance.get('/auth/google');
     return response;
   },
+
+  logout: async () => {
+    const response = await axiosInstance.post('/auth/logout');
+    return response;
+  },
 };

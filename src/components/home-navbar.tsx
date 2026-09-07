@@ -16,6 +16,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
 import { Modal } from './dashboard/modal';
 import toast from 'react-hot-toast';
+import Logo from './logo';
 
 function getInitials(name?: string, email?: string) {
   if (name) {
@@ -30,7 +31,7 @@ function getInitials(name?: string, email?: string) {
   return 'WS';
 }
 
-function UserAvatar({
+export function UserAvatar({
   name,
   email,
   image,
@@ -48,14 +49,14 @@ function UserAvatar({
         alt={name || email || 'User avatar'}
         width={28}
         height={28}
-        className={`rounded-full object-cover ${className ?? ''}`}
+        className={`object-cover ${className ?? ''}`}
       />
     );
   }
 
   return (
     <div
-      className={`flex items-center justify-center rounded-full bg-accent text-[11px] font-bold text-white ${className ?? ''}`}
+      className={`flex items-center justify-center bg-accent text-[11px] font-bold text-white ${className ?? ''}`}
     >
       {getInitials(name, email)}
     </div>
@@ -89,7 +90,7 @@ export default function HomeNavbar() {
     setDropdownOpen(false);
   };
 
-  const displayName = user?.name || user?.email?.split('@')[0];
+  const displayName = user?.fullName || user?.email?.split('@')[0];
 
   const navLinks = [
     { label: 'Features', href: '/features' },
@@ -101,14 +102,7 @@ export default function HomeNavbar() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.07] bg-gray-950/75 backdrop-blur-xl">
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-2.5 select-none">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent text-xs font-bold text-white shadow-lg shadow-accent/30">
-            W
-          </div>
-          <span className="text-[17px] font-bold tracking-tight text-white">
-            Work<span className="text-accent">spora</span>
-          </span>
-        </Link>
+        <Logo />
 
         <ul className="hidden md:flex items-center gap-7 list-none">
           {navLinks.map(({ label, href }) => (
@@ -142,7 +136,7 @@ export default function HomeNavbar() {
                   className="flex items-center gap-2 rounded border border-white/10 bg-white/5 py-1 pl-1 pr-3 text-sm font-medium text-white transition hover:border-white/20 hover:bg-white/10"
                 >
                   <UserAvatar
-                    name={user.name}
+                    name={user.fullName}
                     email={user.email}
                     image={user.avatar}
                     className="h-7 w-7"
@@ -155,7 +149,7 @@ export default function HomeNavbar() {
                   <div className="absolute right-0 mt-2 w-52 overflow-hidden rounded-xl border border-white/8 bg-gray-900 shadow-2xl shadow-black/50">
                     <div className="border-b border-white/[0.07] px-3.5 py-2.5">
                       <p className="truncate text-sm font-medium text-white">
-                        {user.name}
+                        {user.fullName}
                       </p>
                       <p className="truncate text-xs text-gray-500">
                         {user.email}
@@ -243,7 +237,7 @@ export default function HomeNavbar() {
               <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-3 rounded-lg border border-white/8 bg-white/3 p-3">
                   <UserAvatar
-                    name={user.name}
+                    name={user.fullName}
                     email={user.email}
                     image={user.avatar}
                     className="h-8 w-8 shrink-0"

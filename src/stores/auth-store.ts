@@ -1,13 +1,13 @@
 import { User } from '@/lib/types';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-
+import { AuthService } from '@/services/auth';
+import toast from 'react-hot-toast';
 interface AuthState {
   user: User | null;
   accessToken: string | null;
   isAuthenticated: boolean;
   isHydrated: boolean;
-
   setAuth: (payload: { user: User; accessToken: string }) => void;
   setUser: (user: User) => void;
   setAccessToken: (accessToken: string) => void;
@@ -47,9 +47,15 @@ export const useAuthStore = create<AuthState>()(
         set({ accessToken });
       },
 
-      clearAuth: () => {
-        clearCookie();
-        set({ user: null, accessToken: null, isAuthenticated: false });
+      clearAuth: async () => {
+        const res = await AuthService.logout();
+        console.log('Logout response:', res);
+        if (res.status === 200) {
+          clearCookie();
+          set({ user: null, accessToken: null, isAuthenticated: false });
+        } else {
+          toast.error('Logout failed');
+        }
       },
 
       setHydrated: () => set({ isHydrated: true }),
