@@ -33,7 +33,10 @@ export type StatCount = {
 
 export type OrganizationStats = {
   totalMembers: number;
+  activeMembers: number;
   totalProjects: number;
+  activeProjects: number;
+  pendingInvitations: number;
   membersByRole: StatCount[];
   membersByStatus: StatCount[];
   projectsByStatus: StatCount[];

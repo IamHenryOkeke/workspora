@@ -11,7 +11,7 @@ export default function OrganizationLayout({
       <AppSidebar />
       <main>
         <SidebarTrigger />
-        <div className="p-4">{children}</div>
+        <div className="py-4 px-10">{children}</div>
       </main>
     </SidebarProvider>
   );
