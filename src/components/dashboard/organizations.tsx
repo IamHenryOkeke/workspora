@@ -34,27 +34,28 @@ const fetchOrganizations = async (
 
 function Header({ count }: { count: number }) {
   return (
-    <div className="mb-6 flex items-center justify-between gap-4">
-      <div>
-        <h1 className="text-lg font-semibold text-white">Organisations</h1>
-        <p className="text-sm text-gray-500">
-          {count === null ? (
-            <span className="inline-block h-4 w-16 animate-pulse rounded bg-white/5 align-middle" />
-          ) : (
-            <>
-              {count} {count === 1 ? 'organisation' : 'organisations'}
-            </>
-          )}
-        </p>
-      </div>
-      <div className="flex items-center gap-3">
-        <Search />
+    <div className="mb-8">
+      <h1 className="text-3xl font-bold text-white">Your organisations</h1>
+      <p className="mt-1 text-sm text-gray-500">
+        {count === null ? (
+          <span className="inline-block h-4 w-16 animate-pulse rounded bg-white/5 align-middle" />
+        ) : (
+          <>
+            {count} {count === 1 ? 'organisation' : 'organisations'}
+          </>
+        )}
+      </p>
+
+      <div className="mt-6 flex items-center gap-3">
+        <div className="flex-1">
+          <Search />
+        </div>
         <Link
           href="/dashboard/create-org"
-          className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-accent/25 transition hover:bg-accent/80 hover:-translate-y-px active:translate-y-0"
+          className="flex shrink-0 items-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-accent/25 transition hover:bg-accent/80 hover:-translate-y-px active:translate-y-0"
         >
           <HugeiconsIcon icon={PlusSignIcon} size={16} />
-          New
+          New organisation
         </Link>
       </div>
     </div>
@@ -79,15 +80,15 @@ export default function Organizations({
   const count = pagination?.total ? pagination.total : 0;
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-10">
+    <div className="mx-auto max-w-5xl px-6 py-12">
       <Header count={isPending ? 0 : count} />
 
       {isPending && (
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2">
           {Array.from({ length: 4 }).map((_, i) => (
             <div
               key={i}
-              className="h-24 animate-pulse rounded-xl border border-white/8 bg-white/5"
+              className="h-28 animate-pulse rounded-xl border border-white/8 bg-white/5"
             />
           ))}
         </div>
@@ -153,23 +154,25 @@ export default function Organizations({
 
       {!isPending && !error && organizations && organizations.length > 0 && (
         <>
-          <ul className="grid gap-3 sm:grid-cols-2">
+          <ul className="grid gap-4 sm:grid-cols-2">
             {organizations.map((org) => (
               <li key={org.id}>
                 <Link
                   href={`/dashboard/org/${org.slug}/home`}
-                  className="group flex h-full items-center gap-3 rounded-xl border border-white/8 bg-white/3 p-4 transition hover:border-white/15 hover:bg-white/6"
+                  className="group flex h-full items-center gap-4 rounded-xl border border-white/8 bg-white/3 p-6 transition hover:border-white/15 hover:bg-white/6"
                 >
-                  <OrganizationOrUserLogo name={org.name} logo={org.logo} />
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/5">
+                    <OrganizationOrUserLogo name={org.name} logo={org.logo} />
+                  </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <p className="truncate text-sm font-semibold text-white">
+                      <p className="truncate text-base font-semibold text-white">
                         {org.name}
                       </p>
                       <RoleBadge role={org.role} />
                     </div>
                     {org.description && (
-                      <p className="truncate text-xs text-gray-500">
+                      <p className="mt-0.5 truncate text-xs text-gray-600">
                         {org.description}
                       </p>
                     )}
