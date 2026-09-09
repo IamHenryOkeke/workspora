@@ -18,6 +18,7 @@ import {
   ArrowDown01Icon,
   ArrowLeft01Icon,
   CheckIcon,
+  PlusIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import Link from 'next/link';
@@ -119,7 +120,7 @@ export function AppSidebar() {
                     href="/dashboard/create-org"
                     className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-medium text-white"
                   >
-                    <HugeiconsIcon icon={Settings02Icon} size={16} />
+                    <HugeiconsIcon icon={PlusIcon} size={16} />
                     <span>New Organization</span>
                   </Link>
                 </DropdownMenuItem>
