@@ -1,4 +1,4 @@
-import OrganizationHome from '@/components/dashboard/org/organiation-home';
+import OrganizationHome from '@/components/dashboard/org/home';
 
 export default async function OrganzationPage({
   params,

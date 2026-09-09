@@ -9,6 +9,7 @@ import {
   MailAccount01Icon,
   FolderLibraryIcon,
 } from '@hugeicons/core-free-icons';
+import { timeAgo } from '@/lib/utils';
 
 type OrganizationActivityResponse = {
   activities: OrganizationActivity[];
@@ -39,28 +40,6 @@ const ACTIVITY_ICON = {
     className: string;
   }
 >;
-
-function timeAgo(date: string | Date): string {
-  const d = typeof date === 'string' ? new Date(date) : date;
-  const seconds = Math.floor((Date.now() - d.getTime()) / 1000);
-
-  if (seconds < 60) return 'just now';
-
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
-
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
-
-  const days = Math.floor(hours / 24);
-  if (days < 30) return `${days}d ago`;
-
-  const months = Math.floor(days / 30);
-  if (months < 12) return `${months}mo ago`;
-
-  const years = Math.floor(months / 12);
-  return `${years}y ago`;
-}
 
 function ActivityRow({ activity }: { activity: OrganizationActivity }) {
   const { icon, className } = ACTIVITY_ICON[activity.type];
@@ -101,7 +80,8 @@ export default function OrganizationRecentActivities({
 
   if (isPending) {
     return (
-      <div className="mt-4 rounded-xl border border-white/8 bg-white/3 p-4">
+      <div className="border border-white/8 bg-white/3 p-4">
+        <p className="text-sm font-medium text-white mb-1">Recent activity</p>
         <div className="space-y-4">
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="flex items-start gap-3">
@@ -119,7 +99,8 @@ export default function OrganizationRecentActivities({
 
   if (error || !activities) {
     return (
-      <div className="mt-4 rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-center">
+      <div className="border border-red-500/20 bg-red-500/5 p-4">
+        <p className="text-sm font-medium text-white mb-1">Recent activity</p>
         <p className="text-xs text-red-400/70">
           Couldn&apos;t load recent activity
         </p>
@@ -129,16 +110,17 @@ export default function OrganizationRecentActivities({
 
   if (activities.length === 0) {
     return (
-      <div className="mt-4 rounded-xl border border-white/8 bg-white/3 p-6 text-center">
-        <p className="text-sm text-gray-500">No recent activity yet</p>
+      <div className="border border-white/8 bg-white/3 p-4">
+        <p className="text-sm font-medium text-white mb-1">Recent activity</p>
+        <p className="text-xs text-gray-500">No recent activity yet</p>
       </div>
     );
   }
 
   return (
-    <div className="mt-4 rounded-xl border border-white/8 bg-white/3 p-4">
-      <p className="text-sm font-medium text-white">Recent activity</p>
-      <div className="mt-1 divide-y divide-white/8">
+    <div className="border border-white/8 bg-white/3 p-4">
+      <p className="text-sm font-medium text-white mb-1">Recent activity</p>
+      <div className="divide-y divide-white/8">
         {activities.map((activity) => (
           <ActivityRow key={activity.id} activity={activity} />
         ))}

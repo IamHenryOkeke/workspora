@@ -6,10 +6,10 @@ import { AxiosError } from 'axios';
 import { ApiResponse, Organization } from '@/lib/types';
 import { OrganizationService } from '@/services/organization';
 import { useQuery } from '@tanstack/react-query';
-import OrganizationOrUserLogo from '../organization-user-logo';
-// import Members from './members';
 import OrganizationStatsSection from './organization-stats';
 import OrganizationRecentActivities from './organization-recent-activities';
+import OrganizationOrUserLogo from '../../organization-user-logo';
+import OrganizationRecentProjects from './organization-recent-projects';
 
 type OrganizationDetail = {
   organization: Organization;
@@ -96,7 +96,7 @@ export default function OrganizationHome({ slug }: { slug: string }) {
   }
 
   return (
-    <div>
+    <div className="mx-auto px-6 py-10 space-y-6">
       <div className="flex items-center gap-4">
         <OrganizationOrUserLogo
           name={organization.name}
@@ -119,8 +119,11 @@ export default function OrganizationHome({ slug }: { slug: string }) {
       </div>
 
       <OrganizationStatsSection organizationId={organization.id} />
-      <OrganizationRecentActivities organizationId={organization.id} />
-      {/* <Members organizationId={organization.id} /> */}
+
+      <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+        <OrganizationRecentProjects organizationId={organization.id} />
+        <OrganizationRecentActivities organizationId={organization.id} />
+      </div>
     </div>
   );
 }

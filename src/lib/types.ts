@@ -61,6 +61,22 @@ export type Member = {
   };
 };
 
+export type Project = {
+  id: string;
+  name: string;
+  description: string;
+  status: 'PENDING' | 'ACTIVE' | 'COMPLETED' | 'ARCHIVED';
+  organizationId: string;
+  creatorId: string | null;
+  creator: {
+    id: string;
+    fullName: string;
+    avatar: string | null;
+  } | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
 export type PaginationType = {
   page: number;
   limit: number;
