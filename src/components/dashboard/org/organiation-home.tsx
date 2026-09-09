@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import OrganizationOrUserLogo from '../organization-user-logo';
 // import Members from './members';
 import OrganizationStatsSection from './organization-stats';
+import OrganizationRecentActivities from './organization-recent-activities';
 
 type OrganizationDetail = {
   organization: Organization;
@@ -88,7 +89,7 @@ export default function OrganizationHome({ slug }: { slug: string }) {
       </div>
 
       <OrganizationStatsSection organizationId={organization.id} />
-
+      <OrganizationRecentActivities organizationId={organization.id} />
       {/* <Members organizationId={organization.id} /> */}
     </div>
   );

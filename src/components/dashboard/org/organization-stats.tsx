@@ -12,7 +12,7 @@ const fetchOrganizationStats = async (
   organizationId: string,
 ): Promise<ApiResponse<OrganizationStatsResponse>> => {
   const { data } =
-    await OrganizationService.getOrganizationByStats(organizationId);
+    await OrganizationService.getOrganizationStats(organizationId);
   return data;
 };
 
@@ -26,7 +26,7 @@ function StatCard({
   sublabel: string;
 }) {
   return (
-    <div className="rounded-xl border border-white/8 bg-white/3 p-6 min-w-[300px]">
+    <div className="rounded-xl border border-white/8 bg-white/3 p-6 min-w-75">
       <p className="text-3xl font-bold text-white">{value}</p>
       <p className="mt-1 text-sm font-medium text-gray-300">{label}</p>
       <p className="mt-0.5 text-xs text-gray-500">{sublabel}</p>

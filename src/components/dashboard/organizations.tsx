@@ -69,7 +69,6 @@ export default function Organizations({
   page: number;
   query: string;
 }) {
-  console.log(page, query);
   const { isPending, error, data } = useQuery({
     queryKey: ['organizations', { page, query }],
     queryFn: () => fetchOrganizations(page, query),

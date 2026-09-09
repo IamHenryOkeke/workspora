@@ -30,9 +30,16 @@ export const OrganizationService = {
     return response;
   },
 
-  getOrganizationByStats: async (organizationId: string) => {
+  getOrganizationStats: async (organizationId: string) => {
     const response = await axiosInstance.get(
       `/organizations/${organizationId}/stats`,
+    );
+    return response;
+  },
+
+  getOrganizationRecentActivity: async (organizationId: string) => {
+    const response = await axiosInstance.get(
+      `/organizations/${organizationId}/recent-activities`,
     );
     return response;
   },

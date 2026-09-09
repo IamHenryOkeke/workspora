@@ -42,6 +42,14 @@ export type OrganizationStats = {
   projectsByStatus: StatCount[];
 };
 
+export type OrganizationActivity = {
+  type: 'member_joined' | 'invitation_sent' | 'project_created';
+  id: string;
+  timestamp: string;
+  text: string;
+  meta?: Record<string, unknown>;
+};
+
 export type Member = {
   id: string;
   role: OrganizationRole;
