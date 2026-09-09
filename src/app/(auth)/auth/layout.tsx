@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import { Suspense, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth-store';
@@ -50,19 +49,7 @@ export default function AuthLayout({
           </div>
         </div>
       ) : (
-        <>
-          <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 pt-5">
-            <Link href="/" className="flex items-center gap-2.5 select-none">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent text-xs font-bold text-white shadow-lg shadow-accent/30">
-                W
-              </div>
-              <span className="text-[17px] font-bold tracking-tight text-white">
-                Work<span className="text-accent">spora</span>
-              </span>
-            </Link>
-          </nav>
-          {children}
-        </>
+        <>{children}</>
       )}
     </main>
   );

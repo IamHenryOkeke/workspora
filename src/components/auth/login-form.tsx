@@ -1,15 +1,6 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -27,6 +18,7 @@ import { AuthService } from '@/services/auth';
 import { ApiResponse } from '@/lib/types';
 import { useAuthStore } from '@/stores/auth-store';
 import LoginWithGoogle from './login-with-google';
+import CardWrapper from './card-wrapper';
 
 const logInSchema = z.object({
   email: z.email('Invalid email address'),
@@ -62,7 +54,6 @@ export default function LoginForm() {
     mutationFn: loginUser,
     onSuccess: (res) => {
       toast.success('Login successful');
-      console.log('Login response:', res); // Log the response for debugging
       if (res.accessToken && res.user) {
         setAuth({
           user: res.user,
@@ -108,144 +99,150 @@ export default function LoginForm() {
   const isSubmitting = loginMutation.isPending || formState.isSubmitting;
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle>Login to Workspora</CardTitle>
-        <CardDescription>
-          Enter your email below to login to your account
-        </CardDescription>
-        <CardAction>
-          <Button variant="link" asChild>
-            <Link href="/auth/sign-up">Sign Up</Link>
-          </Button>
-        </CardAction>
-      </CardHeader>
-      <CardContent>
-        <form id="login-form" onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-col gap-6">
-            <Controller
-              name="email"
-              control={control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="email">Email</FieldLabel>
-                  <Input
-                    {...field}
-                    id="email"
-                    type="email"
-                    aria-invalid={fieldState.invalid}
-                    placeholder="m@example.com"
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-
-            <Controller
-              name="password"
-              control={control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <div className="flex items-center">
-                    <FieldLabel htmlFor="password">Password</FieldLabel>
-                    <Link
-                      href="/auth/forgot-password"
-                      className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                    >
-                      Forgot your password?
-                    </Link>
-                  </div>
-                  <div className="relative">
+    <CardWrapper
+      title="Welcome back"
+      description="Sign in to your account to continue"
+      footerChildren={
+        <p className="text-sm text-muted-foreground">
+          No account?{' '}
+          <Link href="/auth/sign-up" className="text-accent hover:underline">
+            Create one
+          </Link>
+        </p>
+      }
+    >
+      <div className="space-y-2">
+        <div>
+          <form id="login-form" onSubmit={handleSubmit(onSubmit)}>
+            <div className="flex flex-col gap-6">
+              <Controller
+                name="email"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="email">Email</FieldLabel>
                     <Input
                       {...field}
-                      id="password"
-                      type={showPassword ? 'text' : 'password'}
+                      id="email"
+                      type="email"
                       aria-invalid={fieldState.invalid}
-                      className="pr-10"
+                      placeholder="m@example.com"
                     />
-                    <button
-                      type="button"
-                      onClick={togglePasswordVisibity}
-                      className="absolute inset-y-0 right-3 flex items-center text-muted-foreground hover:text-foreground"
-                      aria-label={
-                        showPassword ? 'Hide password' : 'Show password'
-                      }
-                    >
-                      {showPassword ? (
-                        <HugeiconsIcon icon={EyeOff} size={20} />
-                      ) : (
-                        <HugeiconsIcon icon={Eye} size={20} />
-                      )}
-                    </button>
-                  </div>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-          </div>
-        </form>
-      </CardContent>
-      <CardFooter className="flex-col gap-2">
-        {unverifiedEmail && (
-          <div className="rounded-md bg-yellow-50 border border-yellow-200 p-4 text-sm text-yellow-800 flex flex-col gap-2">
-            <p>
-              Your email <strong>{unverifiedEmail}</strong> is not verified yet.
-              Check your inbox or resend the link.
-            </p>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={resendMutation.isPending}
-              onClick={handleResendVerification}
-            >
-              {resendMutation.isPending
-                ? 'Sending...'
-                : 'Resend verification email'}
-            </Button>
-          </div>
-        )}
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
 
-        <Button
-          type="submit"
-          form="login-form"
-          className="w-full"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? (
-            <>
-              <svg
-                className="animate-spin h-5 w-5 mr-3 text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
+              <Controller
+                name="password"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <div className="flex items-center">
+                      <FieldLabel htmlFor="password">Password</FieldLabel>
+                      <Link
+                        href="/auth/forgot-password"
+                        className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                      >
+                        Forgot your password?
+                      </Link>
+                    </div>
+                    <div className="relative">
+                      <Input
+                        {...field}
+                        id="password"
+                        type={showPassword ? 'text' : 'password'}
+                        aria-invalid={fieldState.invalid}
+                        className="pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={togglePasswordVisibity}
+                        className="absolute inset-y-0 right-3 flex items-center text-muted-foreground hover:text-foreground"
+                        aria-label={
+                          showPassword ? 'Hide password' : 'Show password'
+                        }
+                      >
+                        {showPassword ? (
+                          <HugeiconsIcon icon={EyeOff} size={20} />
+                        ) : (
+                          <HugeiconsIcon icon={Eye} size={20} />
+                        )}
+                      </button>
+                    </div>
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+
+              {unverifiedEmail && (
+                <div className="rounded-md bg-yellow-50 border border-yellow-200 p-4 text-sm text-yellow-800 flex flex-col gap-2">
+                  <p>
+                    Your email <strong>{unverifiedEmail}</strong> is not
+                    verified yet. Check your inbox or resend the link.
+                  </p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={resendMutation.isPending}
+                    onClick={handleResendVerification}
+                  >
+                    {resendMutation.isPending
+                      ? 'Sending...'
+                      : 'Resend verification email'}
+                  </Button>
+                </div>
+              )}
+
+              <Button
+                type="submit"
+                form="login-form"
+                className="w-full"
+                disabled={isSubmitting}
               >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
-              <span>Logging in..</span>
-            </>
-          ) : (
-            'Login'
-          )}
-        </Button>
+                {isSubmitting ? (
+                  <>
+                    <svg
+                      className="animate-spin h-5 w-5 mr-3 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    <span>Logging in..</span>
+                  </>
+                ) : (
+                  'Login'
+                )}
+              </Button>
+            </div>
+          </form>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="h-px flex-1 bg-gray-600/30" />
+          <span className="text-sm text-gray-400">or</span>
+          <span className="h-px flex-1 bg-gray-600/30" />
+        </div>
         <LoginWithGoogle />
-      </CardFooter>
-    </Card>
+      </div>
+    </CardWrapper>
   );
 }
