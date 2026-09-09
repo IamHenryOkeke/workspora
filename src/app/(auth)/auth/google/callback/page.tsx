@@ -15,7 +15,7 @@ export default function GoogleCallbackPage() {
     if (hasRun.current) return;
     hasRun.current = true;
 
-    const token = searchParams.get('token');
+    const accessToken = searchParams.get('accessToken');
     const userParam = searchParams.get('user');
     const error = searchParams.get('error');
 
@@ -26,13 +26,13 @@ export default function GoogleCallbackPage() {
         return;
       }
 
-      if (!token || !userParam) {
+      if (!accessToken || !userParam) {
         router.replace('/auth/login');
         return;
       }
 
       const user = JSON.parse(userParam);
-      setAuth({ token, user });
+      setAuth({ accessToken, user });
       toast.success('Logged in successfully');
       router.replace('/dashboard/org');
     } catch {
