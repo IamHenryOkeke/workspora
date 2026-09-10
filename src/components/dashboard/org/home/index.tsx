@@ -1,54 +1,14 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { AxiosError } from 'axios';
-import { ApiResponse, Organization } from '@/lib/types';
-import { OrganizationService } from '@/services/organization';
-import { useQuery } from '@tanstack/react-query';
 import OrganizationStatsSection from './organization-stats';
 import OrganizationRecentActivities from './organization-recent-activities';
 import OrganizationOrUserLogo from '../../organization-user-logo';
 import OrganizationRecentProjects from './organization-recent-projects';
-
-type OrganizationDetail = {
-  organization: Organization;
-};
-
-const fetchOrganization = async (
-  slug: string,
-): Promise<ApiResponse<OrganizationDetail>> => {
-  const { data } = await OrganizationService.getOrganizationBySlug(slug);
-  return data;
-};
+import { useGetOrganization } from '@/hooks/use-get-organization';
 
 export default function OrganizationHome({ slug }: { slug: string }) {
-  const router = useRouter();
-
-  const {
-    isPending,
-    error,
-    data: organizationData,
-  } = useQuery({
-    queryKey: ['organization', slug],
-    queryFn: () => fetchOrganization(slug),
-    retry: (failureCount, err) => {
-      if (err instanceof AxiosError && err.response?.status === 404) {
-        return false;
-      }
-      return failureCount < 3;
-    },
-  });
-
-  const organization = organizationData?.data?.organization;
-  const isNotFound =
-    error instanceof AxiosError && error.response?.status === 404;
-
-  useEffect(() => {
-    if (isNotFound) {
-      router.replace('/dashboard/org');
-    }
-  }, [isNotFound, router]);
+  const { isPending, organization, error, isNotFound } =
+    useGetOrganization(slug);
 
   if (isPending) {
     return (

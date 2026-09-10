@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: 'Reset your password',
 };
 
-export default function ForgotPassword() {
+export default function page() {
   return (
     <main className="h-screen flex items-center justify-center">
       <ForgotPasswordForm />

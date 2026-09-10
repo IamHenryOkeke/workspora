@@ -1,6 +1,6 @@
 import OrganizationHome from '@/components/dashboard/org/home';
 
-export default async function OrganzationPage({
+export default async function page({
   params,
 }: {
   params: Promise<{ slug: string }>;

@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: 'Log in to your account',
 };
 
-export default function Login() {
+export default function page() {
   return (
     <main className="h-screen flex items-center justify-center">
       <LoginForm />

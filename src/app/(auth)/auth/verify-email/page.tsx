@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: 'Verify your email address',
 };
 
-export default async function VerifyAccount({
+export default async function page({
   searchParams,
 }: {
   searchParams: { token: string };

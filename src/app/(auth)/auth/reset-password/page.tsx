@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: 'Reset your password',
 };
 
-export default async function ResetPassword({
+export default async function page({
   searchParams,
 }: {
   searchParams: { token: string };
