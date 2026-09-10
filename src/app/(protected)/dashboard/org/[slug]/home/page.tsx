@@ -8,7 +8,7 @@ export default async function OrganzationPage({
   const { slug } = await params;
 
   return (
-    <main className="mx-auto w-full p-4">
+    <main className="min-w-5xl p-4">
       <OrganizationHome slug={slug} />
     </main>
   );

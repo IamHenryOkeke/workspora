@@ -124,28 +124,26 @@ export default function OrganizationRecentProjects({
 
   if (isPending) {
     return (
-      <div className="border border-white/8 bg-white/3 p-4">
-        <p className="text-sm font-medium text-white mb-1">Recent projects</p>
-        <div className="space-y-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="flex items-start gap-3">
-              <div className="h-8 w-8 shrink-0 animate-pulse rounded-full bg-white/5" />
-              <div className="flex-1 space-y-2">
-                <div className="h-3 w-3/4 animate-pulse rounded bg-white/5" />
-                <div className="h-2.5 w-16 animate-pulse rounded bg-white/5" />
-              </div>
+      <div className="border border-white/8 bg-white/3 divide-y divide-white/8">
+        <p className="text-sm font-medium text-white p-4">Recent projects</p>
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="flex items-start gap-3 p-4">
+            <div className="h-8 w-8 shrink-0 animate-pulse rounded-full bg-white/5" />
+            <div className="flex-1 space-y-2">
+              <div className="h-3 w-3/4 animate-pulse rounded bg-white/5" />
+              <div className="h-2.5 w-16 animate-pulse rounded bg-white/5" />
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     );
   }
 
   if (error || !projects) {
     return (
-      <div className="border border-red-500/20 bg-red-500/5 p-4">
-        <p className="text-sm font-medium text-white mb-1">Recent projects</p>
-        <p className="text-xs text-red-400/70">
+      <div className="border border-red-500/20 bg-red-500/5 divide-y divide-white/8">
+        <p className="text-sm font-medium text-white p-4">Recent projects</p>
+        <p className="text-xs text-red-400/70 p-4">
           Couldn&apos;t load recent projects
         </p>
       </div>
@@ -154,21 +152,19 @@ export default function OrganizationRecentProjects({
 
   if (projects.length === 0) {
     return (
-      <div className="border border-white/8 bg-white/3 p-4">
-        <p className="text-sm font-medium text-white mb-1">Recent projects</p>
-        <p className="text-xs text-gray-500">No recent projects yet</p>
+      <div className="border border-white/8 bg-white/3 divide-y divide-white/8">
+        <p className="text-sm font-medium text-white p-4">Recent projects</p>
+        <p className="text-xs text-gray-500 p-4">No recent projects yet</p>
       </div>
     );
   }
 
   return (
-    <div className="border border-white/8 bg-white/3 p-4">
-      <p className="text-sm font-medium text-white mb-1">Recent projects</p>
-      <div className="divide-y divide-white/8">
-        {projects.map((project) => (
-          <ProjectRow key={project.id} project={project} />
-        ))}
-      </div>
+    <div className="border border-white/8 bg-white/3 divide-y divide-white/8">
+      <p className="text-sm font-medium text-white p-4">Recent projects</p>
+      {projects.map((project) => (
+        <ProjectRow key={project.id} project={project} />
+      ))}
     </div>
   );
 }

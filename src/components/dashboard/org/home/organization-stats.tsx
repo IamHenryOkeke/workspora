@@ -26,7 +26,7 @@ function StatCard({
   sublabel: string;
 }) {
   return (
-    <div className="rounded-xl border border-white/8 bg-white/3 p-6 min-w-75">
+    <div className="rounded-xl border border-white/8 bg-white/3 p-6">
       <p className="text-3xl font-bold text-white">{value}</p>
       <p className="mt-1 text-sm font-medium text-gray-300">{label}</p>
       <p className="mt-0.5 text-xs text-gray-500">{sublabel}</p>
@@ -70,24 +70,22 @@ export default function OrganizationStatsSection({
   }
 
   return (
-    <div className="mt-4 space-y-3">
-      <div className="w-full grid gap-3 sm:grid-cols-3">
-        <StatCard
-          value={stats.activeProjects}
-          label="Active projects"
-          sublabel={`${stats.totalProjects} total`}
-        />
-        <StatCard
-          value={stats.activeMembers}
-          label="Active members"
-          sublabel={`${stats.totalMembers} total`}
-        />
-        <StatCard
-          value={stats.pendingInvitations}
-          label="Pending invitations"
-          sublabel="awaiting response"
-        />
-      </div>
+    <div className="mt-4 grid gap-3 sm:grid-cols-3">
+      <StatCard
+        value={stats.activeProjects}
+        label="Active projects"
+        sublabel={`${stats.totalProjects} total`}
+      />
+      <StatCard
+        value={stats.activeMembers}
+        label="Active members"
+        sublabel={`${stats.totalMembers} total`}
+      />
+      <StatCard
+        value={stats.pendingInvitations}
+        label="Pending invitations"
+        sublabel="awaiting response"
+      />
     </div>
   );
 }

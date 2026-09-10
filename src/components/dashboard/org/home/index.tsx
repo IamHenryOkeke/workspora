@@ -96,25 +96,17 @@ export default function OrganizationHome({ slug }: { slug: string }) {
   }
 
   return (
-    <div className="mx-auto px-6 py-10 space-y-6">
+    <div className="w-full px-6 py-10 space-y-6">
       <div className="flex items-center gap-4">
         <OrganizationOrUserLogo
           name={organization.name}
           logo={organization.logo}
         />
-
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <h1 className="truncate text-xl font-medium text-white">
-              {organization.name}
-            </h1>
-          </div>
-
-          {organization.description && (
-            <p className="text-sm text-white/40 line-clamp-2">
-              {organization.description}
-            </p>
-          )}
+        <div>
+          <h1 className="truncate text-xl font-medium text-white">
+            {organization.name}
+          </h1>
+          <p className="text-sm text-white/40">{organization.description}</p>
         </div>
       </div>
 

@@ -124,7 +124,7 @@ export default function HomeNavbar() {
             <>
               <Link
                 href="/dashboard/org"
-                className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white"
+                className="flex items-center gap-2 rounded-lg bg-accent px-4 py-1.5 text-sm font-semibold text-white"
               >
                 <HugeiconsIcon icon={GridTableIcon} />
                 Dashboard
@@ -133,7 +133,7 @@ export default function HomeNavbar() {
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setDropdownOpen((v) => !v)}
-                  className="flex items-center gap-2 rounded border border-white/10 bg-white/5 py-1 pl-1 pr-3 text-sm font-medium text-white transition hover:border-white/20 hover:bg-white/10"
+                  className="flex items-center gap-2 border border-white/10 bg-white/5 py-1 pl-1 pr-3 text-sm font-medium text-white transition hover:border-white/20 hover:bg-white/10"
                 >
                   <UserAvatar
                     name={user.fullName}

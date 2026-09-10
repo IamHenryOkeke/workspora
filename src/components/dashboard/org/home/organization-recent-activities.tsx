@@ -45,7 +45,7 @@ function ActivityRow({ activity }: { activity: OrganizationActivity }) {
   const { icon, className } = ACTIVITY_ICON[activity.type];
 
   return (
-    <div className="flex items-start gap-3 py-3">
+    <div className="flex items-start gap-3 p-3">
       <div
         className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${className}`}
       >
@@ -80,29 +80,27 @@ export default function OrganizationRecentActivities({
 
   if (isPending) {
     return (
-      <div className="border border-white/8 bg-white/3 p-4">
-        <p className="text-sm font-medium text-white mb-1">Recent activity</p>
-        <div className="space-y-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="flex items-start gap-3">
-              <div className="h-8 w-8 shrink-0 animate-pulse rounded-full bg-white/5" />
-              <div className="flex-1 space-y-2">
-                <div className="h-3 w-3/4 animate-pulse rounded bg-white/5" />
-                <div className="h-2.5 w-16 animate-pulse rounded bg-white/5" />
-              </div>
+      <div className="border border-white/8 bg-white/3 divide-y divide-white/8">
+        <p className="text-sm font-medium text-white p-4">Recent activities</p>
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="flex items-start gap-3 p-4">
+            <div className="h-8 w-8 shrink-0 animate-pulse rounded-full bg-white/5" />
+            <div className="flex-1 space-y-2">
+              <div className="h-3 w-3/4 animate-pulse rounded bg-white/5" />
+              <div className="h-2.5 w-16 animate-pulse rounded bg-white/5" />
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     );
   }
 
   if (error || !activities) {
     return (
-      <div className="border border-red-500/20 bg-red-500/5 p-4">
-        <p className="text-sm font-medium text-white mb-1">Recent activity</p>
-        <p className="text-xs text-red-400/70">
-          Couldn&apos;t load recent activity
+      <div className="border border-red-500/20 bg-red-500/5 divide-y divide-white/8">
+        <p className="text-sm font-medium text-white p-4">Recent activities</p>
+        <p className="text-xs text-red-400/70 p-4">
+          Couldn&apos;t load recent activities
         </p>
       </div>
     );
@@ -110,21 +108,19 @@ export default function OrganizationRecentActivities({
 
   if (activities.length === 0) {
     return (
-      <div className="border border-white/8 bg-white/3 p-4">
-        <p className="text-sm font-medium text-white mb-1">Recent activity</p>
-        <p className="text-xs text-gray-500">No recent activity yet</p>
+      <div className="border border-white/8 bg-white/3 divide-y divide-white/8">
+        <p className="text-sm font-medium text-white p-4">Recent activities</p>
+        <p className="text-xs text-gray-500 p-4">No recent activities yet</p>
       </div>
     );
   }
 
   return (
-    <div className="border border-white/8 bg-white/3 p-4">
-      <p className="text-sm font-medium text-white mb-1">Recent activity</p>
-      <div className="divide-y divide-white/8">
-        {activities.map((activity) => (
-          <ActivityRow key={activity.id} activity={activity} />
-        ))}
-      </div>
+    <div className="border border-white/8 bg-white/3 divide-y divide-white/8">
+      <p className="text-sm font-medium text-white p-4">Recent activities</p>
+      {activities.map((activity) => (
+        <ActivityRow key={activity.id} activity={activity} />
+      ))}
     </div>
   );
 }
