@@ -3,13 +3,9 @@
 import { ApiResponse, Project } from '@/lib/types';
 import { useQuery } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
-import {
-  Clock01Icon,
-  PlayIcon,
-  CheckmarkCircle01Icon,
-  ArchiveIcon,
-} from '@hugeicons/core-free-icons';
 import { ProjectService } from '@/services/project';
+import { timeAgo } from '@/lib/utils';
+import { STATUS_ICON, STATUS_LABEL } from '../project-status';
 
 type Projects = {
   projects: Project[];
@@ -21,54 +17,6 @@ const fetchOrganizationRecentProjects = async (
   const { data } = await ProjectService.getProjects({ organizationId });
   return data;
 };
-
-const STATUS_ICON = {
-  PENDING: { icon: Clock01Icon, className: 'bg-gray-500/10 text-gray-400' },
-  ACTIVE: { icon: PlayIcon, className: 'bg-accent/10 text-accent' },
-  COMPLETED: {
-    icon: CheckmarkCircle01Icon,
-    className: 'bg-green-500/10 text-green-400',
-  },
-  ARCHIVED: {
-    icon: ArchiveIcon,
-    className: 'bg-gray-500/10 text-gray-500',
-  },
-} satisfies Record<
-  Project['status'],
-  {
-    icon: React.ComponentProps<typeof HugeiconsIcon>['icon'];
-    className: string;
-  }
->;
-
-const STATUS_LABEL: Record<Project['status'], string> = {
-  PENDING: 'Pending',
-  ACTIVE: 'Active',
-  COMPLETED: 'Completed',
-  ARCHIVED: 'Archived',
-};
-
-function timeAgo(date: string | Date): string {
-  const d = typeof date === 'string' ? new Date(date) : date;
-  const seconds = Math.floor((Date.now() - d.getTime()) / 1000);
-
-  if (seconds < 60) return 'just now';
-
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
-
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
-
-  const days = Math.floor(hours / 24);
-  if (days < 30) return `${days}d ago`;
-
-  const months = Math.floor(days / 30);
-  if (months < 12) return `${months}mo ago`;
-
-  const years = Math.floor(months / 12);
-  return `${years}y ago`;
-}
 
 function ProjectRow({ project }: { project: Project }) {
   const { icon, className } = STATUS_ICON[project.status];
