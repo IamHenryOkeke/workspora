@@ -33,9 +33,9 @@ import {
   DropdownMenuSeparator,
 } from './ui/dropdown-menu';
 import OrganizationOrUserLogo from './dashboard/organization-user-logo';
-import { Logout } from './logout';
 import { useQuery } from '@tanstack/react-query';
 import { fetchOrganizations } from './dashboard/organizations';
+import Logout from './logout';
 
 const navLinks = [
   { label: 'Dashboard', segment: 'home', icon: DashboardSquare02Icon },

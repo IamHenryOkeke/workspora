@@ -14,7 +14,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
-import { Modal } from './dashboard/modal';
+import { ConfirmModal } from './dashboard/modal';
 import toast from 'react-hot-toast';
 import Logo from './logo';
 
@@ -67,6 +67,7 @@ export default function HomeNavbar() {
   const { user, isHydrated, clearAuth } = useAuthStore();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [signOutModalOpen, setSignOutModalOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -87,7 +88,14 @@ export default function HomeNavbar() {
   const handleSignOut = () => {
     clearAuth();
     toast.success('Logged out successfully');
+    setSignOutModalOpen(false);
     setDropdownOpen(false);
+    setMobileOpen(false);
+  };
+
+  const openSignOutModal = () => {
+    setDropdownOpen(false);
+    setSignOutModalOpen(true);
   };
 
   const displayName = user?.fullName || user?.email?.split('@')[0];
@@ -170,17 +178,12 @@ export default function HomeNavbar() {
                       </Link>
                     </div>
                     <div className="border-t border-white/[0.07] py-1">
-                      <Modal
-                        trigger={
-                          <button className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-sm text-red-400 transition hover:bg-red-500/10 hover:text-red-300">
-                            <HugeiconsIcon icon={Logout01Icon} /> Sign out
-                          </button>
-                        }
-                        title="Sign out"
-                        description="Are you sure you want to sign out? You will be redirected to the login page."
-                        confirmText="Yes, sign out"
-                        onConfirm={handleSignOut}
-                      />
+                      <button
+                        onClick={openSignOutModal}
+                        className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-sm text-red-400 transition hover:bg-red-500/10 hover:text-red-300"
+                      >
+                        <HugeiconsIcon icon={Logout01Icon} /> Sign out
+                      </button>
                     </div>
                   </div>
                 )}
@@ -270,7 +273,7 @@ export default function HomeNavbar() {
                   <HugeiconsIcon icon={Settings01Icon} /> Settings
                 </Link>
                 <button
-                  onClick={handleSignOut}
+                  onClick={openSignOutModal}
                   className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm text-red-400 hover:bg-red-500/10"
                 >
                   <HugeiconsIcon icon={Logout01Icon} /> Sign out
@@ -294,6 +297,16 @@ export default function HomeNavbar() {
             ))}
         </div>
       )}
+
+      <ConfirmModal
+        open={signOutModalOpen}
+        onOpenChange={setSignOutModalOpen}
+        title="Sign out"
+        description="Are you sure you want to sign out? You will be redirected to the login page."
+        confirmLabel="Yes, sign out"
+        variant="destructive"
+        onConfirm={handleSignOut}
+      />
     </header>
   );
 }

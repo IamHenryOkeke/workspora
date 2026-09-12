@@ -2,10 +2,12 @@
 
 import { ApiResponse, Project } from '@/lib/types';
 import { useQuery } from '@tanstack/react-query';
-import { HugeiconsIcon } from '@hugeicons/react';
 import { ProjectService } from '@/services/project';
 import { timeAgo } from '@/lib/utils';
-import { STATUS_ICON, STATUS_LABEL } from '../project-status';
+import Link from 'next/link';
+import { ArrowRight02Icon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react';
+import ProjectStatus from '../projects/project-status';
 
 type Projects = {
   projects: Project[];
@@ -19,31 +21,15 @@ const fetchOrganizationRecentProjects = async (
 };
 
 function ProjectRow({ project }: { project: Project }) {
-  const { icon, className } = STATUS_ICON[project.status];
-
   return (
-    <div className="flex items-start gap-3 py-3">
-      <div
-        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${className}`}
-      >
-        <HugeiconsIcon icon={icon} size={14} />
-      </div>
+    <div className="flex items-start gap-3 p-4">
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
           <p className="truncate text-sm font-medium text-gray-200">
             {project.name}
           </p>
-          <span
-            className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium ${className}`}
-          >
-            {STATUS_LABEL[project.status]}
-          </span>
+          <ProjectStatus status={project.status} />
         </div>
-        {project.description && (
-          <p className="mt-0.5 truncate text-xs text-gray-500">
-            {project.description}
-          </p>
-        )}
         <p className="mt-0.5 text-xs text-gray-500">
           {project.creator ? `${project.creator.fullName} · ` : ''}
           {timeAgo(project.createdAt)}
@@ -109,7 +95,16 @@ export default function OrganizationRecentProjects({
 
   return (
     <div className="border border-white/8 bg-white/3 divide-y divide-white/8">
-      <p className="text-sm font-medium text-white p-4">Recent projects</p>
+      <div className="flex items-center justify-between text-sm p-4">
+        <p className="font-medium text-white">Recent projects</p>
+        <Link
+          href="projects"
+          className="flex items-center gap-1 text-accent hover:underline"
+        >
+          View all
+          <HugeiconsIcon icon={ArrowRight02Icon} size={14} />
+        </Link>
+      </div>
       {projects.map((project) => (
         <ProjectRow key={project.id} project={project} />
       ))}

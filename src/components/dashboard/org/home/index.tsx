@@ -56,7 +56,7 @@ export default function OrganizationHome({ slug }: { slug: string }) {
   }
 
   return (
-    <div className="w-full px-6 py-10 space-y-6">
+    <div className="space-y-6">
       <div className="flex items-center gap-4">
         <OrganizationOrUserLogo
           name={organization.name}

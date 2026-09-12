@@ -77,6 +77,9 @@ export type Project = {
   updatedAt: Date;
 };
 
+export type ProjectStatus = Project['status'];
+export type ProjectStatusFilter = 'ALL' | ProjectStatus;
+
 export type PaginationType = {
   page: number;
   limit: number;
