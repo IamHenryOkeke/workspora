@@ -5,10 +5,13 @@ import OrganizationRecentActivities from './organization-recent-activities';
 import OrganizationOrUserLogo from '../../organization-user-logo';
 import OrganizationRecentProjects from './organization-recent-projects';
 import { useGetOrganization } from '@/hooks/use-get-organization';
+import { usePageTitle } from '@/hooks/use-page-title';
 
 export default function OrganizationHome({ slug }: { slug: string }) {
   const { isPending, organization, error, isNotFound } =
     useGetOrganization(slug);
+  const title = organization ? `Home | ${organization.name}` : 'Loading';
+  usePageTitle(title);
 
   if (isPending) {
     return (

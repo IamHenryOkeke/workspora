@@ -15,6 +15,7 @@ import Pagination from '../../pagination';
 import { useGetOrganization } from '@/hooks/use-get-organization';
 import AddProject from './add-project';
 import ProjectStatus from './project-status';
+import { usePageTitle } from '@/hooks/use-page-title';
 
 type ProjectsResponse = {
   projects: Project[];
@@ -135,6 +136,9 @@ export default function ProjectsPage({
     isPending: isOrgPending,
     isNotFound,
   } = useGetOrganization(slug);
+
+  const title = organization ? `Projects | ${organization.name}` : 'Loading';
+  usePageTitle(title);
 
   const organizationId = organization?.id ?? '';
 
