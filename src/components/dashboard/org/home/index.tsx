@@ -66,7 +66,7 @@ export default function OrganizationHome({ slug }: { slug: string }) {
           logo={organization.logo}
         />
         <div>
-          <h1 className="truncate text-xl font-medium text-white">
+          <h1 className="truncate text-2xl font-medium text-white">
             {organization.name}
           </h1>
           <p className="text-sm text-white/40">{organization.description}</p>

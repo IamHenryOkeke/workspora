@@ -72,6 +72,9 @@ export type Project = {
   } | null;
   createdAt: Date;
   updatedAt: Date;
+  projectMembers: {
+    member: Member;
+  }[];
 };
 
 export type ProjectStatus = Project['status'];

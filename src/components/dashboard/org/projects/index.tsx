@@ -66,26 +66,35 @@ function initials(name: string) {
 }
 
 function MemberAvatarStack({ project }: { project: Project }) {
-  const members = project.projectMembers ?? [];
-  const visible = members.slice(0, 3);
-  const total = project.memberCount ?? members.length;
+  const projectMembers = project.projectMembers ?? [];
+  console.log(projectMembers);
+  const visible = projectMembers.slice(0, 3);
+  const total = projectMembers.length;
 
   if (total === 0) return null;
-
+  visible.map(({ member }) => {
+    console.log(member.user);
+  });
   return (
     <div className="flex shrink-0 items-center gap-1.5">
       <div className="flex -space-x-2">
-        {visible.map(({ member }) => (
-          <div
-            key={member.id}
-            title={member.user.fullName}
-            className={`flex h-6 w-6 items-center justify-center rounded-full border-2 border-background text-[10px] font-semibold text-white ${colorForId(
-              member.id,
-            )}`}
-          >
-            {initials(member.user.fullName).toUpperCase()}
-          </div>
-        ))}
+        {visible.map(
+          ({
+            member: {
+              user: { id, fullName },
+            },
+          }) => (
+            <div
+              key={id}
+              title={fullName || 'hsif'}
+              className={`flex h-6 w-6 items-center justify-center rounded-full border-2 border-background text-[10px] font-semibold text-white ${colorForId(
+                id,
+              )}`}
+            >
+              {initials(fullName).toUpperCase()}
+            </div>
+          ),
+        )}
       </div>
       <span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-white/10 px-1.5 text-xs font-medium text-gray-300">
         {total}
@@ -98,11 +107,11 @@ function ProjectRow({ project }: { project: Project }) {
   return (
     <Link
       href={`projects/${project.id}`}
-      className="flex items-center justify-between gap-4 border border-white/8 p-5 transition last:border-b-0 bg-white/3"
+      className="group flex items-center justify-between gap-4 border border-white/8 p-5 transition last:border-b-0 bg-white/3"
     >
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <h3 className="truncate text-base font-semibold text-white">
+          <h3 className="truncate text-base font-semibold text-white group-hover:text-accent/80">
             {project.name}
           </h3>
           <ProjectStatus status={project.status} />
@@ -171,7 +180,7 @@ export default function ProjectsPage({
     <div>
       <div className="mb-8 flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white">Projects</h1>
+          <h1 className="text-2xl font-medium text-white">Projects</h1>
           <p className="mt-1 text-sm text-gray-500">
             {isPending ? (
               <span className="inline-block h-4 w-40 animate-pulse rounded bg-white/5 align-middle" />
