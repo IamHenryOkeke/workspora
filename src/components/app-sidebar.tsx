@@ -33,9 +33,9 @@ import {
   DropdownMenuSeparator,
 } from './ui/dropdown-menu';
 import OrganizationOrUserLogo from './dashboard/organization-user-logo';
-import { useQuery } from '@tanstack/react-query';
-import { fetchOrganizations } from './dashboard/organizations';
 import Logout from './logout';
+import { useOrganizationStore } from '@/stores/org-store';
+import { useEffect } from 'react';
 
 const navLinks = [
   { label: 'Dashboard', segment: 'home', icon: DashboardSquare02Icon },
@@ -47,15 +47,13 @@ const navLinks = [
 export function AppSidebar() {
   const { slug } = useParams<{ slug: string }>();
   const { user } = useAuthStore();
+  const { fetchOrganizations, organizations, hasFetched } =
+    useOrganizationStore();
 
-  const { isPending, data } = useQuery({
-    queryKey: ['organizations', { page: 1, query: '' }],
-    queryFn: () => fetchOrganizations(1, ''),
-  });
-  const organizations = data?.data?.organizations || [];
-
+  useEffect(() => {
+    fetchOrganizations();
+  }, []);
   const currentOrganization = organizations.find((org) => org.slug === slug);
-
   return (
     <Sidebar>
       <SidebarHeader>
@@ -74,7 +72,7 @@ export function AppSidebar() {
                       size={34}
                     />
                     <span className="truncate">
-                      {isPending
+                      {!hasFetched
                         ? 'Loading...'
                         : currentOrganization?.name || 'Select organization'}
                     </span>

@@ -36,6 +36,6 @@ export const STATUS_LABEL: Record<Project['status'], string> = {
 export const STATUS_BADGE: Record<ProjectStatus, string> = {
   ACTIVE: 'bg-accent/10 text-accent border border-accent/50',
   PENDING: 'bg-accent/10 text-accent border border-accent/20',
-  COMPLETED: 'bg-orange-600/40 text-white',
+  COMPLETED: 'bg-green-600/40 border border-green/50 text-white',
   ARCHIVED: 'bg-white/10 text-gray-400 border border-white/20',
 };

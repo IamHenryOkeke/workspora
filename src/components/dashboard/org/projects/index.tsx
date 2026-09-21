@@ -1,25 +1,34 @@
 'use client';
 
-import { ApiResponse, Project, ProjectStatusFilter } from '@/lib/types';
+import {
+  ApiResponse,
+  PaginationType,
+  Project,
+  ProjectStatusFilter,
+} from '@/lib/types';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { ProjectService } from '@/services/project';
 import { STATUS_LABEL } from '../project-status';
 import AppTabs from '../../app-tabs';
+import Pagination from '../../pagination';
 import { useGetOrganization } from '@/hooks/use-get-organization';
 import AddProject from './add-project';
 import ProjectStatus from './project-status';
 
 type ProjectsResponse = {
   projects: Project[];
+  pagination: PaginationType;
 };
 
 const fetchProjects = async (
   organizationId: string,
   status: ProjectStatusFilter,
+  page: number,
 ): Promise<ApiResponse<ProjectsResponse>> => {
   const { data } = await ProjectService.getProjects({
     organizationId,
+    page,
     ...(status !== 'ALL' && { status }),
   });
   return data;
@@ -115,9 +124,11 @@ function ProjectRow({ project }: { project: Project }) {
 export default function ProjectsPage({
   status,
   slug,
+  page,
 }: {
   status: ProjectStatusFilter;
   slug: string;
+  page: number;
 }) {
   const {
     organization,
@@ -132,8 +143,8 @@ export default function ProjectsPage({
     error,
     data,
   } = useQuery({
-    queryKey: ['projects', organizationId, status],
-    queryFn: () => fetchProjects(organizationId, status),
+    queryKey: ['projects', organizationId, status, page],
+    queryFn: () => fetchProjects(organizationId, status, page),
     enabled: !!organizationId,
   });
 
@@ -149,8 +160,8 @@ export default function ProjectsPage({
     );
   }
 
-  const projects = data?.data?.projects;
-  const count = projects?.length ?? 0;
+  const { projects, pagination } = data?.data || {};
+  const count = pagination?.total ?? projects?.length ?? 0;
 
   return (
     <div>
@@ -170,11 +181,13 @@ export default function ProjectsPage({
       <div className="mb-4 flex items-center justify-between gap-4">
         <AppTabs tabs={FILTERS} />
         {!isPending && !error && (
-          <span className="shrink-0 text-xs text-gray-500">{count} shown</span>
+          <span className="shrink-0 text-xs text-gray-500">
+            {projects?.length ?? 0} shown
+          </span>
         )}
       </div>
 
-      <div className="">
+      <div>
         {isPending &&
           Array.from({ length: 4 }).map((_, i) => (
             <div
@@ -205,7 +218,7 @@ export default function ProjectsPage({
           </div>
         )}
 
-        <div className="grid lg:grid-cols-2 gap-5">
+        <div className="grid gap-5">
           {!isPending &&
             !error &&
             projects &&
@@ -213,6 +226,12 @@ export default function ProjectsPage({
               <ProjectRow key={project.id} project={project} />
             ))}
         </div>
+
+        {!isPending && !error && pagination && pagination.totalPages > 0 && (
+          <div className="mt-6">
+            <Pagination totalPages={pagination.totalPages} />
+          </div>
+        )}
       </div>
     </div>
   );

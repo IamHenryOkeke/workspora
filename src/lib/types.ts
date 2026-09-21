@@ -37,9 +37,6 @@ export type OrganizationStats = {
   totalProjects: number;
   activeProjects: number;
   pendingInvitations: number;
-  membersByRole: StatCount[];
-  membersByStatus: StatCount[];
-  projectsByStatus: StatCount[];
 };
 
 export type OrganizationActivity = {

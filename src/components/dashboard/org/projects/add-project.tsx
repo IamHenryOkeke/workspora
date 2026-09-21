@@ -13,6 +13,7 @@ import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { ProjectService } from '@/services/project';
 import { ApiResponse } from '@/lib/types';
 import Modal from '../../modal';
+import { useCanManageOrganization } from '@/hooks/use-can-manage-organization';
 
 const newProjectSchema = z.object({
   name: z
@@ -38,6 +39,7 @@ export default function NewProjectModal({
   organizationId: string;
 }) {
   const [open, setOpen] = useState(false);
+  const canManage = useCanManageOrganization();
   const queryClient = useQueryClient();
 
   const { handleSubmit, control, reset } = useForm<NewProjectPayload>({
@@ -66,7 +68,7 @@ export default function NewProjectModal({
     createProjectMutation.mutate(data);
   };
 
-  return (
+  return canManage ? (
     <Modal
       open={open}
       onOpenChange={setOpen}
@@ -134,5 +136,5 @@ export default function NewProjectModal({
         />
       </form>
     </Modal>
-  );
+  ) : null;
 }

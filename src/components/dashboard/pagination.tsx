@@ -94,7 +94,7 @@ function PaginationNumber({
   isActive: boolean;
 }) {
   const baseClasses =
-    'flex h-10 w-10 rounded-md items-center justify-center text-sm text-white';
+    'flex h-8 w-8 rounded-md items-center justify-center text-sm text-white';
 
   return isActive ? (
     <div
@@ -133,18 +133,18 @@ function PaginationArrow({
   const content =
     direction === 'left' ? (
       <>
-        <HugeiconsIcon icon={ArrowLeft01Icon} />
+        <HugeiconsIcon size={18} icon={ArrowLeft01Icon} />
         <p>Previous</p>
       </>
     ) : (
       <>
         <p>Next</p>
-        <HugeiconsIcon icon={ArrowRight01Icon} />
+        <HugeiconsIcon size={18} icon={ArrowRight01Icon} />
       </>
     );
 
   const baseClasses =
-    'flex px-5 gap-1 items-center justify-center rounded-md border';
+    'flex text-sm px-2 items-center justify-center rounded-md border';
 
   return isDisabled ? (
     <div

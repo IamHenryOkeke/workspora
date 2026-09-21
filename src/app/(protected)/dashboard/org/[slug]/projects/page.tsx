@@ -10,9 +10,10 @@ export default async function page({
 }) {
   const { slug } = await params;
   const status = (await searchParams).status as ProjectStatusFilter;
+  const page = (await searchParams).page || 1;
   return (
     <main className="min-w-5xl p-4">
-      <Projects status={status || 'ALL'} slug={slug} />
+      <Projects status={status || 'ALL'} slug={slug} page={Number(page)} />
     </main>
   );
 }
