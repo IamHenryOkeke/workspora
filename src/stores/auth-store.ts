@@ -49,10 +49,10 @@ export const useAuthStore = create<AuthState>()(
 
       clearAuth: async () => {
         const res = await AuthService.logout();
-        console.log('Logout response:', res);
         if (res.status === 200) {
           clearCookie();
           set({ user: null, accessToken: null, isAuthenticated: false });
+          toast.success(res.data.message);
         } else {
           toast.error('Logout failed');
         }
