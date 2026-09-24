@@ -2,7 +2,7 @@
 
 import OrganizationStatsSection from './organization-stats';
 import OrganizationRecentActivities from './organization-recent-activities';
-import OrganizationOrUserLogo from '../../organization-user-logo';
+import OrganizationLogo from '../../organization-logo';
 import OrganizationRecentProjects from './organization-recent-projects';
 import { useGetOrganization } from '@/hooks/use-get-organization';
 import { usePageTitle } from '@/hooks/use-page-title';
@@ -61,10 +61,7 @@ export default function OrganizationHome({ slug }: { slug: string }) {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <OrganizationOrUserLogo
-          name={organization.name}
-          logo={organization.logo}
-        />
+        <OrganizationLogo name={organization.name} logo={organization.logo} />
         <div>
           <h1 className="truncate text-2xl font-medium text-white">
             {organization.name}

@@ -11,57 +11,12 @@ import {
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
 import { ConfirmModal } from './dashboard/modal';
 import toast from 'react-hot-toast';
 import Logo from './logo';
-
-function getInitials(name?: string, email?: string) {
-  if (name) {
-    const parts = name.trim().split(/\s+/);
-    const initials =
-      parts.length > 1
-        ? `${parts[0][0]}${parts[parts.length - 1][0]}`
-        : parts[0].slice(0, 2);
-    return initials.toUpperCase();
-  }
-  if (email) return email.slice(0, 2).toUpperCase();
-  return 'WS';
-}
-
-export function UserAvatar({
-  name,
-  email,
-  image,
-  className,
-}: {
-  name?: string;
-  email?: string;
-  image?: string | null;
-  className?: string;
-}) {
-  if (image) {
-    return (
-      <Image
-        src={image}
-        alt={name || email || 'User avatar'}
-        width={28}
-        height={28}
-        className={`object-cover ${className ?? ''}`}
-      />
-    );
-  }
-
-  return (
-    <div
-      className={`flex items-center justify-center bg-accent text-[11px] font-bold text-white ${className ?? ''}`}
-    >
-      {getInitials(name, email)}
-    </div>
-  );
-}
+import UserAvatar from './user-avatar';
 
 export default function HomeNavbar() {
   const { user, isHydrated, clearAuth } = useAuthStore();

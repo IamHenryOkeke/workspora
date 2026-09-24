@@ -2,7 +2,7 @@ import { Project, ProjectMember, ProjectStatusType } from '@/lib/types';
 import { formatDate } from '@/lib/utils';
 import { STATUS_BADGE, STATUS_LABEL } from '../../project-status';
 import RoleBadge from '@/components/dashboard/role-badge';
-import MemberInitial from '../../member-initial';
+import UserAvatar from '@/components/user-avatar';
 
 type OverviewProps = {
   project: Project;
@@ -48,13 +48,18 @@ export default function OverviewTab({ project, members }: OverviewProps) {
           ASSIGNED MEMBERS
         </h2>
         <ul className="space-y-4">
-          {members.map((member, i) => (
+          {members.map((member) => (
             <li
               key={member.id}
               className="flex items-center justify-between gap-3"
             >
               <div className="flex items-center gap-3">
-                <MemberInitial fullName={member.member.user.fullName} i={i} />
+                <UserAvatar
+                  name={member.member.user.fullName}
+                  email={member.member.user.email}
+                  image={member.member.user.avatar}
+                  className="h-7 w-7"
+                />
                 <span className="text-sm text-white">
                   {member.member.user.fullName}
                 </span>

@@ -1,8 +1,8 @@
 import { ProjectMember } from '@/lib/types';
-import MemberInitial from '../../member-initial';
 import RoleBadge from '@/components/dashboard/role-badge';
 import RemoveMember from './remove-member';
 import { useAuthStore } from '@/stores/auth-store';
+import UserAvatar from '@/components/user-avatar';
 
 export default function MembersTab({ members }: { members: ProjectMember[] }) {
   const { user } = useAuthStore();
@@ -15,13 +15,18 @@ export default function MembersTab({ members }: { members: ProjectMember[] }) {
     <div className="border border-white/8">
       <ul className="divide-y divide-white/8">
         <li className="p-4">Assigned ({members.length})</li>
-        {members.map((member, i) => (
+        {members.map((member) => (
           <li
             key={member.id}
             className="flex items-center justify-between gap-3 p-4"
           >
             <div className="flex items-center gap-3">
-              <MemberInitial fullName={member.member.user.fullName} i={i} />
+              <UserAvatar
+                name={member.member.user.fullName}
+                email={member.member.user.email}
+                image={member.member.user.avatar}
+                className="h-7 w-7"
+              />
               <span className="text-sm text-white">
                 {member.member.user.fullName}
               </span>

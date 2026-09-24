@@ -14,7 +14,7 @@ import {
 import Search from './search';
 import Pagination from './pagination';
 import RoleBadge from './role-badge';
-import OrganizationOrUserLogo from './organization-user-logo';
+import OrganizationLogo from './organization-logo';
 
 type OrganizationsResponse = {
   organizations: Organization[];
@@ -161,9 +161,7 @@ export default function Organizations({
                   href={`/dashboard/org/${org.slug}/home`}
                   className="group flex h-full items-center gap-4 rounded-xl border border-white/8 bg-white/3 p-6 transition hover:border-white/15 hover:bg-white/6"
                 >
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/5">
-                    <OrganizationOrUserLogo name={org.name} logo={org.logo} />
-                  </div>
+                  <OrganizationLogo name={org.name} logo={org.logo} />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <p className="truncate text-base font-semibold text-white">

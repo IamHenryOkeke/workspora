@@ -23,19 +23,19 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import Link from 'next/link';
 import { usePathname, useParams } from 'next/navigation';
-import { UserAvatar } from './home-navbar';
-import { ROLE_LABELS } from './dashboard/role-badge';
+import { ROLE_LABELS } from './role-badge';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
   DropdownMenuItem,
   DropdownMenuSeparator,
-} from './ui/dropdown-menu';
-import OrganizationOrUserLogo from './dashboard/organization-user-logo';
-import Logout from './logout';
+} from '../ui/dropdown-menu';
+import OrganizationLogo from './organization-logo';
+import Logout from '../logout';
 import { useOrganizationStore } from '@/stores/org-store';
 import { useEffect } from 'react';
+import UserAvatar from '../user-avatar';
 
 const navLinks = [
   { label: 'Dashboard', segment: 'home', icon: DashboardSquare02Icon },
@@ -66,7 +66,7 @@ export function AppSidebar() {
                   className="flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-white hover:bg-gray-700/50"
                 >
                   <div className="flex min-w-0 items-center gap-2">
-                    <OrganizationOrUserLogo
+                    <OrganizationLogo
                       name={currentOrganization?.name || 'Select organization'}
                       logo={currentOrganization?.logo}
                       size={34}
@@ -94,7 +94,7 @@ export function AppSidebar() {
                             : ''
                         }`}
                       >
-                        <OrganizationOrUserLogo
+                        <OrganizationLogo
                           name={org.name}
                           logo={org.logo}
                           size={24}

@@ -16,6 +16,7 @@ import { useGetOrganization } from '@/hooks/use-get-organization';
 import AddProject from './add-project';
 import ProjectStatus from './project-status';
 import { usePageTitle } from '@/hooks/use-page-title';
+import UserAvatar from '@/components/user-avatar';
 
 type ProjectsResponse = {
   projects: Project[];
@@ -43,53 +44,29 @@ const FILTERS: { label: string; value: ProjectStatusFilter }[] = [
   { label: 'Archived', value: 'ARCHIVED' },
 ];
 
-const AVATAR_COLORS = [
-  'bg-amber-500',
-  'bg-orange-500',
-  'bg-rose-500',
-  'bg-purple-500',
-  'bg-blue-500',
-  'bg-teal-500',
-];
-
-function colorForId(id: string) {
-  let hash = 0;
-  for (let i = 0; i < id.length; i++) {
-    hash = id.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
-}
-
-function initials(name: string) {
-  const parts = name.trim().split(/\s+/);
-  return (parts[0]?.[0] ?? '') + (parts[1]?.[0] ?? '');
-}
-
 function MemberAvatarStack({ project }: { project: Project }) {
   const projectMembers = project.projectMembers ?? [];
   const visible = projectMembers.slice(0, 3);
   const total = projectMembers.length;
 
   if (total === 0) return null;
-
+  console.log(visible);
   return (
     <div className="flex shrink-0 items-center gap-1.5">
       <div className="flex -space-x-2">
         {visible.map(
           ({
             member: {
-              user: { id, fullName },
+              user: { id, fullName, avatar, email },
             },
           }) => (
-            <div
+            <UserAvatar
               key={id}
-              title={fullName || 'hsif'}
-              className={`flex h-6 w-6 items-center justify-center rounded-full border-2 border-background text-[10px] font-semibold text-white ${colorForId(
-                id,
-              )}`}
-            >
-              {initials(fullName).toUpperCase()}
-            </div>
+              image={avatar}
+              email={email}
+              name={fullName}
+              className="h-6 w-6 rounded-full"
+            />
           ),
         )}
       </div>
