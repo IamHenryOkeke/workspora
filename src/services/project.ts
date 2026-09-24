@@ -12,10 +12,6 @@ export const ProjectService = {
     });
     return response;
   },
-  getProjectMembers: async (projectId: string) => {
-    const response = await axiosInstance.get(`/projects/${projectId}/members`);
-    return response;
-  },
   createProject: async (organizationId: string, data: NewProjectPayload) => {
     const response = await axiosInstance.post('/projects', {
       organizationId,

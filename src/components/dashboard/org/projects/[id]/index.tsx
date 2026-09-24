@@ -10,6 +10,7 @@ import ProjectStatus from '../project-status';
 import { formatDate } from '@/lib/utils';
 import OverviewTab from './overview-tab';
 import MembersTab from './members-tab';
+import { ProjectMemberService } from '@/services/project-member';
 
 type ProjectDetailResponse = {
   project: Project;
@@ -32,7 +33,7 @@ const fetchProject = async (
 const fetchProjectMembers = async (
   projectId: string,
 ): Promise<ApiResponse<ProjectMembersResponse>> => {
-  const { data } = await ProjectService.getProjectMembers(projectId);
+  const { data } = await ProjectMemberService.getProjectMembers(projectId);
   return data;
 };
 

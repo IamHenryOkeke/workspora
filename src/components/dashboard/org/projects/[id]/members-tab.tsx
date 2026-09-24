@@ -2,8 +2,15 @@ import { ProjectMember } from '@/lib/types';
 import MemberInitial from '../../member-initial';
 import RoleBadge from '@/components/dashboard/role-badge';
 import RemoveMember from './remove-member';
+import { useAuthStore } from '@/stores/auth-store';
 
 export default function MembersTab({ members }: { members: ProjectMember[] }) {
+  const { user } = useAuthStore();
+  const userId = user?.id;
+
+  const isProjectMember = members.some(
+    (member) => member.member.user.id === userId,
+  );
   return (
     <div className="border border-white/8">
       <ul className="divide-y divide-white/8">
@@ -21,7 +28,12 @@ export default function MembersTab({ members }: { members: ProjectMember[] }) {
             </div>
             <div className="flex gap-2 items-center">
               <RoleBadge role={member.member.role} />
-              <RemoveMember id={member.id} />
+              <RemoveMember
+                memberId={member.id}
+                projectId={member.projectId}
+                isProjectMember={isProjectMember}
+                targetRole={member.member.role}
+              />
             </div>
           </li>
         ))}
