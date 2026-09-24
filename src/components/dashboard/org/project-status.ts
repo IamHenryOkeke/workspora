@@ -1,4 +1,4 @@
-import { Project, ProjectStatus } from '@/lib/types';
+import { Project, ProjectStatusType } from '@/lib/types';
 import { HugeiconsIcon } from '@hugeicons/react';
 import {
   Clock01Icon,
@@ -33,7 +33,7 @@ export const STATUS_LABEL: Record<Project['status'], string> = {
   ARCHIVED: 'Archived',
 };
 
-export const STATUS_BADGE: Record<ProjectStatus, string> = {
+export const STATUS_BADGE: Record<ProjectStatusType, string> = {
   ACTIVE: 'bg-accent/10 text-accent border border-accent/50',
   PENDING: 'bg-accent/10 text-accent border border-accent/20',
   COMPLETED: 'bg-green-600/40 border border-green/50 text-white',

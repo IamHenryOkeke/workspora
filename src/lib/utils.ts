@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -25,4 +26,31 @@ export function timeAgo(date: string | Date): string {
 
   const years = Math.floor(months / 12);
   return `${years}y ago`;
+}
+
+export function formatDate(date: Date | string) {
+  return dayjs(date).format('YYYY-MM-DD');
+}
+
+const AVATAR_COLORS = [
+  'bg-amber-500',
+  'bg-orange-500',
+  'bg-rose-500',
+  'bg-purple-500',
+  'bg-blue-500',
+  'bg-teal-500',
+];
+
+export function getAvatarColor(index: number) {
+  return AVATAR_COLORS[index % AVATAR_COLORS.length];
+}
+
+export function getInitials(name: string) {
+  return name
+    .split(' ')
+    .filter(Boolean)
+    .map((part) => part[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
 }

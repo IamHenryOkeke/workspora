@@ -111,7 +111,7 @@ export default function NewProjectModal({
                 {...field}
                 id="name"
                 aria-invalid={fieldState.invalid}
-                placeholder="Atlas API Gateway"
+                placeholder="Project name"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>

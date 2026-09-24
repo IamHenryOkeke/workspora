@@ -64,12 +64,12 @@ export type Project = {
   description: string;
   status: 'PENDING' | 'ACTIVE' | 'COMPLETED' | 'ARCHIVED';
   organizationId: string;
-  creatorId: string | null;
-  creator: {
-    id: string;
-    fullName: string;
-    avatar: string | null;
-  } | null;
+  // creatorId: string | null;
+  // creator: {
+  //   id: string;
+  //   fullName: string;
+  //   avatar: string | null;
+  // } | null;
   createdAt: Date;
   updatedAt: Date;
   projectMembers: {
@@ -77,8 +77,16 @@ export type Project = {
   }[];
 };
 
-export type ProjectStatus = Project['status'];
-export type ProjectStatusFilter = 'ALL' | ProjectStatus;
+export type ProjectMember = {
+  id: string;
+  projectId: string;
+  createdAt: Date;
+  updatedAt: Date;
+  member: Member;
+};
+
+export type ProjectStatusType = Project['status'];
+export type ProjectStatusFilter = 'ALL' | ProjectStatusType;
 
 export type PaginationType = {
   page: number;

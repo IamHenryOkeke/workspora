@@ -67,14 +67,11 @@ function initials(name: string) {
 
 function MemberAvatarStack({ project }: { project: Project }) {
   const projectMembers = project.projectMembers ?? [];
-  console.log(projectMembers);
   const visible = projectMembers.slice(0, 3);
   const total = projectMembers.length;
 
   if (total === 0) return null;
-  visible.map(({ member }) => {
-    console.log(member.user);
-  });
+
   return (
     <div className="flex shrink-0 items-center gap-1.5">
       <div className="flex -space-x-2">
