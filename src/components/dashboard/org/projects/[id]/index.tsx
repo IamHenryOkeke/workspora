@@ -11,6 +11,7 @@ import { formatDate } from '@/lib/utils';
 import OverviewTab from './overview-tab';
 import MembersTab from './members-tab';
 import { ProjectMemberService } from '@/services/project-member';
+import UpdateProjectModal from './update-project';
 
 type ProjectDetailResponse = {
   project: Project;
@@ -86,7 +87,10 @@ export default function ProjectDetailPage({
   usePageTitle(title);
 
   const isPending = isOrgPending || isProjectPending || isProjectMembersPending;
-  const hasError = Boolean(projectError || projectMembersError);
+
+  const hasError = Boolean(
+    (projectError && !project) || (projectMembersError && !projectMembersData),
+  );
 
   if (!isOrgPending && isNotFound) {
     return (
@@ -133,6 +137,10 @@ export default function ProjectDetailPage({
                 </span>
               </div>
             </div>
+            <UpdateProjectModal
+              project={project}
+              organizationId={organizationId}
+            />
           </div>
 
           <div className="mb-6 flex items-center gap-6 border-b border-white/8">

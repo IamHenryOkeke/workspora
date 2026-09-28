@@ -1,5 +1,6 @@
-import { NewProjectPayload } from '@/components/dashboard/org/projects/add-project';
+import { CreateProjectPayloadType } from '@/components/dashboard/org/projects/add-project';
 import axiosInstance from './api';
+import { UpdateProjectPayloadType } from '@/components/dashboard/org/projects/[id]/update-project';
 
 export const ProjectService = {
   getProjects: async (params = {}) => {
@@ -12,11 +13,12 @@ export const ProjectService = {
     });
     return response;
   },
-  createProject: async (organizationId: string, data: NewProjectPayload) => {
-    const response = await axiosInstance.post('/projects', {
-      organizationId,
-      ...data,
-    });
+  createProject: async (data: CreateProjectPayloadType) => {
+    const response = await axiosInstance.post('/projects', data);
+    return response;
+  },
+  updateProject: async (projectId: string, data: UpdateProjectPayloadType) => {
+    const response = await axiosInstance.put(`/projects/${projectId}`, data);
     return response;
   },
 };

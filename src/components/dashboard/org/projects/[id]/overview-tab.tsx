@@ -1,8 +1,8 @@
-import { Project, ProjectMember, ProjectStatusType } from '@/lib/types';
+import { Project, ProjectMember } from '@/lib/types';
 import { formatDate } from '@/lib/utils';
-import { STATUS_BADGE, STATUS_LABEL } from '../../project-status';
 import RoleBadge from '@/components/dashboard/role-badge';
 import UserAvatar from '@/components/user-avatar';
+import ProjectStatus from '../project-status';
 
 type OverviewProps = {
   project: Project;
@@ -32,13 +32,7 @@ export default function OverviewTab({ project, members }: OverviewProps) {
           </div>
           <div>
             <dt className="text-xs text-gray-500">Status</dt>
-            <dd className="mt-1">
-              <span
-                className={`rounded px-2 py-0.5 text-xs font-medium ${STATUS_BADGE[status as ProjectStatusType]}`}
-              >
-                {STATUS_LABEL[status]}
-              </span>
-            </dd>
+            <ProjectStatus status={status} />
           </div>
         </dl>
       </div>

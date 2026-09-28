@@ -14,26 +14,24 @@ import { ProjectService } from '@/services/project';
 import { ApiResponse } from '@/lib/types';
 import Modal from '../../modal';
 import { useCanManageOrganization } from '@/hooks/use-can-manage-organization';
+import { createProjectSchema } from '@/lib/schemas';
+import { PlusIcon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react';
 
-const newProjectSchema = z.object({
-  name: z
-    .string({ error: 'Project name is required' })
-    .min(3, 'Project name should be more the 3 characters')
-    .trim(),
-  description: z.string({ error: 'Project description is required' }).trim(),
-});
+type CreateProjectFormType = z.infer<typeof createProjectSchema>;
 
-export type NewProjectPayload = z.infer<typeof newProjectSchema>;
+export type CreateProjectPayloadType = CreateProjectFormType & {
+  organizationId: string;
+};
 
 const createProject = async (
-  organizationId: string,
-  payload: NewProjectPayload,
+  payload: CreateProjectPayloadType,
 ): Promise<ApiResponse> => {
-  const { data } = await ProjectService.createProject(organizationId, payload);
+  const { data } = await ProjectService.createProject(payload);
   return data;
 };
 
-export default function NewProjectModal({
+export default function CreateProjectModal({
   organizationId,
 }: {
   organizationId: string;
@@ -42,8 +40,8 @@ export default function NewProjectModal({
   const canManage = useCanManageOrganization();
   const queryClient = useQueryClient();
 
-  const { handleSubmit, control, reset } = useForm<NewProjectPayload>({
-    resolver: zodResolver(newProjectSchema),
+  const { handleSubmit, control, reset } = useForm<CreateProjectFormType>({
+    resolver: zodResolver(createProjectSchema),
     defaultValues: {
       name: '',
       description: '',
@@ -51,8 +49,8 @@ export default function NewProjectModal({
   });
 
   const createProjectMutation = useMutation({
-    mutationFn: (payload: NewProjectPayload) =>
-      createProject(organizationId, payload),
+    mutationFn: (payload: CreateProjectFormType) =>
+      createProject({ ...payload, organizationId }),
     onSuccess: async (data) => {
       toast.success(data.message || 'Project created');
       await queryClient.invalidateQueries({ queryKey: ['projects'] });
@@ -64,7 +62,7 @@ export default function NewProjectModal({
     },
   });
 
-  const onSubmit = (data: NewProjectPayload) => {
+  const onSubmit = (data: CreateProjectFormType) => {
     createProjectMutation.mutate(data);
   };
 
@@ -72,7 +70,12 @@ export default function NewProjectModal({
     <Modal
       open={open}
       onOpenChange={setOpen}
-      trigger={<Button>+ New project</Button>}
+      trigger={
+        <Button>
+          <HugeiconsIcon icon={PlusIcon} />
+          New project
+        </Button>
+      }
       title="New project"
       className="sm:max-w-md"
       footer={

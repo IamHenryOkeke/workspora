@@ -36,3 +36,22 @@ export const createOrganisationSchema = z.object({
     .string({ error: 'Description is required' })
     .min(10, { error: 'Description must be at least 10 characters long' }),
 });
+
+export const createProjectSchema = z.object({
+  name: z
+    .string({ error: 'Project name is required' })
+    .trim()
+    .min(3, 'Project name should be at least 3 characters'),
+  description: z
+    .string({ error: 'Project description is required' })
+    .trim()
+    .min(1, 'Project description is required'),
+});
+
+export const updateProjectSchema = createProjectSchema.partial().extend({
+  status: z
+    .enum(['PENDING', 'COMPLETED', 'ACTIVE', 'ARCHIVED'], {
+      error: 'Please enter a valid status value',
+    })
+    .optional(),
+});
