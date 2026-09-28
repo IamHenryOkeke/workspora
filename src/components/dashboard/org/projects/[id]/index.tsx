@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import type { ApiResponse, Project, ProjectMember } from '@/lib/types';
 import { ProjectService } from '@/services/project';
@@ -12,6 +11,8 @@ import OverviewTab from './overview-tab';
 import MembersTab from './members-tab';
 import { ProjectMemberService } from '@/services/project-member';
 import UpdateProjectModal from './update-project';
+import AppTabs from '@/components/dashboard/app-tabs';
+import { useSearchParams } from 'next/navigation';
 
 type ProjectDetailResponse = {
   project: Project;
@@ -45,9 +46,7 @@ export default function ProjectDetailPage({
   projectId: string;
   slug: string;
 }) {
-  const [activeTab, setActiveTab] = useState<'overview' | 'members'>(
-    'overview',
-  );
+  const searchParams = useSearchParams();
 
   const {
     organization,
@@ -79,6 +78,19 @@ export default function ProjectDetailPage({
 
   const project = data?.data?.project;
   const members = projectMembersData?.data?.projectMembers ?? [];
+
+  const tabs = [
+    {
+      label: 'Overview',
+      value: 'overview',
+    },
+    {
+      label: `Members (${members.length})`,
+      value: 'members',
+    },
+  ];
+
+  const currentTabValue = searchParams.get('active-tab') || tabs[0].value;
 
   const title =
     project && organization
@@ -143,34 +155,26 @@ export default function ProjectDetailPage({
             />
           </div>
 
-          <div className="mb-6 flex items-center gap-6 border-b border-white/8">
-            <button
-              onClick={() => setActiveTab('overview')}
-              className={`border-b-2 pb-3 text-sm font-medium transition-colors ${
-                activeTab === 'overview'
-                  ? 'border-amber-500 text-white'
-                  : 'border-transparent text-gray-500 hover:text-gray-300'
-              }`}
-            >
-              Overview
-            </button>
-            <button
-              onClick={() => setActiveTab('members')}
-              className={`border-b-2 pb-3 text-sm font-medium transition-colors ${
-                activeTab === 'members'
-                  ? 'border-amber-500 text-white'
-                  : 'border-transparent text-gray-500 hover:text-gray-300'
-              }`}
-            >
-              Members ({members.length})
-            </button>
-          </div>
+          <AppTabs
+            variant="line"
+            urlKey="active-tab"
+            tabs={[
+              {
+                label: 'Overview',
+                value: 'overview',
+              },
+              {
+                label: `Members (${members.length})`,
+                value: 'members',
+              },
+            ]}
+          />
 
-          {activeTab === 'overview' && (
+          {currentTabValue === 'overview' && (
             <OverviewTab project={project} members={members} />
           )}
 
-          {activeTab === 'members' && <MembersTab members={members} />}
+          {currentTabValue === 'members' && <MembersTab members={members} />}
         </>
       )}
     </div>
