@@ -15,7 +15,7 @@ export const ROLE_LABELS = {
 export default function RoleBadge({ role }: { role: OrganizationRole }) {
   return (
     <span
-      className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium ${ROLE_STYLES[role]}`}
+      className={`shrink-0 px-2 py-0.5 text-[11px] font-medium ${ROLE_STYLES[role]}`}
     >
       {ROLE_LABELS[role]}
     </span>

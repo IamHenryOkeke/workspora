@@ -38,7 +38,7 @@ export default function AppTabs({
 
   return (
     <Tabs value={currentValue} onValueChange={handleValueChange}>
-      <TabsList>
+      <TabsList className="bg-black">
         {tabs.map((tab) => (
           <TabsTrigger
             className="data-active:bg-accent/10 data-active:text-accent data-active:border data-active:border-accent/50 p-4 data-active:hover:text-accent"

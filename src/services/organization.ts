@@ -6,14 +6,6 @@ export const OrganizationService = {
     return response;
   },
 
-  getOrganizationMembers: async (organizationId: string, params = {}) => {
-    const response = await axiosInstance.get(
-      `/organizations/${organizationId}/members`,
-      { params },
-    );
-    return response;
-  },
-
   createOrganization: async (data: FormData) => {
     const response = await axiosInstance.post('/organizations', data, {
       headers: {

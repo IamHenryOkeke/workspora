@@ -47,9 +47,17 @@ export type OrganizationActivity = {
   meta?: Record<string, unknown>;
 };
 
+export type MemberStatusType =
+  | 'PENDING'
+  | 'ACTIVE'
+  | 'INVITED'
+  | 'SUSPENDED'
+  | 'REMOVED';
+
 export type Member = {
   id: string;
   role: OrganizationRole;
+  status: MemberStatusType;
   user: {
     id: string;
     fullName: string;
@@ -58,11 +66,13 @@ export type Member = {
   };
 };
 
+export type ProjectStatusType = 'PENDING' | 'ACTIVE' | 'COMPLETED' | 'ARCHIVED';
+
 export type Project = {
   id: string;
   name: string;
   description: string;
-  status: 'PENDING' | 'ACTIVE' | 'COMPLETED' | 'ARCHIVED';
+  status: ProjectStatusType;
   organizationId: string;
   // creatorId: string | null;
   // creator: {
@@ -85,7 +95,6 @@ export type ProjectMember = {
   member: Member;
 };
 
-export type ProjectStatusType = Project['status'];
 export type ProjectStatusFilter = 'ALL' | ProjectStatusType;
 
 export type PaginationType = {
