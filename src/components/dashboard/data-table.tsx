@@ -2,8 +2,8 @@
 
 import { DataTableFeatures, features } from '@/lib/data-table-features';
 import {
-  ArrowDown01Icon,
-  ArrowUp01Icon,
+  ArrowDown02Icon,
+  ArrowUp02Icon,
   ArrowUpDownIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
@@ -172,13 +172,13 @@ export function DataTable<TData extends RowData>({
                         <table.FlexRender header={header} />
                         {sorted === 'asc' ? (
                           <HugeiconsIcon
-                            icon={ArrowUp01Icon}
+                            icon={ArrowUp02Icon}
                             aria-hidden
                             className="size-3.5"
                           />
                         ) : sorted === 'desc' ? (
                           <HugeiconsIcon
-                            icon={ArrowDown01Icon}
+                            icon={ArrowDown02Icon}
                             aria-hidden
                             className="size-3.5"
                           />
