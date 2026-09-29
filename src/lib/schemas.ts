@@ -55,3 +55,10 @@ export const updateProjectSchema = createProjectSchema.partial().extend({
     })
     .optional(),
 });
+
+export const inviteMemberSchema = z.object({
+  email: z.email({ error: 'Must be a valid email address' }).trim(),
+  role: z.enum(['ADMIN', 'MEMBER'], {
+    error: 'Please enter a valid role value',
+  }),
+});

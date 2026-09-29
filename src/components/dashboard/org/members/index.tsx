@@ -1,16 +1,14 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
 import { useGetOrganization } from '@/hooks/use-get-organization';
 import { usePageTitle } from '@/hooks/use-page-title';
 import { useCanManageOrganization } from '@/hooks/use-can-manage-organization';
 import { ApiResponse, Member, PaginationType } from '@/lib/types';
 import { MemberService } from '@/services/member';
-import { HugeiconsIcon } from '@hugeicons/react';
-import { PlusIcon } from '@hugeicons/core-free-icons';
 import { DataTable } from '../../data-table';
 import { memberColumns } from './member-columns';
+import InviteMemberModal from './invite-member';
 
 type MembersResponse = {
   members: Member[];
@@ -23,40 +21,6 @@ const fetchOrganizationMembers = async (
   const { data } = await MemberService.getMembers(organizationId);
   return data;
 };
-
-// const getName = (m: Member): string => m.user.fullName ?? '';
-// const getEmail = (m: Member): string => m.user.email ?? '';
-// const getRole = (m: Member): string => String(m.role ?? '').toUpperCase();
-// const getStatus = (m: Member): string => String(m.status ?? '').toUpperCase();
-
-// const BADGE_BASE =
-//   'inline-block w-full border px-3 py-1 text-xs font-medium leading-none';
-
-// const ROLE_STYLES: Record<string, string> = {
-//   OWNER: 'border-amber-500/40 bg-amber-500/10 text-amber-400',
-//   ADMIN: 'border-orange-500/40 bg-orange-500/10 text-orange-400',
-//   MEMBER: 'border-white/10 bg-white/5 text-gray-400',
-// };
-
-// const STATUS_STYLES: Record<string, string> = {
-//   ACTIVE: 'border-amber-500/40 bg-amber-500/10 text-amber-400',
-//   PENDING: 'border-amber-500/40 bg-amber-500/10 text-amber-300',
-//   INVITED: 'border-white/10 bg-white/5 text-gray-400',
-//   SUSPENDED: 'border-red-500/40 bg-red-500/10 text-red-400',
-// };
-
-// const FALLBACK_BADGE = 'border-white/10 bg-white/5 text-gray-400';
-
-// const toLabel = (value: string) =>
-//   value ? value.charAt(0) + value.slice(1).toLowerCase() : '—';
-
-// const getInitials = (name: string) =>
-//   name
-//     .split(' ')
-//     .filter(Boolean)
-//     .slice(0, 2)
-//     .map((part) => part[0]?.toUpperCase())
-//     .join('') || '?';
 
 const EMPTY_MEMBERS: Member[] = [];
 
@@ -112,12 +76,7 @@ export default function MembersHome({ slug }: { slug: string }) {
             )}
           </p>
         </div>
-        {canManage && (
-          <Button>
-            <HugeiconsIcon icon={PlusIcon} />
-            Invite member
-          </Button>
-        )}
+        {canManage && <InviteMemberModal organizationId={organizationId} />}
       </div>
 
       {!isPending && error && !data && (
