@@ -62,3 +62,8 @@ export const inviteMemberSchema = z.object({
     error: 'Please enter a valid role value',
   }),
 });
+
+export const editMemberSchema = z.object({
+  role: z.enum(['OWNER', 'ADMIN', 'MEMBER']).optional(),
+  status: z.enum(['ACTIVE', 'SUSPENDED']).optional(),
+});

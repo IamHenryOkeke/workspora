@@ -1,8 +1,8 @@
 import { ProjectMember } from '@/lib/types';
 import RoleBadge from '@/components/dashboard/role-badge';
-import RemoveMember from './remove-member';
 import { useAuthStore } from '@/stores/auth-store';
 import UserAvatar from '@/components/user-avatar';
+import RemoveProjectMember from './remove-project-member';
 
 export default function MembersTab({ members }: { members: ProjectMember[] }) {
   const { user } = useAuthStore();
@@ -33,7 +33,7 @@ export default function MembersTab({ members }: { members: ProjectMember[] }) {
             </div>
             <div className="flex gap-2 items-center">
               <RoleBadge role={member.member.role} />
-              <RemoveMember
+              <RemoveProjectMember
                 memberId={member.id}
                 projectId={member.projectId}
                 isProjectMember={isProjectMember}

@@ -20,7 +20,7 @@ type RemoveMemberProps = {
   targetRole: OrganizationRole;
 };
 
-export default function RemoveMember({
+export default function RemoveProjectMember({
   memberId,
   projectId,
   isProjectMember,

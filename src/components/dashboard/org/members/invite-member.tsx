@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Controller, useForm } from 'react-hook-form';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import toast from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
@@ -45,7 +45,7 @@ export default function InviteMemberModal({
 }) {
   const [open, setOpen] = useState(false);
   const canManage = useCanManageOrganization();
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
   const { handleSubmit, control, reset } = useForm<InviteMemberFormType>({
     resolver: zodResolver(inviteMemberSchema),
@@ -58,8 +58,9 @@ export default function InviteMemberModal({
     mutationFn: (payload: InviteMemberFormType) =>
       inviteMember(organizationId, payload),
     onSuccess: async (data) => {
-      toast.success(data.message || 'Project created');
-      await queryClient.invalidateQueries({ queryKey: ['projects'] });
+      toast.success(data.message || 'Invite sent successfully');
+      // update to invalidate invitation table
+      // await queryClient.invalidateQueries({ queryKey: ['projects'] });
       reset();
       setOpen(false);
     },

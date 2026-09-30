@@ -56,6 +56,7 @@ export type MemberStatusType =
 
 export type Member = {
   id: string;
+  organizationId: string;
   role: OrganizationRole;
   status: MemberStatusType;
   user: {
