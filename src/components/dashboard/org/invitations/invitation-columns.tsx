@@ -7,6 +7,7 @@ import RoleBadge from '../../role-badge';
 import { formatDate } from '@/lib/utils';
 import ColumnHeader from '../../column-header';
 import { useAuthStore } from '@/stores/auth-store';
+import InvitationActions from './invitation-actions';
 
 const columnHelper = createColumnHelper<DataTableFeatures, Invitation>();
 
@@ -72,5 +73,11 @@ export const invitationColumns = columnHelper.columns([
         {formatDate(row.getValue())}
       </span>
     ),
+  }),
+  columnHelper.display({
+    id: 'actions',
+    cell: ({ row }) => {
+      return <InvitationActions invitation={row.original} />;
+    },
   }),
 ]);

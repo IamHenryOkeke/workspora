@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { Invitation, InvitationStatusType } from '@/lib/types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -57,3 +58,14 @@ export function getInitials(name?: string, email?: string) {
   if (email) return email.slice(0, 2).toUpperCase();
   return 'WS';
 }
+
+export const isPastExpiry = (expiresAt: string | Date) =>
+  new Date() > new Date(expiresAt);
+
+export const getEffectiveStatus = ({
+  status,
+  expiresAt,
+}: Pick<Invitation, 'status' | 'expiresAt'>): InvitationStatusType => {
+  if (status === 'PENDING' && isPastExpiry(expiresAt)) return 'EXPIRED';
+  return status;
+};

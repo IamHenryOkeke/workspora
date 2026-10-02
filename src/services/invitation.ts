@@ -19,4 +19,16 @@ export const InvitationService = {
     );
     return response;
   },
+  resendInvitation: async (organizationId: string, invitationId: string) => {
+    const response = await axiosInstance.post(
+      `/organizations/${organizationId}/invitations/${invitationId}/resend`,
+    );
+    return response;
+  },
+  revokeInvitation: async (organizationId: string, invitationId: string) => {
+    const response = await axiosInstance.delete(
+      `/organizations/${organizationId}/invitations/${invitationId}`,
+    );
+    return response;
+  },
 };
