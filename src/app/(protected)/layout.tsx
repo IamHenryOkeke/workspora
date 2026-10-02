@@ -16,7 +16,7 @@ export default function DashboardLayout({
 
   useEffect(() => {
     if (isHydrated && !isAuthenticated) {
-      router.replace(`/auth/login?redirect=${encodeURIComponent(pathname)}`);
+      router.replace('/auth/login');
     }
   }, [isHydrated, isAuthenticated, pathname, router]);
 

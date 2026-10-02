@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+// import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { AuthService } from '@/services/auth';
 import { useAuthStore } from '@/stores/auth-store';
@@ -13,15 +13,17 @@ import { Logout05Icon } from '@hugeicons/core-free-icons';
 
 export default function Logout() {
   const [open, setOpen] = useState(false);
-  const router = useRouter();
+  // const router = useRouter();
   const { clearAuth } = useAuthStore();
+  const queryClient = useQueryClient();
 
   const logoutMutation = useMutation({
     mutationFn: () => AuthService.logout(),
     onSuccess: () => {
+      queryClient.invalidateQueries();
       clearAuth();
       setOpen(false);
-      router.push('/auth/login');
+      // router.push('/auth/login');
     },
     onError: () => {
       toast.error('Failed to log out. Please try again.');

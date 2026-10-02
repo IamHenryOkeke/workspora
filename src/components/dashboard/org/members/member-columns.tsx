@@ -7,12 +7,9 @@ import { createColumnHelper } from '@tanstack/react-table';
 import RoleBadge from '../../role-badge';
 import MemberStatus from '../../member-status';
 import MemberActions from './member-actions';
+import ColumnHeader from '../../column-header';
 
 const columnHelper = createColumnHelper<DataTableFeatures, Member>();
-
-function ColumnHeader({ title }: { title: string }) {
-  return <div className="text-white/50">{title}</div>;
-}
 
 export const memberColumns = columnHelper.columns([
   columnHelper.accessor('user', {

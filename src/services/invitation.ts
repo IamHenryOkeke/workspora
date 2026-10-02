@@ -12,4 +12,11 @@ export const InvitationService = {
     );
     return response;
   },
+  getInvitations: async (organizationId: string, params = {}) => {
+    const response = await axiosInstance.get(
+      `/organizations/${organizationId}/invitations`,
+      { params },
+    );
+    return response;
+  },
 };

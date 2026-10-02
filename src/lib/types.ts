@@ -104,3 +104,25 @@ export type PaginationType = {
   total: number;
   totalPages: number;
 };
+
+export type InvitationStatusType =
+  | 'PENDING'
+  | 'ACCEPTED'
+  | 'DECLINED'
+  | 'EXPIRED'
+  | 'REVOKED';
+
+export type Invitation = {
+  id: string;
+  organizationId: string;
+  organization: Organization;
+  email: string;
+  role: OrganizationRole;
+  status: InvitationStatusType;
+  invitedById: string;
+  invitedBy: User;
+  userId: string;
+  user: User;
+  expiresAt: Date;
+  createdAt: Date;
+};
