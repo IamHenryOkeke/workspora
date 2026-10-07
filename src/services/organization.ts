@@ -15,6 +15,26 @@ export const OrganizationService = {
     return response;
   },
 
+  updateOrganization: async (organizationId: string, data: FormData) => {
+    const response = await axiosInstance.put(
+      `/organizations/${organizationId}`,
+      data,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      },
+    );
+    return response;
+  },
+
+  deleteOrganization: async (organizationId: string) => {
+    const response = await axiosInstance.delete(
+      `/organizations/${organizationId}`,
+    );
+    return response;
+  },
+
   getOrganizationById: async (organizationId: string) => {
     const response = await axiosInstance.get(
       `/organizations/${organizationId}`,

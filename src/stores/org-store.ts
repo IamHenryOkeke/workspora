@@ -22,6 +22,11 @@ type OrganizationStore = {
   fetchOrganizations: () => Promise<void>;
   setOrganizations: (payload: unknown) => void;
   getOrganizationBySlug: (slug: string) => Organization | undefined;
+  updateOrganization: (
+    id: string,
+    patch: Partial<Omit<Organization, 'id' | 'role'>>,
+  ) => void;
+  removeOrganization: (id: string) => void;
   clear: () => void;
 };
 
@@ -64,6 +69,20 @@ export const useOrganizationStore = create<OrganizationStore>((set, get) => ({
 
   getOrganizationBySlug: (slug) => {
     return get().organizations.find((org) => org.slug === slug);
+  },
+
+  updateOrganization: (id, patch) => {
+    set((state) => ({
+      organizations: state.organizations.map((org) =>
+        org.id === id ? { ...org, ...patch } : org,
+      ),
+    }));
+  },
+
+  removeOrganization: (id: string) => {
+    set((state) => ({
+      organizations: state.organizations.filter((org) => org.id !== id),
+    }));
   },
 
   clear: () => {

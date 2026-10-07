@@ -67,3 +67,23 @@ export const editMemberSchema = z.object({
   role: z.enum(['OWNER', 'ADMIN', 'MEMBER']).optional(),
   status: z.enum(['ACTIVE', 'SUSPENDED']).optional(),
 });
+
+export const updateOrganizationSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(2, 'Organization name must be at least 2 characters')
+    .max(60, 'Organization name must be 60 characters or fewer'),
+  description: z
+    .string()
+    .trim()
+    .max(200, 'Description must be 200 characters or fewer'),
+  logo: z
+    .instanceof(File)
+    .refine(
+      (f) => ACCEPTED_IMAGE_TYPES.includes(f.type),
+      'Logo must be a PNG or JPG',
+    )
+    .refine((f) => f.size <= MAX_FILE_SIZE, 'Logo must be 2MB or smaller')
+    .optional(),
+});

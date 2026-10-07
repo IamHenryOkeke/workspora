@@ -50,7 +50,7 @@ function MemberAvatarStack({ project }: { project: Project }) {
   const total = projectMembers.length;
 
   if (total === 0) return null;
-  console.log(visible);
+
   return (
     <div className="flex shrink-0 items-center gap-1.5">
       <div className="flex -space-x-2">
