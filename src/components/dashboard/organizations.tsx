@@ -10,6 +10,7 @@ import {
   ArrowRight01Icon,
   PlusSignIcon,
   SearchRemoveIcon,
+  UserIcon,
 } from '@hugeicons/core-free-icons';
 import Search from './search';
 import Pagination from './pagination';
@@ -35,16 +36,22 @@ export const fetchOrganizations = async (
 function Header({ count }: { count: number }) {
   return (
     <div className="mb-8">
-      <h1 className="text-3xl font-bold text-white">Your organizations</h1>
-      <p className="mt-1 text-sm text-gray-500">
-        {count === null ? (
-          <span className="inline-block h-4 w-16 animate-pulse rounded bg-white/5 align-middle" />
-        ) : (
-          <>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-white">Your organizations</h1>
+          <p className="mt-1 text-sm text-gray-500">
             {count} {count === 1 ? 'organization' : 'organizations'}
-          </>
-        )}
-      </p>
+          </p>
+        </div>
+
+        <Link
+          href="/dashboard/account"
+          className="flex shrink-0 items-center gap-2 rounded-lg border border-white/10 px-3.5 py-2 text-sm font-medium text-gray-300 transition hover:border-white/20 hover:bg-white/5 hover:text-white"
+        >
+          <HugeiconsIcon icon={UserIcon} size={16} />
+          Account
+        </Link>
+      </div>
 
       <div className="mt-6 flex items-center gap-3">
         <div className="flex-1">
@@ -80,7 +87,7 @@ export default function Organizations({
   const count = pagination?.total ? pagination.total : 0;
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-12">
+    <div>
       <Header count={isPending ? 0 : count} />
 
       {isPending && (

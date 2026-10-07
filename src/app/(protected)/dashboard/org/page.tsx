@@ -9,7 +9,7 @@ export default async function page({
   const query = (await searchParams).query;
 
   return (
-    <main>
+    <main className="mx-auto max-w-5xl px-6 py-12">
       <Organizations page={Number(page) || 1} query={query || ''} />
     </main>
   );
