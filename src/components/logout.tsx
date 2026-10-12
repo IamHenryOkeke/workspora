@@ -1,34 +1,13 @@
 'use client';
 
-import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-// import { useRouter } from 'next/navigation';
-import toast from 'react-hot-toast';
-import { AuthService } from '@/services/auth';
-import { useAuthStore } from '@/stores/auth-store';
 import { ConfirmModal } from './dashboard/modal';
 import { SidebarMenuItem } from './ui/sidebar';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Logout05Icon } from '@hugeicons/core-free-icons';
+import { useLogout } from '@/hooks/use-logout';
 
 export default function Logout() {
-  const [open, setOpen] = useState(false);
-  // const router = useRouter();
-  const { clearAuth } = useAuthStore();
-  const queryClient = useQueryClient();
-
-  const logoutMutation = useMutation({
-    mutationFn: () => AuthService.logout(),
-    onSuccess: () => {
-      queryClient.invalidateQueries();
-      clearAuth();
-      setOpen(false);
-      // router.push('/auth/login');
-    },
-    onError: () => {
-      toast.error('Failed to log out. Please try again.');
-    },
-  });
+  const { open, setOpen, isPending, logout } = useLogout();
 
   return (
     <>
@@ -46,8 +25,8 @@ export default function Logout() {
         description="You'll need to sign in again to access your account."
         confirmLabel="Log out"
         variant="destructive"
-        isLoading={logoutMutation.isPending}
-        onConfirm={() => logoutMutation.mutate()}
+        isLoading={isPending}
+        onConfirm={logout}
       />
     </>
   );

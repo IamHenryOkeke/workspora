@@ -1,5 +1,10 @@
 import Organizations from '@/components/dashboard/organizations';
 
+export const metadata = {
+  title: 'Organizations | Workspora',
+  description: 'Manage your organizations and teams.',
+};
+
 export default async function page({
   searchParams,
 }: {

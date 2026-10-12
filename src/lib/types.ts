@@ -10,6 +10,8 @@ export type User = {
   email: string;
   fullName: string;
   avatar?: string;
+  phoneNumber: string | null;
+  hasPassword: boolean;
 };
 
 export type OrganizationRole = 'OWNER' | 'ADMIN' | 'MEMBER';

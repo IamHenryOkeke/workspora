@@ -63,6 +63,7 @@ export default function LoginForm() {
     },
     onError: (error: AxiosError<{ message: string }>) => {
       const errMessage = error.response?.data?.message;
+      console.log('Login error:', errMessage);
       if (errMessage?.includes('verify your account')) {
         setUnverifiedEmail(loginMutation.variables?.email ?? null);
       } else {

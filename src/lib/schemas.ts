@@ -87,3 +87,46 @@ export const updateOrganizationSchema = z.object({
     .refine((f) => f.size <= MAX_FILE_SIZE, 'Logo must be 2MB or smaller')
     .optional(),
 });
+
+export const updateProfileSchema = z.object({
+  fullName: z
+    .string()
+    .trim()
+    .min(2, 'Name must be at least 2 characters')
+    .max(255),
+  phoneNumber: z
+    .string()
+    .trim()
+    .max(20, 'Phone number is too long')
+    .regex(/^\+?[0-9\s().-]*$/, 'Enter a valid phone number')
+    .optional(),
+  avatar: z
+    .instanceof(File)
+    .refine(
+      (f) => ['image/png', 'image/jpeg'].includes(f.type),
+      'Avatar must be a PNG or JPG',
+    )
+    .refine((f) => f.size <= MAX_FILE_SIZE, 'Avatar must be 2MB or smaller')
+    .optional(),
+});
+
+export const getChangePasswordSchema = (hasPassword: boolean) =>
+  z
+    .object({
+      currentPassword: hasPassword
+        ? z.string().min(1, 'Enter your current password')
+        : z.string().optional(),
+      newPassword: z
+        .string()
+        .min(8, 'Password must be at least 8 characters')
+        .max(72, 'Password must be 72 characters or fewer'), // bcrypt ignores anything past 72 bytes
+      confirmPassword: z.string().min(1, 'Confirm your new password'),
+    })
+    .refine((d) => d.newPassword === d.confirmPassword, {
+      path: ['confirmPassword'],
+      message: 'Passwords do not match',
+    })
+    .refine((d) => !hasPassword || d.newPassword !== d.currentPassword, {
+      path: ['newPassword'],
+      message: 'New password must be different from the current one',
+    });

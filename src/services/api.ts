@@ -17,6 +17,47 @@ const refreshClient = axios.create({
   withCredentials: true,
 });
 
+// A 401 from these endpoints means bad credentials or a dead session, not an
+// expired access token, so refreshing can't help. Adjust to your actual routes.
+const NO_REFRESH_ENDPOINTS = [
+  '/auth/login',
+  '/auth/register',
+  '/auth/refresh',
+  '/auth/logout',
+  '/auth/forgot-password',
+  '/auth/reset-password',
+];
+
+const shouldSkipRefresh = (url?: string) => {
+  if (!url) return false;
+  const path = url.split('?')[0];
+  return NO_REFRESH_ENDPOINTS.some((endpoint) => path.endsWith(endpoint));
+};
+
+// Fixed toast ids so concurrent failures show one toast, not one each
+const REFRESH_TOAST_ID = 'refresh-session';
+const EXPIRED_TOAST_ID = 'session-expired';
+
+// One shared refresh for all requests that fail at the same time. With refresh
+// token rotation, a second parallel refresh would fail and log the user out.
+let refreshPromise: Promise<string> | null = null;
+
+const refreshAccessToken = (): Promise<string> => {
+  if (!refreshPromise) {
+    refreshPromise = refreshClient
+      .post('/auth/refresh')
+      .then(({ data }) => {
+        const { accessToken } = data;
+        useAuthStore.getState().setAccessToken(accessToken);
+        return accessToken as string;
+      })
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+  return refreshPromise;
+};
+
 axiosInstance.interceptors.request.use(
   (config) => {
     if (typeof window !== 'undefined') {
@@ -41,25 +82,28 @@ axiosInstance.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if (
+      error.response.status === 401 &&
+      !originalRequest._retry &&
+      !shouldSkipRefresh(originalRequest.url)
+    ) {
       originalRequest._retry = true;
-      const toastId = toast.loading('Refreshing session...');
-      try {
-        const { data } = await refreshClient.post('/auth/refresh');
+      toast.loading('Refreshing session...', { id: REFRESH_TOAST_ID });
 
-        const { accessToken } = data;
-        toast.dismiss(toastId);
-        useAuthStore.getState().setAccessToken(accessToken);
+      try {
+        const accessToken = await refreshAccessToken();
+        toast.dismiss(REFRESH_TOAST_ID);
 
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-
         return axiosInstance(originalRequest);
       } catch (refreshError) {
-        toast.dismiss(toastId);
+        toast.dismiss(REFRESH_TOAST_ID);
         useAuthStore.getState().clearAuth();
 
         if (window.location.pathname !== '/auth/login') {
-          toast.error('Your session has expired. Please log in again.');
+          toast.error('Your session has expired. Please log in again.', {
+            id: EXPIRED_TOAST_ID,
+          });
           window.location.href = '/auth/login';
         }
 

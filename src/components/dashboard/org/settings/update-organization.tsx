@@ -47,6 +47,7 @@ export default function UpdateOrganization({
   const canManage = useCanManageOrganization();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { updateOrganization: updateOrg } = useOrganizationStore();
 
   const [origin, setOrigin] = useState('');
   useEffect(() => {
@@ -94,7 +95,7 @@ export default function UpdateOrganization({
         logo,
       } = (data.data as { organization: Organization }).organization;
 
-      useOrganizationStore.getState().updateOrganization(organization.id, {
+      updateOrg(organization.id, {
         name,
         slug: newSlug,
         description,

@@ -16,6 +16,7 @@ import Search from './search';
 import Pagination from './pagination';
 import RoleBadge from './role-badge';
 import OrganizationLogo from './organization-logo';
+import LogoutButton from '../logout-button';
 
 type OrganizationsResponse = {
   organizations: Organization[];
@@ -44,13 +45,16 @@ function Header({ count }: { count: number }) {
           </p>
         </div>
 
-        <Link
-          href="/dashboard/account"
-          className="flex shrink-0 items-center gap-2 rounded-lg border border-white/10 px-3.5 py-2 text-sm font-medium text-gray-300 transition hover:border-white/20 hover:bg-white/5 hover:text-white"
-        >
-          <HugeiconsIcon icon={UserIcon} size={16} />
-          Account
-        </Link>
+        <div className="flex shrink-0 items-center gap-2">
+          <Link
+            href="/dashboard/account"
+            className="flex shrink-0 items-center gap-2 rounded-lg border border-white/10 px-3.5 py-2 text-sm font-medium text-gray-300 transition hover:border-white/20 hover:bg-white/5 hover:text-white"
+          >
+            <HugeiconsIcon icon={UserIcon} size={16} />
+            Account
+          </Link>
+          <LogoutButton />
+        </div>
       </div>
 
       <div className="mt-6 flex items-center gap-3">
