@@ -1,18 +1,12 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
 import { useGetOrganization } from '@/hooks/use-get-organization';
 import { usePageTitle } from '@/hooks/use-page-title';
-import { useCanManageOrganization } from '@/hooks/use-can-manage-organization';
-import AppTabs from '../../app-tabs';
-import OrganizationTab from './organization-tab';
-
-const TAB_KEY = 'active-tab';
+import UpdateOrganization from './update-organization';
+import DeleteOrganization from './delete-organization';
 
 export default function SettingsHome({ slug }: { slug: string }) {
-  const searchParams = useSearchParams();
   const { organization, isPending, isNotFound } = useGetOrganization(slug);
-  const canManage = useCanManageOrganization();
 
   usePageTitle(organization ? `Settings | ${organization.name}` : 'Loading');
 
@@ -52,25 +46,13 @@ export default function SettingsHome({ slug }: { slug: string }) {
     );
   }
 
-  const tabs = [
-    ...(canManage ? [{ label: 'Organization', value: 'organization' }] : []),
-    { label: 'Account', value: 'account' },
-  ];
-
-  const requestedTab = searchParams.get(TAB_KEY);
-  const currentTabValue = tabs.some((tab) => tab.value === requestedTab)
-    ? requestedTab
-    : tabs[0].value;
-
   return (
     <div>
       {header}
-      <AppTabs variant="line" urlKey={TAB_KEY} tabs={tabs} />
-
-      {currentTabValue === 'organization' && canManage && (
-        <OrganizationTab organization={organization} />
-      )}
-      {currentTabValue === 'account' && <div>Account</div>}
+      <div className="mt-4 space-y-6">
+        <UpdateOrganization organization={organization} />
+        <DeleteOrganization organization={organization} />
+      </div>
     </div>
   );
 }

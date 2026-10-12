@@ -8,7 +8,6 @@ import {
   SidebarMenu,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { useAuthStore } from '@/stores/auth-store';
 import {
   DashboardSquare02Icon,
   ChartNoAxesGanttIcon,
@@ -23,7 +22,6 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import Link from 'next/link';
 import { usePathname, useParams } from 'next/navigation';
-import { ROLE_LABELS } from './role-badge';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,10 +30,9 @@ import {
   DropdownMenuSeparator,
 } from '../ui/dropdown-menu';
 import OrganizationLogo from './organization-logo';
-import Logout from '../logout';
 import { useOrganizationStore } from '@/stores/org-store';
 import { useEffect } from 'react';
-import UserAvatar from '../user-avatar';
+import UserMenu from './user-menu';
 
 const navLinks = [
   { label: 'Dashboard', segment: 'home', icon: DashboardSquare02Icon },
@@ -46,7 +43,6 @@ const navLinks = [
 
 export function AppSidebar() {
   const { slug } = useParams<{ slug: string }>();
-  const { user } = useAuthStore();
   const { fetchOrganizations, organizations, hasFetched } =
     useOrganizationStore();
 
@@ -161,31 +157,8 @@ export function AppSidebar() {
               icon={ArrowLeft01Icon}
             />
           </SidebarMenuItem>
-          <SidebarMenuItem className="px-3 py-2.5">
-            <div className="flex items-center gap-2">
-              <UserAvatar
-                name={user?.fullName}
-                email={user?.email}
-                image={user?.avatar}
-                className="h-7 w-7"
-              />
-              <div className="flex flex-col">
-                <span className="text-sm font-semibold text-gray-300">
-                  {user?.fullName || user?.email?.split('@')[0]}
-                </span>
-                <span className="text-xs text-gray-500">
-                  {
-                    ROLE_LABELS[
-                      (currentOrganization?.role as keyof typeof ROLE_LABELS) ||
-                        'MEMBER'
-                    ]
-                  }
-                </span>
-              </div>
-            </div>
-          </SidebarMenuItem>
           <SidebarMenuItem>
-            <Logout />
+            <UserMenu role={currentOrganization?.role} />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
