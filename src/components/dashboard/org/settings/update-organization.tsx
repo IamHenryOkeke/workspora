@@ -12,7 +12,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { OrganizationService } from '@/services/organization';
-import { useCanManageOrganization } from '@/hooks/use-can-manage-organization';
 import { updateOrganizationSchema } from '@/lib/schemas';
 import { ApiResponse, Organization } from '@/lib/types';
 import { useRouter } from 'next/navigation';
@@ -44,7 +43,6 @@ export default function UpdateOrganization({
   organization: Organization;
 }) {
   const router = useRouter();
-  const canManage = useCanManageOrganization();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { updateOrganization: updateOrg } = useOrganizationStore();
@@ -132,8 +130,6 @@ export default function UpdateOrganization({
 
   const onSubmit = (data: UpdateOrganizationFormType) =>
     updateMutation.mutate(data);
-
-  if (!canManage) return null;
 
   const logoSrc = preview ?? organization.logo ?? null;
 

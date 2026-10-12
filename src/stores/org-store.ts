@@ -9,7 +9,7 @@ export const organizationSchema = z.object({
   slug: z.string(),
   description: z.string(),
   logo: z.string(),
-  role: z.string(),
+  role: z.enum(['OWNER', 'ADMIN', 'MEMBER']),
 });
 
 export const organizationListSchema = z.array(organizationSchema);

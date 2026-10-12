@@ -4,9 +4,15 @@ import { useGetOrganization } from '@/hooks/use-get-organization';
 import { usePageTitle } from '@/hooks/use-page-title';
 import UpdateOrganization from './update-organization';
 import DeleteOrganization from './delete-organization';
+import LeaveOrganization from './leave-organization';
+import OrganizationOverview from './organization-overview';
+import { useCanManageOrganization } from '@/hooks/use-can-manage-organization';
+import { useCurrentOrganizationRole } from '@/hooks/use-current-organization-role';
 
 export default function SettingsHome({ slug }: { slug: string }) {
   const { organization, isPending, isNotFound } = useGetOrganization(slug);
+  const canManage = useCanManageOrganization();
+  const { role } = useCurrentOrganizationRole();
 
   usePageTitle(organization ? `Settings | ${organization.name}` : 'Loading');
 
@@ -49,10 +55,17 @@ export default function SettingsHome({ slug }: { slug: string }) {
   return (
     <div>
       {header}
-      <div className="mt-4 space-y-6">
-        <UpdateOrganization organization={organization} />
-        <DeleteOrganization organization={organization} />
-      </div>
+      {!canManage ? (
+        <div className="mt-4 space-y-6">
+          <UpdateOrganization organization={organization} />
+          {role === 'OWNER' && (
+            <DeleteOrganization organization={organization} />
+          )}
+        </div>
+      ) : (
+        <OrganizationOverview organization={organization} />
+      )}
+      <LeaveOrganization organization={organization} />
     </div>
   );
 }

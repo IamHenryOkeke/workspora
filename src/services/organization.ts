@@ -60,4 +60,11 @@ export const OrganizationService = {
     const response = await axiosInstance.get(`/organizations/slug/${slug}`);
     return response;
   },
+
+  leaveOrganization: async (organizationId: string) => {
+    const response = await axiosInstance.post(
+      `/organizations/${organizationId}/leave`,
+    );
+    return response;
+  },
 };

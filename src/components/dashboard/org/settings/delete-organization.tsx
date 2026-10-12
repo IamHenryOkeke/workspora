@@ -11,7 +11,6 @@ import { Input } from '@/components/ui/input';
 import { Field, FieldLabel } from '@/components/ui/field';
 import Modal from '../../modal';
 import { OrganizationService } from '@/services/organization';
-import { useCurrentOrganizationRole } from '@/hooks/use-current-organization-role'; // adjust to your hook
 import { ApiResponse, Organization } from '@/lib/types';
 import { useOrganizationStore } from '@/stores/org-store';
 
@@ -27,7 +26,6 @@ export default function DeleteOrganization({
 }: {
   organization: Organization;
 }) {
-  const { role } = useCurrentOrganizationRole();
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -56,8 +54,6 @@ export default function DeleteOrganization({
       );
     },
   });
-
-  if (role !== 'OWNER') return null;
 
   const isMatch = confirmText === organization.name;
 
