@@ -17,6 +17,7 @@ import Pagination from './pagination';
 import RoleBadge from './role-badge';
 import OrganizationLogo from './organization-logo';
 import LogoutButton from '../logout-button';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 type OrganizationsResponse = {
   organizations: Organization[];
@@ -35,6 +36,23 @@ export const fetchOrganizations = async (
 };
 
 function Header({ count }: { count: number }) {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const defultValue = searchParams.get('query') || '';
+
+  const handleSearch = (term: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (term) {
+      params.set('query', term);
+      params.delete('page');
+    } else {
+      params.delete('query');
+    }
+    router.replace(`${pathname}?${params.toString()}`);
+  };
+
   return (
     <div className="mb-8">
       <div className="flex items-start justify-between gap-4">
@@ -59,7 +77,11 @@ function Header({ count }: { count: number }) {
 
       <div className="mt-6 flex items-center gap-3">
         <div className="flex-1">
-          <Search />
+          <Search
+            handleSearch={handleSearch}
+            defaultValue={defultValue}
+            placeholder="Search organizations..."
+          />
         </div>
         <Link
           href="/dashboard/create-org"

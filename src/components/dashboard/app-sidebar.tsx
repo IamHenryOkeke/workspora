@@ -31,8 +31,9 @@ import {
 } from '../ui/dropdown-menu';
 import OrganizationLogo from './organization-logo';
 import { useOrganizationStore } from '@/stores/org-store';
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import UserMenu from './user-menu';
+import Search from './search';
 
 const navLinks = [
   { label: 'Dashboard', segment: 'home', icon: DashboardSquare02Icon },
@@ -42,6 +43,7 @@ const navLinks = [
 ];
 
 export function AppSidebar() {
+  const [searchTerm, setSearchTerm] = useState('');
   const { slug } = useParams<{ slug: string }>();
   const { fetchOrganizations, organizations, hasFetched } =
     useOrganizationStore();
@@ -49,7 +51,14 @@ export function AppSidebar() {
   useEffect(() => {
     fetchOrganizations();
   }, []);
+
   const currentOrganization = organizations.find((org) => org.slug === slug);
+
+  const filteredOrgs = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return organizations;
+    return organizations.filter((org) => org.name.toLowerCase().includes(term));
+  }, [organizations, searchTerm]);
   return (
     <Sidebar>
       <SidebarHeader>
@@ -76,8 +85,19 @@ export function AppSidebar() {
                   <HugeiconsIcon icon={ArrowDown01Icon} className="shrink-0" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-64 space-y-1 border border-white/10">
-                {organizations.map((org) => (
+              <DropdownMenuContent className="w-64 pt-1.5 space-y-2 border border-white/10">
+                <div
+                  onKeyDown={(e) => {
+                    if (e.key !== 'Escape' && e.key !== 'ArrowDown')
+                      e.stopPropagation();
+                  }}
+                >
+                  <Search
+                    placeholder="Search organizations..."
+                    handleSearch={setSearchTerm}
+                  />
+                </div>
+                {filteredOrgs.map((org) => (
                   <DropdownMenuItem key={org.id} asChild>
                     <Link
                       href={`/dashboard/org/${org.slug}/home`}

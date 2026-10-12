@@ -9,7 +9,7 @@ import toast from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
 import { ConfirmModal } from '../../modal';
 import { OrganizationService } from '@/services/organization';
-import { useCurrentOrganizationRole } from '@/hooks/use-current-organization-role'; // adjust to your hook
+import { useCurrentOrganizationRole } from '@/hooks/use-current-organization-role';
 import { useOrganizationStore } from '@/stores/org-store';
 import { ApiResponse, Organization } from '@/lib/types';
 
@@ -29,6 +29,7 @@ export default function LeaveOrganization({
   const queryClient = useQueryClient();
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const { removeOrganization } = useOrganizationStore();
 
   const leaveMutation = useMutation({
     mutationFn: () => leaveOrganization(organization.id),
@@ -43,7 +44,7 @@ export default function LeaveOrganization({
       router.replace(
         next ? `/dashboard/org/${next.slug}/home` : '/dashboard/org',
       );
-      store.removeOrganization(organization.id);
+      removeOrganization(organization.id);
       void queryClient.invalidateQueries({ queryKey: ['organizations'] });
       setOpen(false);
     },
