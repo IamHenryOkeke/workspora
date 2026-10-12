@@ -21,4 +21,8 @@ export const UserService = {
     });
     return response;
   },
+  getInvitations: async () => {
+    const response = await axiosInstance.get('/users/me/invitations');
+    return response;
+  },
 };

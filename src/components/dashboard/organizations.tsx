@@ -11,6 +11,7 @@ import {
   PlusSignIcon,
   SearchRemoveIcon,
   UserIcon,
+  MailAccount01Icon,
 } from '@hugeicons/core-free-icons';
 import Search from './search';
 import Pagination from './pagination';
@@ -70,6 +71,13 @@ function Header({ count }: { count: number }) {
           >
             <HugeiconsIcon icon={UserIcon} size={16} />
             Account
+          </Link>
+          <Link
+            href="/dashboard/invitations"
+            className="flex shrink-0 items-center gap-2 rounded-lg border border-white/10 px-3.5 py-2 text-sm font-medium text-gray-300 transition hover:border-white/20 hover:bg-white/5 hover:text-white"
+          >
+            <HugeiconsIcon icon={MailAccount01Icon} size={16} />
+            Invitations
           </Link>
           <LogoutButton />
         </div>

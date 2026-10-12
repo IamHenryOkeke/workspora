@@ -1,7 +1,6 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { usePageTitle } from '@/hooks/use-page-title';
 import { UserService } from '@/services/user';
 import { User, ApiResponse } from '@/lib/types';
 import ProfileForm from './profile-form';
@@ -17,8 +16,6 @@ const fetchAccount = async (): Promise<ApiResponse<{ user: User }>> => {
 };
 
 export default function AccountHome() {
-  usePageTitle('Account settings');
-
   const { data, isPending, error } = useQuery({
     queryKey: ACCOUNT_QUERY_KEY,
     queryFn: fetchAccount,

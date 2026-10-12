@@ -55,7 +55,7 @@ export default function SettingsHome({ slug }: { slug: string }) {
   return (
     <div>
       {header}
-      {!canManage ? (
+      {canManage ? (
         <div className="mt-4 space-y-6">
           <UpdateOrganization organization={organization} />
           {role === 'OWNER' && (
