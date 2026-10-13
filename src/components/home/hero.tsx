@@ -88,7 +88,7 @@ export default function Hero() {
           </p>
         </div>
 
-        <div className="mt-16 sm:mt-24">
+        <div className="my-16 sm:my-24">
           <DashboardPreview />
         </div>
       </div>

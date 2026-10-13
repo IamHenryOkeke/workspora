@@ -17,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={outfit.variable}>
+    <html lang="en" className={outfit.variable + ' scroll-smooth'}>
       <body className="antialiased">
         <QueryProvider>{children}</QueryProvider>
         <Toaster position="top-right" />
