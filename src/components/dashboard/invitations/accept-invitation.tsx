@@ -7,20 +7,20 @@ import { AxiosError } from 'axios';
 import toast from 'react-hot-toast';
 
 import { Button } from '@/components/ui/button';
-import { ReceivedInvitation } from '@/lib/types';
+import { Invitation } from '@/lib/types';
 import { getEffectiveStatus } from '@/lib/utils';
 import { InvitationService } from '@/services/invitation';
 import { useOrganizationStore } from '@/stores/org-store';
 import { ConfirmModal } from '../modal';
 
 // Only a live, unexpired invite can be accepted
-const canAccept = (invitation: ReceivedInvitation) =>
+const canAccept = (invitation: Invitation) =>
   getEffectiveStatus(invitation) === 'PENDING';
 
 export default function AcceptInvitation({
   invitation,
 }: {
-  invitation: ReceivedInvitation;
+  invitation: Invitation;
 }) {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();

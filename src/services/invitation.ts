@@ -31,4 +31,16 @@ export const InvitationService = {
     );
     return response;
   },
+  acceptInvitation: async (invitationId: string) => {
+    const response = await axiosInstance.post(
+      `/invitations/${invitationId}/accept`,
+    );
+    return response;
+  },
+  declineInvitation: async (invitationId: string) => {
+    const response = await axiosInstance.post(
+      `/invitations/${invitationId}/decline`,
+    );
+    return response;
+  },
 };
