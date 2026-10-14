@@ -2,7 +2,7 @@ import { User } from '@/lib/types';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { AuthService } from '@/services/auth';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 interface AuthState {
   user: User | null;
   accessToken: string | null;

@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Controller, useForm } from 'react-hook-form';
 import { Field, FieldError, FieldLabel } from '../ui/field';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import { Eye, EyeOff } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { useTogglePasswordVisibity } from '@/hooks/use-toggle-password-visibility';

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Outfit } from 'next/font/google';
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from '@/components/ui/sonner';
 import QueryProvider from '@/providers/query-provider';
 import './globals.css';
 
@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en" className={outfit.variable + ' scroll-smooth'}>
       <body className="antialiased">
         <QueryProvider>{children}</QueryProvider>
-        <Toaster position="top-right" />
+        <Toaster duration={2000} position="top-right" />
       </body>
     </html>
   );

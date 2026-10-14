@@ -1,6 +1,6 @@
 import { useAuthStore } from '@/stores/auth-store';
 import axios from 'axios';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 export const baseURL = process.env.NEXT_PUBLIC_API_URL;
 

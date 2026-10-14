@@ -14,7 +14,7 @@ import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
 import { ConfirmModal } from './dashboard/modal';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import UserAvatar from './user-avatar';
 import Logo from './logo';
 
