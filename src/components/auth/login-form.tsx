@@ -8,9 +8,6 @@ import * as z from 'zod';
 import { Controller, useForm } from 'react-hook-form';
 import { Field, FieldError, FieldLabel } from '../ui/field';
 import { toast } from 'sonner';
-import { Eye, EyeOff } from '@hugeicons/core-free-icons';
-import { HugeiconsIcon } from '@hugeicons/react';
-import { useTogglePasswordVisibity } from '@/hooks/use-toggle-password-visibility';
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
@@ -19,6 +16,7 @@ import { ApiResponse } from '@/lib/types';
 import { useAuthStore } from '@/stores/auth-store';
 import LoginWithGoogle from './login-with-google';
 import CardWrapper from './card-wrapper';
+import { PasswordInput } from '../ui/password-input';
 
 const logInSchema = z.object({
   email: z.email('Invalid email address'),
@@ -40,7 +38,6 @@ const resendVerificationEmail = async (email: string): Promise<ApiResponse> => {
 export default function LoginForm() {
   const { setAuth } = useAuthStore();
   const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
-  const { showPassword, togglePasswordVisibity } = useTogglePasswordVisibity();
 
   const { handleSubmit, control, formState } = useForm<LoginPayload>({
     resolver: zodResolver(logInSchema),
@@ -150,29 +147,13 @@ export default function LoginForm() {
                         Forgot your password?
                       </Link>
                     </div>
-                    <div className="relative">
-                      <Input
-                        {...field}
-                        id="password"
-                        type={showPassword ? 'text' : 'password'}
-                        aria-invalid={fieldState.invalid}
-                        className="pr-10"
-                      />
-                      <button
-                        type="button"
-                        onClick={togglePasswordVisibity}
-                        className="absolute inset-y-0 right-3 flex items-center text-muted-foreground hover:text-foreground"
-                        aria-label={
-                          showPassword ? 'Hide password' : 'Show password'
-                        }
-                      >
-                        {showPassword ? (
-                          <HugeiconsIcon icon={EyeOff} size={20} />
-                        ) : (
-                          <HugeiconsIcon icon={Eye} size={20} />
-                        )}
-                      </button>
-                    </div>
+                    <PasswordInput
+                      {...field}
+                      placeholder="Enter a password"
+                      id="password"
+                      aria-invalid={fieldState.invalid}
+                      disabled={isSubmitting}
+                    />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}

@@ -8,42 +8,14 @@ import * as z from 'zod';
 import { Controller, useForm } from 'react-hook-form';
 import { Field, FieldError, FieldLabel } from '../ui/field';
 import { toast } from 'sonner';
-import { useTogglePasswordVisibity } from '@/hooks/use-toggle-password-visibility';
-import { Eye, EyeOff } from '@hugeicons/core-free-icons';
-import { HugeiconsIcon } from '@hugeicons/react';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { AuthService } from '@/services/auth';
 import { ApiResponse } from '@/lib/types';
 import LoginWithGoogle from './login-with-google';
 import CardWrapper from './card-wrapper';
-
-const signUpSchema = z
-  .object({
-    fullName: z
-      .string({ error: 'Name is required' })
-      .min(3, { error: 'Name must be at least 3 characters long' })
-      .trim(),
-    email: z.email({ error: 'Email must be valid' }).trim().toLowerCase(),
-    password: z
-      .string()
-      .min(8, { error: 'Password must be at least 8 characters long' })
-      .regex(/[A-Z]/, {
-        error: 'Password must contain at least one uppercase letter',
-      })
-      .regex(/[a-z]/, {
-        error: 'Password must contain at least one lowercase letter',
-      })
-      .regex(/[0-9]/, { error: 'Password must contain at least one number' })
-      .regex(/[^A-Za-z0-9]/, {
-        error: 'Password must contain at least one special character',
-      }),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
-  });
+import { PasswordInput } from '../ui/password-input';
+import { signUpSchema } from '@/lib/schemas';
 
 type SignUpPayload = z.infer<typeof signUpSchema>;
 
@@ -54,8 +26,6 @@ const signUpUser = async (payload: SignUpPayload): Promise<ApiResponse> => {
 };
 
 export default function SignUpForm() {
-  const { showPassword, togglePasswordVisibity } = useTogglePasswordVisibity();
-
   const { handleSubmit, control, formState, reset } = useForm<SignUpPayload>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -72,9 +42,22 @@ export default function SignUpForm() {
       toast.success(data.message || 'Signup successful');
       reset();
     },
-    onError: (error: AxiosError<{ message: string }>) => {
+    onError: (
+      error: AxiosError<{
+        message: string;
+        details?: Record<string, string[]>;
+      }>,
+    ) => {
+      const details = error.response?.data?.details;
+      const detailMessages = details ? Object.values(details).flat() : [];
+
       toast.error(
         error.response?.data?.message || 'An error occurred during sign up',
+        {
+          description: detailMessages.length
+            ? detailMessages.join('. ')
+            : 'Please try again later.',
+        },
       );
     },
   });
@@ -147,29 +130,11 @@ export default function SignUpForm() {
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="password">Password</FieldLabel>
-                    <div className="relative">
-                      <Input
-                        {...field}
-                        id="password"
-                        type={showPassword ? 'text' : 'password'}
-                        aria-invalid={fieldState.invalid}
-                        className="pr-10"
-                      />
-                      <button
-                        type="button"
-                        onClick={togglePasswordVisibity}
-                        className="absolute inset-y-0 right-3 flex items-center text-muted-foreground hover:text-foreground"
-                        aria-label={
-                          showPassword ? 'Hide password' : 'Show password'
-                        }
-                      >
-                        {showPassword ? (
-                          <HugeiconsIcon icon={EyeOff} size={20} />
-                        ) : (
-                          <HugeiconsIcon icon={Eye} size={20} />
-                        )}
-                      </button>
-                    </div>
+                    <PasswordInput
+                      {...field}
+                      placeholder="Enter a password"
+                      id="password"
+                    />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
@@ -185,31 +150,11 @@ export default function SignUpForm() {
                     <FieldLabel htmlFor="confirmPassword">
                       Confirm Password
                     </FieldLabel>
-                    <div className="relative">
-                      <Input
-                        {...field}
-                        id="confirmPassword"
-                        type={showPassword ? 'text' : 'password'}
-                        aria-invalid={fieldState.invalid}
-                        className="pr-10"
-                      />
-                      <button
-                        type="button"
-                        onClick={togglePasswordVisibity}
-                        className="absolute inset-y-0 right-3 flex items-center text-muted-foreground hover:text-foreground"
-                        aria-label={
-                          showPassword
-                            ? 'Hide confirm password'
-                            : 'Show confirm password'
-                        }
-                      >
-                        {showPassword ? (
-                          <HugeiconsIcon icon={EyeOff} size={20} />
-                        ) : (
-                          <HugeiconsIcon icon={Eye} size={20} />
-                        )}
-                      </button>
-                    </div>
+                    <PasswordInput
+                      {...field}
+                      placeholder="Confirm your password"
+                      id="confirmPassword"
+                    />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}

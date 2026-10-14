@@ -19,7 +19,7 @@ export default async function page({
   }
 
   return (
-    <main className="h-screen flex items-center justify-center">
+    <main>
       <VerifyEmail token={token} />
     </main>
   );

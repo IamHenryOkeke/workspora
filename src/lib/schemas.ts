@@ -27,6 +27,55 @@ const requiredImageFile = z
     'Only .jpg, .png, and .webp formats are supported',
   );
 
+export const signUpSchema = z
+  .object({
+    fullName: z
+      .string({ error: 'Name is required' })
+      .min(3, { error: 'Name must be at least 3 characters long' })
+      .trim(),
+    email: z.email({ error: 'Email must be valid' }).trim().toLowerCase(),
+    password: z
+      .string()
+      .min(8, { error: 'Password must be at least 8 characters long' })
+      .regex(/[A-Z]/, {
+        error: 'Password must contain at least one uppercase letter',
+      })
+      .regex(/[a-z]/, {
+        error: 'Password must contain at least one lowercase letter',
+      })
+      .regex(/[0-9]/, { error: 'Password must contain at least one number' })
+      .regex(/[^A-Za-z0-9]/, {
+        error: 'Password must contain at least one special character',
+      }),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
+
+export const updatePasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .min(8, { error: 'Password must be at least 8 characters long' })
+      .regex(/[A-Z]/, {
+        error: 'Password must contain at least one uppercase letter',
+      })
+      .regex(/[a-z]/, {
+        error: 'Password must contain at least one lowercase letter',
+      })
+      .regex(/[0-9]/, { error: 'Password must contain at least one number' })
+      .regex(/[^A-Za-z0-9]/, {
+        error: 'Password must contain at least one special character',
+      }),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
+
 export const createOrganisationSchema = z.object({
   name: z
     .string({ error: 'Name is required' })

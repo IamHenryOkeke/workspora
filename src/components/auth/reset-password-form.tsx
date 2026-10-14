@@ -1,7 +1,6 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -9,37 +8,14 @@ import { Controller, useForm } from 'react-hook-form';
 import { Field, FieldError, FieldLabel } from '../ui/field';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { useTogglePasswordVisibity } from '@/hooks/use-toggle-password-visibility';
-import { Eye, EyeOff } from '@hugeicons/core-free-icons';
-import { HugeiconsIcon } from '@hugeicons/react';
 import { useMutation } from '@tanstack/react-query';
 import { ApiResponse } from '@/lib/types';
 import { AuthService } from '@/services/auth';
 import { AxiosError } from 'axios';
 import { useState } from 'react';
 import CardWrapper from './card-wrapper';
-
-const updatePasswordSchema = z
-  .object({
-    password: z
-      .string()
-      .min(8, { error: 'Password must be at least 8 characters long' })
-      .regex(/[A-Z]/, {
-        error: 'Password must contain at least one uppercase letter',
-      })
-      .regex(/[a-z]/, {
-        error: 'Password must contain at least one lowercase letter',
-      })
-      .regex(/[0-9]/, { error: 'Password must contain at least one number' })
-      .regex(/[^A-Za-z0-9]/, {
-        error: 'Password must contain at least one special character',
-      }),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
-  });
+import { updatePasswordSchema } from '@/lib/schemas';
+import { PasswordInput } from '../ui/password-input';
 
 type ResetPasswordPayload = z.infer<typeof updatePasswordSchema>;
 
@@ -54,7 +30,6 @@ const resetPassword = async (payload: {
 export default function ResetPasswordForm({ token }: { token: string }) {
   const router = useRouter();
   const [isRedirecting, setIsRedirecting] = useState(false);
-  const { showPassword, togglePasswordVisibity } = useTogglePasswordVisibity();
 
   const { handleSubmit, control, formState } = useForm<
     z.infer<typeof updatePasswordSchema>
@@ -114,30 +89,13 @@ export default function ResetPasswordForm({ token }: { token: string }) {
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <div className="relative">
-                    <Input
-                      {...field}
-                      id="password"
-                      type={showPassword ? 'text' : 'password'}
-                      aria-invalid={fieldState.invalid}
-                      className="pr-10"
-                      disabled={isSubmitting}
-                    />
-                    <button
-                      type="button"
-                      onClick={togglePasswordVisibity}
-                      className="absolute inset-y-0 right-3 flex items-center text-muted-foreground hover:text-foreground"
-                      aria-label={
-                        showPassword ? 'Hide password' : 'Show password'
-                      }
-                    >
-                      {showPassword ? (
-                        <HugeiconsIcon icon={EyeOff} size={20} />
-                      ) : (
-                        <HugeiconsIcon icon={Eye} size={20} />
-                      )}
-                    </button>
-                  </div>
+                  <PasswordInput
+                    {...field}
+                    placeholder="Enter a password"
+                    id="password"
+                    aria-invalid={fieldState.invalid}
+                    disabled={isSubmitting}
+                  />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
@@ -153,32 +111,13 @@ export default function ResetPasswordForm({ token }: { token: string }) {
                   <FieldLabel htmlFor="confirmPassword">
                     Confirm Password
                   </FieldLabel>
-                  <div className="relative">
-                    <Input
-                      {...field}
-                      id="confirmPassword"
-                      type={showPassword ? 'text' : 'password'}
-                      aria-invalid={fieldState.invalid}
-                      className="pr-10"
-                      disabled={isSubmitting}
-                    />
-                    <button
-                      type="button"
-                      onClick={togglePasswordVisibity}
-                      className="absolute inset-y-0 right-3 flex items-center text-muted-foreground hover:text-foreground"
-                      aria-label={
-                        showPassword
-                          ? 'Hide confirm password'
-                          : 'Show confirm password'
-                      }
-                    >
-                      {showPassword ? (
-                        <HugeiconsIcon icon={EyeOff} size={20} />
-                      ) : (
-                        <HugeiconsIcon icon={Eye} size={20} />
-                      )}
-                    </button>
-                  </div>
+                  <PasswordInput
+                    {...field}
+                    placeholder="Enter a password"
+                    id="confirmPassword"
+                    aria-invalid={fieldState.invalid}
+                    disabled={isSubmitting}
+                  />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
