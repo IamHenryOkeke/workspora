@@ -8,7 +8,7 @@ import { useOrganizationStore } from '@/stores/org-store';
 export function useLogout() {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
-  const { clearAuth } = useAuthStore();
+  const clearAuth = useAuthStore((s) => s.clearAuth);
 
   const mutation = useMutation({
     mutationFn: () => AuthService.logout(),
@@ -17,6 +17,7 @@ export function useLogout() {
       useOrganizationStore.getState().clear();
       queryClient.clear();
       clearAuth();
+      toast.success('Logout Successful');
     },
     onError: () => {
       toast.error('Failed to log out. Please try again.');

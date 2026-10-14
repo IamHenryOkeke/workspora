@@ -17,11 +17,7 @@ import { useAuthStore } from '@/stores/auth-store';
 import LoginWithGoogle from './login-with-google';
 import CardWrapper from './card-wrapper';
 import { PasswordInput } from '../ui/password-input';
-
-const logInSchema = z.object({
-  email: z.email('Invalid email address'),
-  password: z.string().min(3, 'Password must be at least 8 characters'),
-});
+import { logInSchema } from '@/lib/schemas';
 
 type LoginPayload = z.infer<typeof logInSchema>;
 

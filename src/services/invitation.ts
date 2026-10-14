@@ -31,9 +31,9 @@ export const InvitationService = {
     );
     return response;
   },
-  acceptInvitation: async (invitationId: string) => {
+  acceptInvitation: async (invitationId: string, organizationId: string) => {
     const response = await axiosInstance.post(
-      `/invitations/${invitationId}/accept`,
+      `/organizations/${organizationId}/invitations/${invitationId}/accept`,
     );
     return response;
   },

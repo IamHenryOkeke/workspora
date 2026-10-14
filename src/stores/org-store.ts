@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { z } from 'zod';
 import { OrganizationService } from '@/services/organization';
 import { queryClient } from '@/lib/queryClient';
@@ -38,58 +39,80 @@ const organizationsQuery = {
   },
 };
 
-export const useOrganizationStore = create<OrganizationStore>((set, get) => ({
-  organizations: [],
-  hasFetched: false,
+let generation = 0;
 
-  fetchOrganizations: async () => {
-    try {
-      const data = await queryClient.fetchQuery(organizationsQuery);
-      const result = organizationListSchema.safeParse(data);
+export const useOrganizationStore = create<OrganizationStore>()(
+  persist(
+    (set, get) => ({
+      organizations: [],
+      hasFetched: false,
 
-      if (!result.success) {
-        console.error('Invalid organisations payload:', result.error.flatten());
-        return;
-      }
+      fetchOrganizations: async () => {
+        const current = generation;
+        try {
+          const data = await queryClient.fetchQuery(organizationsQuery);
+          if (current !== generation) return;
+          const result = organizationListSchema.safeParse(data);
 
-      set({ organizations: result.data, hasFetched: true });
-    } catch (err) {
-      console.error('Failed to fetch organizations:', err);
-    }
-  },
+          if (!result.success) {
+            console.error(
+              'Invalid organisations payload:',
+              result.error.flatten(),
+            );
+            return;
+          }
 
-  setOrganizations: (payload) => {
-    const result = organizationListSchema.safeParse(payload);
-    if (!result.success) {
-      console.error('Invalid organisations payload:', result.error.flatten());
-      return;
-    }
-    set({ organizations: result.data, hasFetched: true });
-  },
+          console.log(result.data);
 
-  getOrganizationBySlug: (slug) => {
-    return get().organizations.find((org) => org.slug === slug);
-  },
+          set({ organizations: result.data, hasFetched: true });
+        } catch (err) {
+          console.error('Failed to fetch organizations:', err);
+        }
+      },
 
-  updateOrganization: (id, patch) => {
-    set((state) => ({
-      organizations: state.organizations.map((org) =>
-        org.id === id ? { ...org, ...patch } : org,
-      ),
-    }));
-  },
+      setOrganizations: (payload) => {
+        const result = organizationListSchema.safeParse(payload);
+        if (!result.success) {
+          console.error(
+            'Invalid organisations payload:',
+            result.error.flatten(),
+          );
+          return;
+        }
+        set({ organizations: result.data, hasFetched: true });
+      },
 
-  removeOrganization: (id: string) => {
-    set((state) => ({
-      organizations: state.organizations.filter((org) => org.id !== id),
-    }));
-  },
+      getOrganizationBySlug: (slug) => {
+        return get().organizations.find((org) => org.slug === slug);
+      },
 
-  clear: () => {
-    set({ organizations: [], hasFetched: false });
-    // Also drop the cached query so a later fetchOrganizations() call
-    // actually re-fetches rather than immediately restoring the
-    // cleared data from cache.
-    queryClient.removeQueries({ queryKey: organizationsQuery.queryKey });
-  },
-}));
+      updateOrganization: (id, patch) => {
+        set((state) => ({
+          organizations: state.organizations.map((org) =>
+            org.id === id ? { ...org, ...patch } : org,
+          ),
+        }));
+      },
+
+      removeOrganization: (id: string) => {
+        set((state) => ({
+          organizations: state.organizations.filter((org) => org.id !== id),
+        }));
+      },
+
+      clear: () => {
+        generation += 1;
+        set({ organizations: [], hasFetched: false });
+        queryClient.removeQueries({ queryKey: organizationsQuery.queryKey });
+      },
+    }),
+    {
+      name: 'workspora-org-storage',
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        organizations: state.organizations,
+        hasFetched: state.hasFetched,
+      }),
+    },
+  ),
+);

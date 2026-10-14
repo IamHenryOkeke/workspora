@@ -25,11 +25,14 @@ export default function AcceptInvitation({
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const router = useRouter();
-  const { id, organization } = invitation;
+  const { id, organization, organizationId } = invitation;
 
   const { mutate, isPending } = useMutation({
     mutationFn: async () => {
-      const { data } = await InvitationService.acceptInvitation(id);
+      const { data } = await InvitationService.acceptInvitation(
+        id,
+        organizationId,
+      );
       return data;
     },
     onSuccess: async (data) => {
@@ -41,8 +44,6 @@ export default function AcceptInvitation({
         queryClient.invalidateQueries({ queryKey: ['organizations'] }),
       ]);
 
-      // The sidebar reads its own copy of the list from Zustand. Refresh it
-      // before navigating so the new org is there when the sidebar renders.
       await useOrganizationStore.getState().fetchOrganizations();
 
       router.push(`/dashboard/org/${organization.slug}/home`);

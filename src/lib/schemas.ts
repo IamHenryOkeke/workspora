@@ -54,6 +54,15 @@ export const signUpSchema = z
     path: ['confirmPassword'],
   });
 
+export const logInSchema = z.object({
+  email: z.email('Invalid email address'),
+  password: z.string().min(3, 'Password must be at least 8 characters'),
+});
+
+export const forgotPasswordSchema = z.object({
+  email: z.email('Invalid email address'),
+});
+
 export const updatePasswordSchema = z
   .object({
     password: z

@@ -31,9 +31,10 @@ import {
 } from '../ui/dropdown-menu';
 import OrganizationLogo from './organization-logo';
 import { useOrganizationStore } from '@/stores/org-store';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import UserMenu from './user-menu';
 import Search from './search';
+import { useCurrentOrganizationRole } from '@/hooks/use-current-organization-role';
 
 const navLinks = [
   { label: 'Dashboard', segment: 'home', icon: DashboardSquare02Icon },
@@ -42,15 +43,16 @@ const navLinks = [
   { label: 'Invitations', segment: 'invitations', icon: MailAccount01Icon },
 ];
 
+const getNavLinks = (isAdmin: boolean) => {
+  if (isAdmin) return navLinks;
+  return navLinks.filter((link) => link.segment !== 'invitations');
+};
+
 export function AppSidebar() {
+  const { role } = useCurrentOrganizationRole();
   const [searchTerm, setSearchTerm] = useState('');
   const { slug } = useParams<{ slug: string }>();
-  const { fetchOrganizations, organizations, hasFetched } =
-    useOrganizationStore();
-
-  useEffect(() => {
-    fetchOrganizations();
-  }, []);
+  const { organizations, hasFetched } = useOrganizationStore();
 
   const currentOrganization = organizations.find((org) => org.slug === slug);
 
@@ -146,7 +148,7 @@ export function AppSidebar() {
 
       <SidebarContent className="pt-10 px-2 bg-background/50 border-y border-white/10">
         <SidebarMenu className="space-y-4">
-          {navLinks.map((link) => {
+          {getNavLinks(role !== 'MEMBER').map((link) => {
             const href = `/dashboard/org/${slug}/${link.segment}`;
             return (
               <SidebarMenuItem key={link.segment}>

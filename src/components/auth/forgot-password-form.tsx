@@ -15,10 +15,7 @@ import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useState } from 'react';
 import CardWrapper from './card-wrapper';
-
-const forgotPasswordSchema = z.object({
-  email: z.email('Invalid email address'),
-});
+import { forgotPasswordSchema } from '@/lib/schemas';
 
 type ForgotPasswordPayload = z.infer<typeof forgotPasswordSchema>;
 

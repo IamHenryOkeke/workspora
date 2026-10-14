@@ -1,10 +1,12 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { useCanManageOrganization } from '@/hooks/use-can-manage-organization';
 import { useGetOrganization } from '@/hooks/use-get-organization';
 import { usePageTitle } from '@/hooks/use-page-title';
 import { ApiResponse, Invitation, PaginationType } from '@/lib/types';
+import { getEffectiveStatus } from '@/lib/utils';
 import { InvitationService } from '@/services/invitation';
 import { DataTable } from '../../data-table';
 import InviteMemberModal from '../members/invite-member';
@@ -29,6 +31,7 @@ export default function InvitationHome({ slug }: { slug: string }) {
     organization,
     isPending: isOrgPending,
     isNotFound,
+    error: orgError,
   } = useGetOrganization(slug);
   const canManage = useCanManageOrganization();
 
@@ -39,7 +42,7 @@ export default function InvitationHome({ slug }: { slug: string }) {
 
   const {
     isPending: isInvitationsPending,
-    error,
+    error: invitationsError,
     data,
   } = useQuery({
     queryKey: ['invitations', organizationId],
@@ -51,7 +54,14 @@ export default function InvitationHome({ slug }: { slug: string }) {
   const pagination = data?.data?.pagination;
   const count = pagination?.total ?? invitations.length;
 
-  const isPending = isOrgPending || isInvitationsPending;
+  const isPending = isOrgPending || (!!organizationId && isInvitationsPending);
+
+  const error = invitationsError ?? orgError;
+  const hasLoadError = !isPending && Boolean(error) && !data;
+
+  const pendingCount = invitations.filter(
+    (invitation) => getEffectiveStatus(invitation) === 'PENDING',
+  ).length;
 
   if (!isOrgPending && isNotFound) {
     return (
@@ -72,22 +82,41 @@ export default function InvitationHome({ slug }: { slug: string }) {
             {isPending ? (
               <span className="inline-block h-4 w-40 animate-pulse rounded bg-white/5 align-middle" />
             ) : (
-              `${count} ${count === 1 ? 'invitation' : 'invitations'} sent`
+              `${count} ${count === 1 ? 'invitation' : 'invitations'} sent · ${pendingCount} pending`
             )}
           </p>
         </div>
         {canManage && <InviteMemberModal organizationId={organizationId} />}
       </div>
 
-      {!isPending && error && !data && (
+      {hasLoadError && (
         <div className="p-8 text-center">
           <p className="text-sm font-medium text-red-400">
             Couldn&apos;t load invitations
           </p>
+          <p className="mt-1 text-xs text-red-400/70">
+            {(error as AxiosError<{ message: string }>).response?.data
+              ?.message ?? error?.message}
+          </p>
         </div>
       )}
 
-      <DataTable data={invitations} columns={invitationColumns} />
+      {!isPending && !hasLoadError && invitations.length === 0 && (
+        <div className="rounded-md border border-dashed border-white/15 px-6 py-16 text-center">
+          <h3 className="text-base font-semibold text-white">
+            No invitations yet
+          </h3>
+          <p className="mt-1 text-sm text-gray-400">
+            {canManage
+              ? 'Invite someone to this organization to get started.'
+              : 'Invitations sent for this organization will show up here.'}
+          </p>
+        </div>
+      )}
+
+      {(isPending || invitations.length > 0) && !hasLoadError && (
+        <DataTable data={invitations} columns={invitationColumns} />
+      )}
     </div>
   );
 }
