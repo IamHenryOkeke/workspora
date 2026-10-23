@@ -6,11 +6,11 @@ export const InvitationTokenService = {
     return response;
   },
   acceptInvitationByInviteToken: async (token: string) => {
-    const response = await axiosInstance.post(`/invitations/${token}`);
+    const response = await axiosInstance.post(`/invitations/${token}/accept`);
     return response;
   },
   declineInvitationByInviteToken: async (token: string) => {
-    const response = await axiosInstance.post(`/invitations/${token}`);
+    const response = await axiosInstance.post(`/invitations/${token}/decline`);
     return response;
   },
 };

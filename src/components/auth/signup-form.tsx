@@ -19,6 +19,7 @@ import CardWrapper from './card-wrapper';
 import { PasswordInput } from '../ui/password-input';
 import { signUpSchema } from '@/lib/schemas';
 import { extractDetailsMessage } from '@/lib/utils';
+import { useAuthStore } from '@/stores/auth-store';
 
 type SignUpPayload = z.infer<typeof signUpSchema>;
 
@@ -48,6 +49,7 @@ const fetchInvitation = async (
 
 export default function SignUpForm({ inviteToken, next }: SignUpFormProps) {
   const router = useRouter();
+  const { setAuth } = useAuthStore();
 
   const inviteQuery = useQuery({
     queryKey: ['invitation', inviteToken, 'signup'],
@@ -73,6 +75,12 @@ export default function SignUpForm({ inviteToken, next }: SignUpFormProps) {
     mutationFn: signUpUser,
     onSuccess: (data) => {
       toast.success(data.message || 'Signup successful');
+      if (data.accessToken && data.user) {
+        setAuth({
+          user: data.user,
+          accessToken: data.accessToken,
+        });
+      }
       if (inviteToken) {
         const target =
           next && next.startsWith('/') && !next.startsWith('//')
@@ -96,9 +104,7 @@ export default function SignUpForm({ inviteToken, next }: SignUpFormProps) {
       toast.error(
         error.response?.data?.message || 'An error occurred during sign up',
         {
-          description: detailMessages.length
-            ? detailMessages.join('. ')
-            : 'Please try again later.',
+          description: detailMessages.length ? detailMessages.join('. ') : '',
         },
       );
     },

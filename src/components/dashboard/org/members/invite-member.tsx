@@ -135,7 +135,7 @@ export default function InviteMemberModal({
           control={control}
           render={({ field }) => (
             <Field>
-              <FieldLabel htmlFor="role">Status</FieldLabel>
+              <FieldLabel htmlFor="role">Role</FieldLabel>
               <Select value={field.value} onValueChange={field.onChange}>
                 <SelectTrigger id="role" className="w-full">
                   <SelectValue />

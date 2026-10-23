@@ -3,7 +3,7 @@ import axiosInstance from './api';
 export const AuthService = {
   register: async (payload: {
     fullName: string;
-    email: string;
+    email?: string;
     password: string;
     inviteToken?: string;
   }) => {
