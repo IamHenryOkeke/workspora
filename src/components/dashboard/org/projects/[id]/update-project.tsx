@@ -24,18 +24,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { extractDetailsMessage } from '@/lib/utils';
 
 export type UpdateProjectFormType = z.infer<typeof updateProjectSchema>;
 
-export type UpdateProjectPayloadType = UpdateProjectFormType & {
-  organizationId: string;
-};
-
 const updateProject = async (
+  organizationId: string,
   projectId: string,
-  payload: UpdateProjectPayloadType,
+  payload: UpdateProjectFormType,
 ): Promise<ApiResponse> => {
-  const { data } = await ProjectService.updateProject(projectId, payload);
+  const { data } = await ProjectService.updateProject(
+    organizationId,
+    projectId,
+    payload,
+  );
   return data;
 };
 
@@ -50,9 +52,6 @@ export default function UpdateProjectModal({
   const canManage = useCanManageOrganization();
   const queryClient = useQueryClient();
 
-  // `values` (instead of `defaultValues`) keeps the form in sync with the
-  // latest project data, so after a successful update and refetch the form
-  // reflects the new values rather than the ones from first render.
   const { handleSubmit, control, reset } = useForm<UpdateProjectFormType>({
     resolver: zodResolver(updateProjectSchema),
     values: {
@@ -64,7 +63,7 @@ export default function UpdateProjectModal({
 
   const updateProjectMutation = useMutation({
     mutationFn: (payload: UpdateProjectFormType) =>
-      updateProject(project.id, { ...payload, organizationId }),
+      updateProject(organizationId, project.id, payload),
     onSuccess: async (data) => {
       toast.success(data.message || 'Project updated');
       await Promise.all([
@@ -72,13 +71,27 @@ export default function UpdateProjectModal({
           queryKey: ['project', project.id, organizationId],
         }),
         queryClient.invalidateQueries({
+          queryKey: ['organization-recent-project', organizationId],
+        }),
+        queryClient.invalidateQueries({
           queryKey: ['projects', organizationId],
         }),
       ]);
       setOpen(false);
     },
-    onError: (error: AxiosError<{ message: string }>) => {
-      toast.error(error.response?.data?.message || 'Failed to update project');
+    onError: (
+      error: AxiosError<{
+        message: string;
+        details?: Record<string, string[]>;
+      }>,
+    ) => {
+      const details = error.response?.data?.details;
+      const detailMessages = extractDetailsMessage(details);
+      toast.error(error.response?.data?.message || 'Failed to update project', {
+        description: detailMessages.length
+          ? detailMessages.join('. ')
+          : 'Please try again.',
+      });
     },
   });
 

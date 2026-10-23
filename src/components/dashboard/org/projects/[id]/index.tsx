@@ -23,19 +23,24 @@ type ProjectMembersResponse = {
 };
 
 const fetchProject = async (
-  projectId: string,
   organizationId: string,
+  projectId: string,
 ): Promise<ApiResponse<ProjectDetailResponse>> => {
-  const { data } = await ProjectService.getProjectById(projectId, {
+  const { data } = await ProjectService.getProjectById(
     organizationId,
-  });
+    projectId,
+  );
   return data;
 };
 
 const fetchProjectMembers = async (
+  organizationId: string,
   projectId: string,
 ): Promise<ApiResponse<ProjectMembersResponse>> => {
-  const { data } = await ProjectMemberService.getProjectMembers(projectId);
+  const { data } = await ProjectMemberService.getProjectMembers(
+    organizationId,
+    projectId,
+  );
   return data;
 };
 
@@ -62,7 +67,7 @@ export default function ProjectDetailPage({
     data,
   } = useQuery({
     queryKey: ['project', projectId, organizationId],
-    queryFn: () => fetchProject(projectId, organizationId),
+    queryFn: () => fetchProject(organizationId, projectId),
     enabled: !!organizationId,
   });
 
@@ -71,8 +76,8 @@ export default function ProjectDetailPage({
     error: projectMembersError,
     data: projectMembersData,
   } = useQuery({
-    queryKey: ['project-members', projectId],
-    queryFn: () => fetchProjectMembers(projectId),
+    queryKey: ['project-members', projectId, organizationId],
+    queryFn: () => fetchProjectMembers(organizationId, projectId),
     enabled: !!organizationId,
   });
 

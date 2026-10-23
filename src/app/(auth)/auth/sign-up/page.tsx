@@ -6,10 +6,16 @@ export const metadata: Metadata = {
   description: 'Create a new account',
 };
 
-export default function page() {
+type PageProps = {
+  searchParams: Promise<{ invite?: string; next?: string }>;
+};
+
+export default async function page({ searchParams }: PageProps) {
+  const { invite, next } = await searchParams;
+
   return (
     <main className="h-screen flex items-center justify-center">
-      <SignUpForm />
+      <SignUpForm inviteToken={invite} next={next} />
     </main>
   );
 }

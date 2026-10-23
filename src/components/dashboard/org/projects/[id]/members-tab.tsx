@@ -34,10 +34,8 @@ export default function MembersTab({ members }: { members: ProjectMember[] }) {
             <div className="flex gap-2 items-center">
               <RoleBadge role={member.member.role} />
               <RemoveProjectMember
-                memberId={member.id}
-                projectId={member.projectId}
+                member={member}
                 isProjectMember={isProjectMember}
-                targetRole={member.member.role}
               />
             </div>
           </li>

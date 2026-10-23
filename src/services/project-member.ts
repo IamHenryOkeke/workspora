@@ -1,13 +1,20 @@
 import axiosInstance from './api';
+import { ORG } from './organization';
 
 export const ProjectMemberService = {
-  getProjectMembers: async (projectId: string) => {
-    const response = await axiosInstance.get(`/projects/${projectId}/members`);
+  getProjectMembers: async (organizationId: string, projectId: string) => {
+    const response = await axiosInstance.get(
+      `${ORG}/${organizationId}/projects/${projectId}/members`,
+    );
     return response;
   },
-  removeProjectMember: async (projectMemberId: string, projectId: string) => {
+  removeProjectMember: async (
+    id: string,
+    projectId: string,
+    organizationId: string,
+  ) => {
     const response = await axiosInstance.delete(
-      `/projects/${projectId}/members/${projectMemberId}`,
+      `${ORG}/${organizationId}/projects/${projectId}/members/${id}`,
     );
     return response;
   },

@@ -62,8 +62,6 @@ export const useOrganizationStore = create<OrganizationStore>()(
             return;
           }
 
-          console.log(result.data);
-
           set({ organizations: result.data, hasFetched: true });
         } catch (err) {
           console.error('Failed to fetch organizations:', err);

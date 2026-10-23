@@ -1,24 +1,41 @@
 import { CreateProjectPayloadType } from '@/components/dashboard/org/projects/add-project';
 import axiosInstance from './api';
-import { UpdateProjectPayloadType } from '@/components/dashboard/org/projects/[id]/update-project';
+import { ORG } from './organization';
+import { UpdateProjectFormType } from '@/components/dashboard/org/projects/[id]/update-project';
 
 export const ProjectService = {
-  getProjects: async (params = {}) => {
-    const response = await axiosInstance.get('/projects', { params });
+  getProjects: async (organizationId: string, params = {}) => {
+    const response = await axiosInstance.get(
+      `${ORG}/${organizationId}/projects`,
+      { params },
+    );
     return response;
   },
-  getProjectById: async (projectId: string, params = {}) => {
-    const response = await axiosInstance.get(`/projects/${projectId}`, {
-      params,
-    });
+  getProjectById: async (organizationId: string, projectId: string) => {
+    const response = await axiosInstance.get(
+      `${ORG}/${organizationId}/projects/${projectId}`,
+    );
     return response;
   },
-  createProject: async (data: CreateProjectPayloadType) => {
-    const response = await axiosInstance.post('/projects', data);
+  createProject: async (
+    organizationId: string,
+    data: CreateProjectPayloadType,
+  ) => {
+    const response = await axiosInstance.post(
+      `${ORG}/${organizationId}/projects`,
+      data,
+    );
     return response;
   },
-  updateProject: async (projectId: string, data: UpdateProjectPayloadType) => {
-    const response = await axiosInstance.put(`/projects/${projectId}`, data);
+  updateProject: async (
+    organizationId: string,
+    projectId: string,
+    data: UpdateProjectFormType,
+  ) => {
+    const response = await axiosInstance.put(
+      `${ORG}/${organizationId}/projects/${projectId}`,
+      data,
+    );
     return response;
   },
 };

@@ -33,7 +33,7 @@ export const signUpSchema = z
       .string({ error: 'Name is required' })
       .min(3, { error: 'Name must be at least 3 characters long' })
       .trim(),
-    email: z.email({ error: 'Email must be valid' }).trim().toLowerCase(),
+    email: z.string().trim().toLowerCase().optional(),
     password: z
       .string()
       .min(8, { error: 'Password must be at least 8 characters long' })
@@ -48,10 +48,23 @@ export const signUpSchema = z
         error: 'Password must contain at least one special character',
       }),
     confirmPassword: z.string(),
+    inviteToken: z.string().optional(),
   })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
+  .superRefine((data, ctx) => {
+    if (data.password !== data.confirmPassword) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Passwords do not match',
+        path: ['confirmPassword'],
+      });
+    }
+    if (!data.inviteToken && !z.email().safeParse(data.email).success) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Email must be valid',
+        path: ['email'],
+      });
+    }
   });
 
 export const logInSchema = z.object({

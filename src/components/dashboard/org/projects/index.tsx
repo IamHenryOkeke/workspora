@@ -28,8 +28,7 @@ const fetchProjects = async (
   status: ProjectStatusFilter,
   page: number,
 ): Promise<ApiResponse<ProjectsResponse>> => {
-  const { data } = await ProjectService.getProjects({
-    organizationId,
+  const { data } = await ProjectService.getProjects(organizationId, {
     page,
     ...(status !== 'ALL' && { status }),
   });

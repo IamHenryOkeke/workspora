@@ -16,7 +16,7 @@ type Projects = {
 const fetchOrganizationRecentProjects = async (
   organizationId: string,
 ): Promise<ApiResponse<Projects>> => {
-  const { data } = await ProjectService.getProjects({ organizationId });
+  const { data } = await ProjectService.getProjects(organizationId);
   return data;
 };
 
@@ -31,7 +31,7 @@ function ProjectRow({ project }: { project: Project }) {
           <ProjectStatus status={project.status} />
         </div>
         <p className="mt-0.5 text-xs text-gray-500">
-          {project.creator ? `${project.creator.fullName} · ` : ''}
+          {/* {project.creator ? `${project.creator.fullName} · ` : ''} */}
           {timeAgo(project.createdAt)}
         </p>
       </div>

@@ -5,6 +5,7 @@ export const AuthService = {
     fullName: string;
     email: string;
     password: string;
+    inviteToken?: string;
   }) => {
     const response = await axiosInstance.post('/auth/register', payload);
     return response;

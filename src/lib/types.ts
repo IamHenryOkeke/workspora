@@ -128,3 +128,13 @@ export type Invitation = {
   expiresAt: Date;
   createdAt: Date;
 };
+
+export type InvitationByToken = {
+  organization: Organization;
+  invitedBy: User;
+  role: OrganizationRole;
+  maskedEmail: string;
+  status: InvitationStatusType;
+  expiresAt: Date;
+  isInvitee: boolean;
+};

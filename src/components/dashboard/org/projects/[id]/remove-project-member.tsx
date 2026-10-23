@@ -3,7 +3,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { useCanManageOrganization } from '@/hooks/use-can-manage-organization';
-import { OrganizationRole } from '@/lib/types';
+import { OrganizationRole, ProjectMember } from '@/lib/types';
 import { useCurrentOrganizationRole } from '@/hooks/use-current-organization-role';
 import { ProjectMemberService } from '@/services/project-member';
 
@@ -14,25 +14,26 @@ const ROLE_RANK: Record<OrganizationRole, number> = {
 };
 
 type RemoveMemberProps = {
-  memberId: string;
-  projectId: string;
+  member: ProjectMember;
   isProjectMember: boolean;
-  targetRole: OrganizationRole;
 };
 
 export default function RemoveProjectMember({
-  memberId,
-  projectId,
+  member,
   isProjectMember,
-  targetRole,
 }: RemoveMemberProps) {
   const canManage = useCanManageOrganization();
   const currentRole = useCurrentOrganizationRole();
   const queryClient = useQueryClient();
-
+  const {
+    id,
+    projectId,
+    member: { role, organizationId },
+  } = member;
+  console.log(member);
   const { mutate, isPending } = useMutation({
     mutationFn: () =>
-      ProjectMemberService.removeProjectMember(projectId, memberId),
+      ProjectMemberService.removeProjectMember(id, projectId, organizationId),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['project-members', projectId],
@@ -41,7 +42,7 @@ export default function RemoveProjectMember({
   });
 
   const outranksTarget = currentRole.role
-    ? ROLE_RANK[currentRole.role as OrganizationRole] > ROLE_RANK[targetRole]
+    ? ROLE_RANK[currentRole.role as OrganizationRole] > ROLE_RANK[role]
     : false;
 
   const canRemove = canManage && isProjectMember && outranksTarget;

@@ -1,17 +1,18 @@
 import { EditMemberPayload } from '@/components/dashboard/org/members/edit-member';
 import axiosInstance from './api';
+import { ORG } from './organization';
 
 export const MemberService = {
   getMembers: async (organizationId: string, params = {}) => {
     const response = await axiosInstance.get(
-      `/organizations/${organizationId}/members`,
+      `${ORG}/${organizationId}/members`,
       { params },
     );
     return response;
   },
   removeMember: async (organizationId: string, memberId: string) => {
     const response = await axiosInstance.delete(
-      `/organizations/${organizationId}/members/${memberId}/delete`,
+      `${ORG}/${organizationId}/members/${memberId}/delete`,
     );
     return response;
   },
@@ -21,7 +22,7 @@ export const MemberService = {
     payload: EditMemberPayload,
   ) => {
     const response = await axiosInstance.put(
-      `/organizations/${organizationId}/members/${memberId}/update`,
+      `${ORG}/${organizationId}/members/${memberId}/update`,
       payload,
     );
     return response;

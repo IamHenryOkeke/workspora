@@ -177,6 +177,7 @@ export function AppSidebar() {
               href="/dashboard/org"
               label="Back to Orgs"
               icon={ArrowLeft01Icon}
+              exact
             />
           </SidebarMenuItem>
           <SidebarMenuItem>
@@ -192,13 +193,17 @@ export const SidebarLinkItem = ({
   href,
   label,
   icon,
+  exact = false,
 }: {
   href: string;
   label: string;
   icon: React.ComponentProps<typeof HugeiconsIcon>['icon'];
+  exact?: boolean;
 }) => {
   const pathName = usePathname();
-  const isActive = pathName === href;
+  const isActive = exact
+    ? pathName === href
+    : pathName === href || pathName.startsWith(`${href}/`);
 
   return (
     <Link

@@ -69,3 +69,7 @@ export const getEffectiveStatus = ({
   if (status === 'PENDING' && isPastExpiry(expiresAt)) return 'EXPIRED';
   return status;
 };
+
+export const extractDetailsMessage = (details?: Record<string, string[]>) => {
+  return details ? Object.values(details).flat() : [];
+};
