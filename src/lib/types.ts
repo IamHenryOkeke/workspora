@@ -12,6 +12,7 @@ export type User = {
   avatar?: string;
   phoneNumber: string | null;
   hasPassword: boolean;
+  phoneVerifiedAt: Date;
 };
 
 export type OrganizationRole = 'OWNER' | 'ADMIN' | 'MEMBER';
