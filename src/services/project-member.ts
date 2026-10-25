@@ -1,3 +1,4 @@
+import { AssignMembersFormType } from '@/components/dashboard/org/projects/[id]/assign-member';
 import axiosInstance from './api';
 import { ORG } from './organization';
 
@@ -15,6 +16,17 @@ export const ProjectMemberService = {
   ) => {
     const response = await axiosInstance.delete(
       `${ORG}/${organizationId}/projects/${projectId}/members/${id}`,
+    );
+    return response;
+  },
+  createProjectMember: async (
+    projectId: string,
+    organizationId: string,
+    payload: AssignMembersFormType,
+  ) => {
+    const response = await axiosInstance.post(
+      `${ORG}/${organizationId}/projects/${projectId}/members`,
+      payload,
     );
     return response;
   },

@@ -12,35 +12,45 @@ export default function MembersTab({ members }: { members: ProjectMember[] }) {
     (member) => member.member.user.id === userId,
   );
   return (
-    <div className="border border-white/8">
-      <ul className="divide-y divide-white/8">
-        <li className="p-4">Assigned ({members.length})</li>
-        {members.map((member) => (
-          <li
-            key={member.id}
-            className="flex items-center justify-between gap-3 p-4"
-          >
-            <div className="flex items-center gap-3">
-              <UserAvatar
-                name={member.member.user.fullName}
-                email={member.member.user.email}
-                image={member.member.user.avatar}
-                className="h-7 w-7"
-              />
-              <span className="text-sm text-white">
-                {member.member.user.fullName}
-              </span>
-            </div>
-            <div className="flex gap-2 items-center">
-              <RoleBadge role={member.member.role} />
-              <RemoveProjectMember
-                member={member}
-                isProjectMember={isProjectMember}
-              />
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <section>
+      <div className="border border-white/8">
+        <ul className="divide-y divide-white/8">
+          <li className="p-4">Assigned ({members.length})</li>
+          {members.map((member) => (
+            <li
+              key={member.id}
+              className="flex items-center justify-between gap-3 p-4"
+            >
+              <div className="flex items-center gap-3">
+                <UserAvatar
+                  name={member.member.user.fullName}
+                  email={member.member.user.email}
+                  image={member.member.user.avatar}
+                  className="h-7 w-7"
+                />
+                <div className="flex flex-col">
+                  <span className="text-sm text-white">
+                    {member.member.user.fullName}
+                  </span>
+                  <span className="text-xs text-white/30">
+                    {member.member.user.email}
+                  </span>
+                </div>
+              </div>
+              <div className="flex gap-2 items-center">
+                <RoleBadge role={member.member.role} />
+                <RemoveProjectMember
+                  member={member}
+                  isProjectMember={isProjectMember}
+                />
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <p className="text-white/30 text-xs mt-2">
+        All active org members are assigned to this project.
+      </p>
+    </section>
   );
 }

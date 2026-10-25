@@ -18,16 +18,13 @@ import { createProjectSchema } from '@/lib/schemas';
 import { PlusIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 
-type CreateProjectFormType = z.infer<typeof createProjectSchema>;
-
-export type CreateProjectPayloadType = CreateProjectFormType & {
-  organizationId: string;
-};
+export type CreateProjectFormType = z.infer<typeof createProjectSchema>;
 
 const createProject = async (
-  payload: CreateProjectPayloadType,
+  organizationId: string,
+  payload: CreateProjectFormType,
 ): Promise<ApiResponse> => {
-  const { data } = await ProjectService.createProject(payload);
+  const { data } = await ProjectService.createProject(organizationId, payload);
   return data;
 };
 
@@ -50,7 +47,7 @@ export default function CreateProjectModal({
 
   const createProjectMutation = useMutation({
     mutationFn: (payload: CreateProjectFormType) =>
-      createProject({ ...payload, organizationId }),
+      createProject(organizationId, payload),
     onSuccess: async (data) => {
       toast.success(data.message || 'Project created');
       await queryClient.invalidateQueries({ queryKey: ['projects'] });

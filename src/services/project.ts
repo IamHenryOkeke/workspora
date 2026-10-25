@@ -1,4 +1,4 @@
-import { CreateProjectPayloadType } from '@/components/dashboard/org/projects/add-project';
+import { CreateProjectFormType } from '@/components/dashboard/org/projects/add-project';
 import axiosInstance from './api';
 import { ORG } from './organization';
 import { UpdateProjectFormType } from '@/components/dashboard/org/projects/[id]/update-project';
@@ -19,7 +19,7 @@ export const ProjectService = {
   },
   createProject: async (
     organizationId: string,
-    data: CreateProjectPayloadType,
+    data: CreateProjectFormType,
   ) => {
     const response = await axiosInstance.post(
       `${ORG}/${organizationId}/projects`,

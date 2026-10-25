@@ -181,6 +181,10 @@ export const updateProfileSchema = z.object({
     .optional(),
 });
 
+export const assignMembersSchema = z.object({
+  memberIds: z.array(z.string()).min(1, 'Select at least one member'),
+});
+
 export const getChangePasswordSchema = (hasPassword: boolean) =>
   z
     .object({

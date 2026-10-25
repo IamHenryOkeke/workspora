@@ -3,6 +3,7 @@ import { formatDate } from '@/lib/utils';
 import RoleBadge from '@/components/dashboard/role-badge';
 import UserAvatar from '@/components/user-avatar';
 import ProjectStatus from '../project-status';
+import AssignMember from './assign-member';
 
 type OverviewProps = {
   project: Project;
@@ -10,10 +11,9 @@ type OverviewProps = {
 };
 export default function OverviewTab({ project, members }: OverviewProps) {
   const { name, status, createdAt, updatedAt } = project;
-
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <div className="rounded-lg border border-white/8 p-6">
+      <div className="border border-white/8 p-6">
         <h2 className="mb-6 text-xs font-medium tracking-wide text-gray-500">
           DETAILS
         </h2>
@@ -37,10 +37,13 @@ export default function OverviewTab({ project, members }: OverviewProps) {
         </dl>
       </div>
 
-      <div className="rounded-lg border border-white/8 p-6">
-        <h2 className="mb-6 text-xs font-medium tracking-wide text-gray-500">
-          ASSIGNED MEMBERS
-        </h2>
+      <div className="border border-white/8 p-6">
+        <div className="mb-3 flex justify-between items-center">
+          <h2 className="text-xs font-medium tracking-wide text-gray-500">
+            ASSIGNED MEMBERS
+          </h2>
+          <AssignMember project={project} assignedMembers={members} />
+        </div>
         <ul className="space-y-4">
           {members.map((member) => (
             <li

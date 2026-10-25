@@ -6,6 +6,9 @@ import { useCanManageOrganization } from '@/hooks/use-can-manage-organization';
 import { OrganizationRole, ProjectMember } from '@/lib/types';
 import { useCurrentOrganizationRole } from '@/hooks/use-current-organization-role';
 import { ProjectMemberService } from '@/services/project-member';
+import { ConfirmModal } from '@/components/dashboard/modal';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 const ROLE_RANK: Record<OrganizationRole, number> = {
   OWNER: 3,
@@ -22,6 +25,7 @@ export default function RemoveProjectMember({
   member,
   isProjectMember,
 }: RemoveMemberProps) {
+  const [open, setOpen] = useState(false);
   const canManage = useCanManageOrganization();
   const currentRole = useCurrentOrganizationRole();
   const queryClient = useQueryClient();
@@ -30,14 +34,19 @@ export default function RemoveProjectMember({
     projectId,
     member: { role, organizationId },
   } = member;
-  console.log(member);
   const { mutate, isPending } = useMutation({
     mutationFn: () =>
       ProjectMemberService.removeProjectMember(id, projectId, organizationId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['project-members', projectId],
-      });
+    onSuccess: async (res) => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ['project', projectId, organizationId],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['project-members', projectId, organizationId],
+        }),
+        toast.success(res.data.message),
+      ]);
     },
   });
 
@@ -49,8 +58,24 @@ export default function RemoveProjectMember({
   if (!canRemove) return null;
 
   return (
-    <Button variant="ghost" disabled={isPending} onClick={() => mutate()}>
-      {isPending ? 'Removing...' : 'Remove'}
-    </Button>
+    <>
+      <Button
+        variant="destructive"
+        disabled={isPending}
+        onClick={() => setOpen(!open)}
+      >
+        {isPending ? 'Removing...' : 'Remove'}
+      </Button>
+      <ConfirmModal
+        open={open}
+        onOpenChange={setOpen}
+        title="Remove Project Member?"
+        description="You'll need add them again for them to have access."
+        confirmLabel="Remove"
+        variant="destructive"
+        isLoading={isPending}
+        onConfirm={() => mutate()}
+      />
+    </>
   );
 }
