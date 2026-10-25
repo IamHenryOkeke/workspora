@@ -5,7 +5,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { toast } from 'sonner';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
-
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Field, FieldError } from '@/components/ui/field';
@@ -28,7 +27,7 @@ const verifyPhone = async (
   phoneNumber: string,
   code: string,
 ): Promise<ApiResponse> => {
-  const { data } = await UserService.verifyPhone(phoneNumber, code);
+  const { data } = await UserService.verifyPhone({ phoneNumber, code });
   return data;
 };
 

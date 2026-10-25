@@ -21,8 +21,12 @@ export const UserService = {
     });
     return response;
   },
-  getInvitations: async () => {
-    const response = await axiosInstance.get('/users/me/invitations');
+  sendPhoneCode: async (phoneNumber: string) => {
+    const response = await axiosInstance.put('/users/me', phoneNumber);
+    return response;
+  },
+  verifyPhone: async (payload: { phoneNumber: string; code: string }) => {
+    const response = await axiosInstance.put('/users/me', payload);
     return response;
   },
 };
