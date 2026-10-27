@@ -2,7 +2,7 @@
 
 import { createColumnHelper } from '@tanstack/react-table';
 import { DataTableFeatures } from '@/lib/data-table-features';
-import { InvitationStatusType, ReceivedInvitation } from '@/lib/types';
+import { InvitationStatusType, Invitation } from '@/lib/types';
 import { formatDate, getEffectiveStatus } from '@/lib/utils';
 import RoleBadge from '../role-badge';
 import ColumnHeader from '../column-header';
@@ -10,10 +10,7 @@ import OrganizationLogo from '../organization-logo';
 import { STATUS_STYLES } from '../org/invitations/invitation-columns';
 import InvitationActions from './invitation-actions';
 
-const columnHelper = createColumnHelper<
-  DataTableFeatures,
-  ReceivedInvitation
->();
+const columnHelper = createColumnHelper<DataTableFeatures, Invitation>();
 
 function StatusBadge({ status }: { status: InvitationStatusType }) {
   return (
