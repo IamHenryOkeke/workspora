@@ -6,27 +6,30 @@ import { AxiosError } from 'axios';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
-import { ReceivedInvitation } from '@/lib/types';
+import { Invitation } from '@/lib/types';
 import { getEffectiveStatus } from '@/lib/utils';
 import { InvitationService } from '@/services/invitation';
 import { ConfirmModal } from '../modal';
 
 // Only a live, unexpired invite can be declined
-const canDecline = (invitation: ReceivedInvitation) =>
+const canDecline = (invitation: Invitation) =>
   getEffectiveStatus(invitation) === 'PENDING';
 
 export default function DeclineInvitation({
   invitation,
 }: {
-  invitation: ReceivedInvitation;
+  invitation: Invitation;
 }) {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
-  const { id, organization } = invitation;
+  const { id, organization, organizationId } = invitation;
 
   const { mutate, isPending } = useMutation({
     mutationFn: async () => {
-      const { data } = await InvitationService.declineInvitation(id);
+      const { data } = await InvitationService.declineInvitation(
+        id,
+        organizationId,
+      );
       return data;
     },
     onSuccess: async (data) => {
