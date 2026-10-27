@@ -5,6 +5,10 @@ export const UserService = {
     const response = await axiosInstance.get('/users/me');
     return response;
   },
+  getInvitations: async () => {
+    const response = await axiosInstance.get('/users/me/invitations');
+    return response;
+  },
   changePassword: async (payload: {
     currentPassword?: string;
     newPassword: string;
