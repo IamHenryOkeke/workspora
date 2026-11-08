@@ -1,6 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { useGetOrganization } from '@/hooks/use-get-organization';
 import { usePageTitle } from '@/hooks/use-page-title';
 import { useCanManageOrganization } from '@/hooks/use-can-manage-organization';
@@ -29,6 +30,7 @@ export default function MembersHome({ slug }: { slug: string }) {
     organization,
     isPending: isOrgPending,
     isNotFound,
+    error: orgError,
   } = useGetOrganization(slug);
   const canManage = useCanManageOrganization();
 
@@ -39,7 +41,7 @@ export default function MembersHome({ slug }: { slug: string }) {
 
   const {
     isPending: isMembersPending,
-    error,
+    error: membersError,
     data,
   } = useQuery({
     queryKey: ['members', organizationId],
@@ -51,7 +53,10 @@ export default function MembersHome({ slug }: { slug: string }) {
   const pagination = data?.data?.pagination;
   const count = pagination?.total ?? members.length;
 
-  const isPending = isOrgPending || isMembersPending;
+  const isPending = isOrgPending || (!!organizationId && isMembersPending);
+
+  const error = membersError ?? orgError;
+  const hasLoadError = !isPending && Boolean(error) && !data;
 
   if (!isOrgPending && isNotFound) {
     return (
@@ -76,18 +81,31 @@ export default function MembersHome({ slug }: { slug: string }) {
             )}
           </p>
         </div>
-        {canManage && <InviteMemberModal organizationId={organizationId} />}
+        {canManage && !!organizationId && (
+          <InviteMemberModal organizationId={organizationId} />
+        )}
       </div>
 
-      {!isPending && error && !data && (
+      {hasLoadError && (
         <div className="p-8 text-center">
           <p className="text-sm font-medium text-red-400">
             Couldn&apos;t load members
           </p>
+          <p className="mt-1 text-xs text-red-400/70">
+            {(error as AxiosError<{ message: string }>).response?.data
+              ?.message ?? error?.message}
+          </p>
         </div>
       )}
 
-      <DataTable data={members} columns={memberColumns} />
+      {!hasLoadError && (
+        <DataTable
+          data={members}
+          columns={memberColumns}
+          isLoading={isPending}
+          emptyMessage="No members yet."
+        />
+      )}
     </div>
   );
 }

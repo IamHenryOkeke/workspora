@@ -31,6 +31,8 @@ export default function InvitationsHome() {
 
   const invitations = data?.data?.invitations ?? EMPTY_INVITATIONS;
 
+  const hasLoadError = !isPending && Boolean(error) && !data;
+
   const pendingCount = invitations.filter(
     (invitation) => getEffectiveStatus(invitation) === 'PENDING',
   ).length;
@@ -53,24 +55,16 @@ export default function InvitationsHome() {
         </p>
       </div>
 
-      {isPending && (
-        <div className="flex flex-col gap-2">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-14 animate-pulse rounded-md bg-white/5" />
-          ))}
-        </div>
-      )}
-
-      {!isPending && error && !data && (
+      {hasLoadError && (
         <div className="rounded-md border border-red-500/20 bg-red-500/5 p-8 text-center">
           <p className="text-sm font-medium text-red-400">
             Couldn&apos;t load your invitations
           </p>
-          <p className="mt-1 text-xs text-red-400/70">{error.message}</p>
+          <p className="mt-1 text-xs text-red-400/70">{error?.message}</p>
         </div>
       )}
 
-      {!isPending && !error && invitations.length === 0 && (
+      {!isPending && !hasLoadError && invitations.length === 0 && (
         <div className="rounded-md border border-dashed border-white/15 px-6 py-16 text-center">
           <h3 className="text-base font-semibold text-white">
             No invitations yet
@@ -81,8 +75,12 @@ export default function InvitationsHome() {
         </div>
       )}
 
-      {!isPending && invitations.length > 0 && (
-        <DataTable data={invitations} columns={invitationColumns} />
+      {(isPending || invitations.length > 0) && !hasLoadError && (
+        <DataTable
+          data={invitations}
+          columns={invitationColumns}
+          isLoading={isPending}
+        />
       )}
     </div>
   );
