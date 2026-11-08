@@ -86,7 +86,9 @@ export default function InvitationHome({ slug }: { slug: string }) {
             )}
           </p>
         </div>
-        {canManage && <InviteMemberModal organizationId={organizationId} />}
+        {canManage && !!organizationId && (
+          <InviteMemberModal organizationId={organizationId} />
+        )}
       </div>
 
       {hasLoadError && (
@@ -115,7 +117,11 @@ export default function InvitationHome({ slug }: { slug: string }) {
       )}
 
       {(isPending || invitations.length > 0) && !hasLoadError && (
-        <DataTable data={invitations} columns={invitationColumns} />
+        <DataTable
+          data={invitations}
+          columns={invitationColumns}
+          isLoading={isPending}
+        />
       )}
     </div>
   );
