@@ -6,7 +6,10 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuButton,
   SidebarMenuItem,
+  SidebarRail,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import {
   DashboardSquare02Icon,
@@ -53,6 +56,7 @@ export function AppSidebar() {
   const [searchTerm, setSearchTerm] = useState('');
   const { slug } = useParams<{ slug: string }>();
   const { organizations, hasFetched } = useOrganizationStore();
+  const { isMobile, setOpenMobile, state, toggleSidebar } = useSidebar();
 
   const currentOrganization = organizations.find((org) => org.slug === slug);
 
@@ -61,33 +65,41 @@ export function AppSidebar() {
     if (!term) return organizations;
     return organizations.filter((org) => org.name.toLowerCase().includes(term));
   }, [organizations, searchTerm]);
+
+  const closeMobile = () => {
+    if (isMobile) setOpenMobile(false);
+  };
+
   return (
-    <Sidebar>
+    <Sidebar collapsible="icon">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button
-                  type="button"
-                  className="flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-white hover:bg-gray-700/50"
+                <SidebarMenuButton
+                  size="lg"
+                  tooltip={currentOrganization?.name || 'Select organization'}
+                  className="text-white hover:bg-gray-700/50 hover:text-white"
                 >
-                  <div className="flex min-w-0 items-center gap-2">
-                    <OrganizationLogo
-                      name={currentOrganization?.name || 'Select organization'}
-                      logo={currentOrganization?.logo}
-                      size={34}
-                    />
-                    <span className="truncate">
-                      {!hasFetched
-                        ? 'Loading...'
-                        : currentOrganization?.name || 'Select organization'}
-                    </span>
-                  </div>
+                  <OrganizationLogo
+                    name={currentOrganization?.name || 'Select organization'}
+                    logo={currentOrganization?.logo}
+                    size={32}
+                  />
+                  <span className="flex-1 truncate font-medium">
+                    {!hasFetched
+                      ? 'Loading...'
+                      : currentOrganization?.name || 'Select organization'}
+                  </span>
                   <HugeiconsIcon icon={ArrowDown01Icon} className="shrink-0" />
-                </button>
+                </SidebarMenuButton>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-64 pt-1.5 space-y-2 border border-white/10">
+              <DropdownMenuContent
+                side={isMobile ? 'bottom' : 'right'}
+                align="start"
+                className="w-64 pt-1.5 space-y-2 border border-white/10"
+              >
                 <div
                   onKeyDown={(e) => {
                     if (e.key !== 'Escape' && e.key !== 'ArrowDown')
@@ -103,6 +115,7 @@ export function AppSidebar() {
                   <DropdownMenuItem key={org.id} asChild>
                     <Link
                       href={`/dashboard/org/${org.slug}/home`}
+                      onClick={closeMobile}
                       className="flex w-full items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-sm font-medium text-white"
                     >
                       <div
@@ -134,6 +147,7 @@ export function AppSidebar() {
                 <DropdownMenuItem asChild>
                   <Link
                     href="/dashboard/create-org"
+                    onClick={closeMobile}
                     className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-medium text-white"
                   >
                     <HugeiconsIcon icon={PlusIcon} size={16} />
@@ -146,8 +160,8 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarHeader>
 
-      <SidebarContent className="pt-10 px-2 bg-background/50 border-y border-white/10">
-        <SidebarMenu className="space-y-4">
+      <SidebarContent className="pt-6 px-2 bg-background/50 border-y border-white/10">
+        <SidebarMenu className="gap-2">
           {getNavLinks(role !== 'MEMBER').map((link) => {
             const href = `/dashboard/org/${slug}/${link.segment}`;
             return (
@@ -156,6 +170,7 @@ export function AppSidebar() {
                   href={href}
                   label={link.label}
                   icon={link.icon}
+                  onNavigate={closeMobile}
                 />
               </SidebarMenuItem>
             );
@@ -164,12 +179,13 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="px-2 bg-background/50">
-        <SidebarMenu className="space-y-3">
+        <SidebarMenu className="gap-2">
           <SidebarMenuItem>
             <SidebarLinkItem
               href={`/dashboard/org/${slug}/settings`}
               label="Settings"
               icon={Settings02Icon}
+              onNavigate={closeMobile}
             />
           </SidebarMenuItem>
           <SidebarMenuItem>
@@ -178,6 +194,7 @@ export function AppSidebar() {
               label="Back to Orgs"
               icon={ArrowLeft01Icon}
               exact
+              onNavigate={closeMobile}
             />
           </SidebarMenuItem>
           <SidebarMenuItem>
@@ -185,6 +202,24 @@ export function AppSidebar() {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
+
+      {!isMobile && (
+        <button
+          type="button"
+          onClick={toggleSidebar}
+          aria-label="Toggle sidebar"
+          className="absolute -right-3 top-18 z-30 flex size-6 items-center justify-center rounded-full border border-white/10 bg-background text-white/70 shadow-sm transition-colors hover:bg-gray-700 hover:text-white"
+        >
+          <HugeiconsIcon
+            icon={ArrowLeft01Icon}
+            size={14}
+            className={`transition-transform ${
+              state === 'collapsed' ? 'rotate-180' : ''
+            }`}
+          />
+        </button>
+      )}
+      <SidebarRail />
     </Sidebar>
   );
 }
@@ -194,11 +229,13 @@ export const SidebarLinkItem = ({
   label,
   icon,
   exact = false,
+  onNavigate,
 }: {
   href: string;
   label: string;
   icon: React.ComponentProps<typeof HugeiconsIcon>['icon'];
   exact?: boolean;
+  onNavigate?: () => void;
 }) => {
   const pathName = usePathname();
   const isActive = exact
@@ -206,17 +243,20 @@ export const SidebarLinkItem = ({
     : pathName === href || pathName.startsWith(`${href}/`);
 
   return (
-    <Link
-      href={href}
-      aria-current={isActive ? 'page' : undefined}
-      className={`flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium ${
-        isActive
-          ? 'text-accent border-l-2 border-accent bg-accent/20'
-          : 'hover:bg-gray-700/50 text-white'
-      }`}
+    <SidebarMenuButton
+      asChild
+      isActive={isActive}
+      tooltip={label}
+      className="h-10 text-white hover:bg-gray-700/50 hover:text-white data-[active=true]:border-l-2 data-[active=true]:border-accent data-[active=true]:bg-accent/20 data-[active=true]:text-accent"
     >
-      <HugeiconsIcon icon={icon} />
-      <span>{label}</span>
-    </Link>
+      <Link
+        href={href}
+        onClick={onNavigate}
+        aria-current={isActive ? 'page' : undefined}
+      >
+        <HugeiconsIcon icon={icon} />
+        <span>{label}</span>
+      </Link>
+    </SidebarMenuButton>
   );
 };

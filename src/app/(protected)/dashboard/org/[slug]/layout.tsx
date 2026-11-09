@@ -1,5 +1,6 @@
 import { AppSidebar } from '@/components/dashboard/app-sidebar';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { DashboardHeader } from '@/components/dashboard/dashboard-header';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 
 export default function OrganizationLayout({
   children,
@@ -9,10 +10,10 @@ export default function OrganizationLayout({
   return (
     <SidebarProvider>
       <AppSidebar />
-      <main>
-        <SidebarTrigger />
-        <div className="py-4 px-10">{children}</div>
-      </main>
+      <SidebarInset>
+        <DashboardHeader />
+        <div className="flex-1 px-4 py-4 md:px-10">{children}</div>
+      </SidebarInset>
     </SidebarProvider>
   );
 }

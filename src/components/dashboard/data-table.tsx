@@ -140,109 +140,181 @@ export function DataTable<TData extends RowData>({
   const columnCount = columns.length + (showRowNumbers ? 1 : 0);
 
   return (
-    <div className={cn('rounded-md border', className)}>
-      <Table>
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="hover:bg-transparent">
-              {headerGroup.headers.map((header) => {
-                const canSort = header.column.getCanSort();
-                const sorted = header.column.getIsSorted(); // false | "asc" | "desc"
+    <>
+      <div className={cn('hidden rounded-md border md:block', className)}>
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id} className="hover:bg-transparent">
+                {headerGroup.headers.map((header) => {
+                  const canSort = header.column.getCanSort();
+                  const sorted = header.column.getIsSorted(); // false | "asc" | "desc"
 
-                return (
-                  <TableHead
-                    key={header.id}
-                    colSpan={header.colSpan}
-                    aria-sort={
-                      sorted === 'asc'
-                        ? 'ascending'
-                        : sorted === 'desc'
-                          ? 'descending'
-                          : canSort
-                            ? 'none'
-                            : undefined
-                    }
-                  >
-                    {header.isPlaceholder ? null : canSort ? (
-                      <button
-                        type="button"
-                        onClick={header.column.getToggleSortingHandler()}
-                        className="-ml-2 inline-flex items-center gap-1.5 rounded-md px-2 py-1 transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-                      >
+                  return (
+                    <TableHead
+                      key={header.id}
+                      colSpan={header.colSpan}
+                      aria-sort={
+                        sorted === 'asc'
+                          ? 'ascending'
+                          : sorted === 'desc'
+                            ? 'descending'
+                            : canSort
+                              ? 'none'
+                              : undefined
+                      }
+                    >
+                      {header.isPlaceholder ? null : canSort ? (
+                        <button
+                          type="button"
+                          onClick={header.column.getToggleSortingHandler()}
+                          className="-ml-2 inline-flex items-center gap-1.5 rounded-md px-2 py-1 transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                        >
+                          <table.FlexRender header={header} />
+                          {sorted === 'asc' ? (
+                            <HugeiconsIcon
+                              icon={ArrowUp02Icon}
+                              aria-hidden
+                              className="size-3.5"
+                            />
+                          ) : sorted === 'desc' ? (
+                            <HugeiconsIcon
+                              icon={ArrowDown02Icon}
+                              aria-hidden
+                              className="size-3.5"
+                            />
+                          ) : (
+                            <HugeiconsIcon
+                              icon={ArrowUpDownIcon}
+                              aria-hidden
+                              className="size-3.5 text-muted-foreground"
+                            />
+                          )}
+                        </button>
+                      ) : (
                         <table.FlexRender header={header} />
-                        {sorted === 'asc' ? (
-                          <HugeiconsIcon
-                            icon={ArrowUp02Icon}
-                            aria-hidden
-                            className="size-3.5"
-                          />
-                        ) : sorted === 'desc' ? (
-                          <HugeiconsIcon
-                            icon={ArrowDown02Icon}
-                            aria-hidden
-                            className="size-3.5"
-                          />
-                        ) : (
-                          <HugeiconsIcon
-                            icon={ArrowUpDownIcon}
-                            aria-hidden
-                            className="size-3.5 text-muted-foreground"
-                          />
-                        )}
-                      </button>
-                    ) : (
-                      <table.FlexRender header={header} />
-                    )}
-                  </TableHead>
-                );
-              })}
-            </TableRow>
-          ))}
-        </TableHeader>
+                      )}
+                    </TableHead>
+                  );
+                })}
+              </TableRow>
+            ))}
+          </TableHeader>
 
-        <TableBody>
-          {isLoading ? (
-            Array.from({ length: skeletonRows }).map((_, i) => (
-              <TableRow key={`skeleton-${i}`} className="hover:bg-transparent">
-                {Array.from({ length: columnCount }).map((_, j) => (
-                  <TableCell key={`skeleton-cell-${i}-${j}`}>
-                    <div className="h-4 animate-pulse rounded bg-muted" />
-                  </TableCell>
-                ))}
+          <TableBody>
+            {isLoading ? (
+              Array.from({ length: skeletonRows }).map((_, i) => (
+                <TableRow
+                  key={`skeleton-${i}`}
+                  className="hover:bg-transparent"
+                >
+                  {Array.from({ length: columnCount }).map((_, j) => (
+                    <TableCell key={`skeleton-cell-${i}-${j}`}>
+                      <div className="h-4 animate-pulse rounded bg-muted" />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : isError ? (
+              <TableRow className="hover:bg-transparent">
+                <TableCell
+                  colSpan={columnCount}
+                  className="h-24 text-center text-destructive"
+                >
+                  {errorMessage}
+                </TableCell>
               </TableRow>
-            ))
-          ) : isError ? (
-            <TableRow className="hover:bg-transparent">
-              <TableCell
-                colSpan={columnCount}
-                className="h-24 text-center text-destructive"
-              >
-                {errorMessage}
-              </TableCell>
-            </TableRow>
-          ) : rows.length ? (
-            rows.map((row) => (
-              <TableRow key={row.id}>
-                {row.getAllCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    <table.FlexRender cell={cell} />
-                  </TableCell>
-                ))}
+            ) : rows.length ? (
+              rows.map((row) => (
+                <TableRow key={row.id}>
+                  {row.getAllCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      <table.FlexRender cell={cell} />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow className="hover:bg-transparent">
+                <TableCell
+                  colSpan={columnCount}
+                  className="h-24 text-center text-muted-foreground"
+                >
+                  {emptyMessage}
+                </TableCell>
               </TableRow>
-            ))
-          ) : (
-            <TableRow className="hover:bg-transparent">
-              <TableCell
-                colSpan={columnCount}
-                className="h-24 text-center text-muted-foreground"
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      <div className="space-y-2 md:hidden">
+        {isLoading ? (
+          Array.from({ length: skeletonRows }).map((_, i) => (
+            <div
+              key={`card-skeleton-${i}`}
+              className="space-y-2 rounded-md border bg-white/4 p-3"
+            >
+              <div className="h-4 w-2/3 animate-pulse rounded bg-muted" />
+              <div className="h-3 w-1/2 animate-pulse rounded bg-muted" />
+              <div className="h-3 w-1/3 animate-pulse rounded bg-muted" />
+            </div>
+          ))
+        ) : isError ? (
+          <div className="rounded-md border bg-white/4 p-6 text-center text-sm text-destructive">
+            {errorMessage}
+          </div>
+        ) : rows.length ? (
+          rows.map((row) => {
+            const [first, ...rest] = row.getAllCells();
+            const labeled = rest.filter(
+              (cell) => typeof cell.column.columnDef.header === 'string',
+            );
+            const actions = rest.filter(
+              (cell) => typeof cell.column.columnDef.header !== 'string',
+            );
+
+            return (
+              <div
+                key={row.id}
+                className="space-y-2.5 rounded-md border bg-white/4 p-3 text-sm"
               >
-                {emptyMessage}
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </div>
+                {first && (
+                  <div className="font-medium">
+                    <table.FlexRender cell={first} />
+                  </div>
+                )}
+                {labeled.length > 0 && (
+                  <div className="grid grid-cols-2 gap-x-3 gap-y-2">
+                    {labeled.map((cell) => (
+                      <div key={cell.id} className="min-w-0">
+                        <p className="text-xs text-muted-foreground">
+                          {cell.column.columnDef.header as string}
+                        </p>
+                        <div className="truncate">
+                          <table.FlexRender cell={cell} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {actions.length > 0 && (
+                  <div className="flex items-center justify-end gap-2 border-t pt-2">
+                    {actions.map((cell) => (
+                      <table.FlexRender key={cell.id} cell={cell} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })
+        ) : (
+          <div className="rounded-md border bg-white/4 p-6 text-center text-sm text-muted-foreground">
+            {emptyMessage}
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 

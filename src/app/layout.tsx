@@ -3,6 +3,7 @@ import { Outfit } from 'next/font/google';
 import { Toaster } from '@/components/ui/sonner';
 import QueryProvider from '@/providers/query-provider';
 import './globals.css';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 const outfit = Outfit({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -19,7 +20,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={outfit.variable + ' scroll-smooth'}>
       <body className="antialiased">
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          <TooltipProvider>{children}</TooltipProvider>
+        </QueryProvider>
         <Toaster duration={2000} position="top-right" />
       </body>
     </html>
