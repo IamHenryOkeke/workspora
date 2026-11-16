@@ -56,9 +56,9 @@ function Header({ count }: { count: number }) {
 
   return (
     <div className="mb-6 sm:mb-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div className="flex items-start justify-between gap-3 sm:gap-4">
         <div className="min-w-0">
-          <h1 className="text-2xl font-bold text-white sm:text-3xl">
+          <h1 className="text-xl font-bold text-white sm:text-3xl">
             Your organizations
           </h1>
           <p className="mt-1 text-sm text-gray-500">
@@ -66,26 +66,28 @@ function Header({ count }: { count: number }) {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 sm:shrink-0 sm:justify-end">
+        <div className="flex shrink-0 items-center gap-2">
           <Link
             href="/dashboard/account"
-            className="flex shrink-0 items-center gap-2 rounded-lg border border-white/10 px-3 py-2 text-sm font-medium text-gray-300 transition hover:border-white/20 hover:bg-white/5 hover:text-white sm:px-3.5"
+            aria-label="Account"
+            className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-white/10 text-sm font-medium text-gray-300 transition hover:border-white/20 hover:bg-white/5 hover:text-white sm:size-auto sm:gap-2 sm:px-3.5 sm:py-2"
           >
             <HugeiconsIcon icon={UserIcon} size={16} />
-            Account
+            <span className="hidden sm:inline">Account</span>
           </Link>
           <Link
             href="/dashboard/invitations"
-            className="flex shrink-0 items-center gap-2 rounded-lg border border-white/10 px-3 py-2 text-sm font-medium text-gray-300 transition hover:border-white/20 hover:bg-white/5 hover:text-white sm:px-3.5"
+            aria-label="Invitations"
+            className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-white/10 text-sm font-medium text-gray-300 transition hover:border-white/20 hover:bg-white/5 hover:text-white sm:size-auto sm:gap-2 sm:px-3.5 sm:py-2"
           >
             <HugeiconsIcon icon={MailAccount01Icon} size={16} />
-            Invitations
+            <span className="hidden sm:inline">Invitations</span>
           </Link>
           <LogoutButton />
         </div>
       </div>
 
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+      <div className="mt-5 flex items-center gap-2 sm:mt-6 sm:gap-3">
         <div className="min-w-0 flex-1">
           <Search
             handleSearch={handleSearch}
@@ -95,10 +97,11 @@ function Header({ count }: { count: number }) {
         </div>
         <Link
           href="/dashboard/create-org"
-          className="flex w-full shrink-0 items-center justify-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-accent/25 transition hover:bg-accent/80 hover:-translate-y-px active:translate-y-0 sm:w-auto"
+          aria-label="New organization"
+          className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-accent text-sm font-semibold text-white shadow-md shadow-accent/25 transition hover:bg-accent/80 hover:-translate-y-px active:translate-y-0 sm:size-auto sm:gap-2 sm:px-4 sm:py-2.5"
         >
-          <HugeiconsIcon icon={PlusSignIcon} size={16} />
-          New organization
+          <HugeiconsIcon icon={PlusSignIcon} size={18} />
+          <span className="hidden sm:inline">New organization</span>
         </Link>
       </div>
     </div>

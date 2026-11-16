@@ -12,11 +12,12 @@ export default function LogoutButton() {
     <>
       <button
         type="button"
+        aria-label="Log out"
         onClick={() => setOpen(true)}
-        className="flex shrink-0 items-center gap-2 rounded-lg border border-white/10 px-3.5 py-2 text-sm font-medium text-gray-300 transition hover:border-red-500/30 hover:bg-red-500/10 hover:text-red-400"
+        className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-white/10 text-sm font-medium text-gray-300 transition hover:border-red-500/30 hover:bg-red-500/10 hover:text-red-400 sm:size-auto sm:gap-2 sm:px-3.5 sm:py-2"
       >
         <HugeiconsIcon icon={Logout05Icon} size={16} />
-        Log out
+        <span className="hidden sm:inline">Log out</span>
       </button>
 
       <ConfirmModal
