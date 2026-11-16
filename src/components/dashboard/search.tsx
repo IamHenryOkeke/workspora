@@ -25,10 +25,8 @@ export default function Search({
   }, 700);
 
   return (
-    <div className="w-full max-w-xs">
-      <InputGroup
-        className={className ? ` ${className}` : 'h-20 w-full lg:h-11'}
-      >
+    <div className="w-full sm:max-w-xs">
+      <InputGroup className={className ? ` ${className}` : 'h-11 w-full'}>
         <InputGroupInput
           onChange={(e) => onSearch(e.target.value)}
           data-slot="input"
