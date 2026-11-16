@@ -5,7 +5,6 @@ import { UserService } from '@/services/user';
 import { User, ApiResponse } from '@/lib/types';
 import ProfileForm from './profile-form';
 import ChangePasswordForm from './change-password-form';
-import LogoutButton from '@/components/logout-button';
 import BackButton from '../org/back-button';
 
 export const ACCOUNT_QUERY_KEY = ['me'] as const;
@@ -25,9 +24,8 @@ export default function AccountHome() {
 
   return (
     <div className="pb-12">
-      <div className="mb-6 flex items-center justify-between gap-4">
+      <div className="mb-6 flex items-center gap-4">
         <BackButton title="Go back" />
-        <LogoutButton />
       </div>
 
       <div className="mb-8">
