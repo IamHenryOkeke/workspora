@@ -24,7 +24,7 @@ export default function AccountHome() {
   const user = data?.data?.user;
 
   return (
-    <div className="mx-auto max-w-3xl px-6 pb-12">
+    <div className="pb-12">
       <div className="mb-6 flex items-center justify-between gap-4">
         <BackButton title="Go back" />
         <LogoutButton />
