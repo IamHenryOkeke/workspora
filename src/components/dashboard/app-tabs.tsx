@@ -41,7 +41,7 @@ export default function AppTabs({
       <TabsList className="bg-black">
         {tabs.map((tab) => (
           <TabsTrigger
-            className="data-active:bg-accent/10 data-active:text-accent data-active:border data-active:border-accent/50 p-4 data-active:hover:text-accent"
+            className="text-xs lg:text-sm data-active:bg-accent/10 data-active:text-accent data-active:border data-active:border-accent/50 p-1.5 lg:p-3.5 data-active:hover:text-accent"
             key={tab.value}
             value={tab.value}
           >

@@ -9,7 +9,10 @@ export default async function page({
   const { slug, id } = await params;
   return (
     <main className="w-full max-w-5xl p-4">
-      <BackButton title="Back to projects" />
+      <BackButton
+        title="Back to projects"
+        href={`/dashboard/org/${slug}/projects`}
+      />
       <ProjectDetailPage projectId={id} slug={slug} />
     </main>
   );

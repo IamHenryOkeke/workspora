@@ -12,7 +12,7 @@ export default async function page({
   const status = (await searchParams).status as ProjectStatusFilter;
   const page = (await searchParams).page || 1;
   return (
-    <main className="w-full max-w-5xl p-4">
+    <main className="w-full max-w-5xl py-4 px-4 lg:px-10">
       <Projects status={status || 'ALL'} slug={slug} page={Number(page)} />
     </main>
   );
