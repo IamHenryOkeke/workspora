@@ -26,8 +26,8 @@ function StatCard({
   sublabel: string;
 }) {
   return (
-    <div className="rounded-xl border border-white/8 bg-white/3 p-6">
-      <p className="text-3xl font-bold text-white">{value}</p>
+    <div className="rounded-xl border border-white/8 bg-white/3 p-4 sm:p-6">
+      <p className="text-2xl font-bold text-white sm:text-3xl">{value}</p>
       <p className="mt-1 text-sm font-medium text-gray-300">{label}</p>
       <p className="mt-0.5 text-xs text-gray-500">{sublabel}</p>
     </div>
@@ -53,10 +53,10 @@ export default function OrganizationStatsSection({
 
   if (isPending) {
     return (
-      <div className="mt-4 grid gap-3 sm:grid-cols-3">
-        <div className="h-32 animate-pulse rounded-xl border border-white/8 bg-white/3" />
-        <div className="h-32 animate-pulse rounded-xl border border-white/8 bg-white/3" />
-        <div className="h-32 animate-pulse rounded-xl border border-white/8 bg-white/3" />
+      <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <div className="h-28 animate-pulse rounded-xl border border-white/8 bg-white/3 sm:h-32" />
+        <div className="h-28 animate-pulse rounded-xl border border-white/8 bg-white/3 sm:h-32" />
+        <div className="h-28 animate-pulse rounded-xl border border-white/8 bg-white/3 sm:h-32" />
       </div>
     );
   }
@@ -70,7 +70,7 @@ export default function OrganizationStatsSection({
   }
 
   return (
-    <div className="mt-4 grid gap-3 sm:grid-cols-3">
+    <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
       <StatCard
         value={stats.activeProjects}
         label="Active projects"

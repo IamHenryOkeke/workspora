@@ -8,7 +8,7 @@ export default async function page({
   const { slug } = await params;
 
   return (
-    <main className="min-w-5xl p-4">
+    <main className="w-full max-w-5xl p-4">
       <SettingsHome slug={slug} />
     </main>
   );

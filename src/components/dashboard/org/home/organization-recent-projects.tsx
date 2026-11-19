@@ -25,10 +25,12 @@ function ProjectRow({ project }: { project: Project }) {
     <div className="flex items-start gap-3 p-4">
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
-          <p className="truncate text-sm font-medium text-gray-200">
+          <p className="min-w-0 truncate text-sm font-medium text-gray-200">
             {project.name}
           </p>
-          <ProjectStatus status={project.status} />
+          <div className="shrink-0">
+            <ProjectStatus status={project.status} />
+          </div>
         </div>
         <p className="mt-0.5 text-xs text-gray-500">
           {/* {project.creator ? `${project.creator.fullName} · ` : ''} */}
@@ -58,7 +60,7 @@ export default function OrganizationRecentProjects({
 
   if (isPending) {
     return (
-      <div className="border border-white/8 bg-white/3 divide-y divide-white/8">
+      <div className="min-w-0 border border-white/8 bg-white/3 divide-y divide-white/8">
         <p className="text-sm font-medium text-white p-4">Recent projects</p>
         {Array.from({ length: 4 }).map((_, i) => (
           <div key={i} className="flex items-start gap-3 p-4">
@@ -75,7 +77,7 @@ export default function OrganizationRecentProjects({
 
   if (error || !projects) {
     return (
-      <div className="border border-red-500/20 bg-red-500/5 divide-y divide-white/8">
+      <div className="min-w-0 border border-red-500/20 bg-red-500/5 divide-y divide-white/8">
         <p className="text-sm font-medium text-white p-4">Recent projects</p>
         <p className="text-xs text-red-400/70 p-4">
           Couldn&apos;t load recent projects
@@ -86,7 +88,7 @@ export default function OrganizationRecentProjects({
 
   if (projects.length === 0) {
     return (
-      <div className="border border-white/8 bg-white/3 divide-y divide-white/8">
+      <div className="min-w-0 border border-white/8 bg-white/3 divide-y divide-white/8">
         <p className="text-sm font-medium text-white p-4">Recent projects</p>
         <p className="text-xs text-gray-500 p-4">No recent projects yet</p>
       </div>
@@ -94,7 +96,7 @@ export default function OrganizationRecentProjects({
   }
 
   return (
-    <div className="border border-white/8 bg-white/3 divide-y divide-white/8">
+    <div className="min-w-0 border border-white/8 bg-white/3 divide-y divide-white/8">
       <div className="flex items-center justify-between text-sm p-4">
         <p className="font-medium text-white">Recent projects</p>
         <Link

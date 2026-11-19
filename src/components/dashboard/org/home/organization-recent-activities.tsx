@@ -52,7 +52,7 @@ function ActivityRow({ activity }: { activity: OrganizationActivity }) {
         <HugeiconsIcon icon={icon} size={14} />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-sm text-gray-200">{activity.text}</p>
+        <p className="wrap-break-word text-sm text-gray-200">{activity.text}</p>
         <p className="mt-0.5 text-xs text-gray-500">
           {timeAgo(activity.timestamp)}
         </p>
@@ -80,7 +80,7 @@ export default function OrganizationRecentActivities({
 
   if (isPending) {
     return (
-      <div className="border border-white/8 bg-white/3 divide-y divide-white/8">
+      <div className="min-w-0 border border-white/8 bg-white/3 divide-y divide-white/8">
         <p className="text-sm font-medium text-white p-4">Recent activities</p>
         {Array.from({ length: 4 }).map((_, i) => (
           <div key={i} className="flex items-start gap-3 p-4">
@@ -97,7 +97,7 @@ export default function OrganizationRecentActivities({
 
   if (error || !activities) {
     return (
-      <div className="border border-red-500/20 bg-red-500/5 divide-y divide-white/8">
+      <div className="min-w-0 border border-red-500/20 bg-red-500/5 divide-y divide-white/8">
         <p className="text-sm font-medium text-white p-4">Recent activities</p>
         <p className="text-xs text-red-400/70 p-4">
           Couldn&apos;t load recent activities
@@ -108,7 +108,7 @@ export default function OrganizationRecentActivities({
 
   if (activities.length === 0) {
     return (
-      <div className="border border-white/8 bg-white/3 divide-y divide-white/8">
+      <div className="min-w-0 border border-white/8 bg-white/3 divide-y divide-white/8">
         <p className="text-sm font-medium text-white p-4">Recent activities</p>
         <p className="text-xs text-gray-500 p-4">No recent activities yet</p>
       </div>
@@ -116,7 +116,7 @@ export default function OrganizationRecentActivities({
   }
 
   return (
-    <div className="border border-white/8 bg-white/3 divide-y divide-white/8">
+    <div className="min-w-0 border border-white/8 bg-white/3 divide-y divide-white/8">
       <p className="text-sm font-medium text-white p-4">Recent activities</p>
       {activities.map((activity) => (
         <ActivityRow key={activity.id} activity={activity} />

@@ -12,7 +12,7 @@ export default function OrganizationLayout({
       <AppSidebar />
       <SidebarInset>
         <DashboardHeader />
-        <div className="flex-1 px-4 py-4 md:px-10">{children}</div>
+        {children}
       </SidebarInset>
     </SidebarProvider>
   );
