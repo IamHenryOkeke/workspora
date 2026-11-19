@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { useCanManageOrganization } from '@/hooks/use-can-manage-organization';
 import { OrganizationRole, ProjectMember } from '@/lib/types';
-import { useCurrentOrganizationRole } from '@/hooks/use-current-organization-role';
+import { useCurrentOrganization } from '@/hooks/use-current-organization';
 import { ProjectMemberService } from '@/services/project-member';
 import { ConfirmModal } from '@/components/dashboard/modal';
 import { useState } from 'react';
@@ -27,7 +27,7 @@ export default function RemoveProjectMember({
 }: RemoveMemberProps) {
   const [open, setOpen] = useState(false);
   const canManage = useCanManageOrganization();
-  const currentRole = useCurrentOrganizationRole();
+  const currentRole = useCurrentOrganization();
   const queryClient = useQueryClient();
   const {
     id,

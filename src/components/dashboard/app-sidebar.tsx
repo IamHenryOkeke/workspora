@@ -33,11 +33,11 @@ import {
   DropdownMenuSeparator,
 } from '../ui/dropdown-menu';
 import OrganizationLogo from './organization-logo';
-import { useOrganizationStore } from '@/stores/org-store';
 import { useMemo, useState } from 'react';
 import UserMenu from './user-menu';
 import Search from './search';
-import { useCurrentOrganizationRole } from '@/hooks/use-current-organization-role';
+import { useOrganizationStore } from '@/stores/org-store';
+import { useGetAllOrganizations } from '@/hooks/use-get-all-organizations';
 
 const navLinks = [
   { label: 'Dashboard', segment: 'home', icon: DashboardSquare02Icon },
@@ -52,10 +52,10 @@ const getNavLinks = (isAdmin: boolean) => {
 };
 
 export function AppSidebar() {
-  const { role } = useCurrentOrganizationRole();
+  const { organizations } = useOrganizationStore();
+  const { isPending, error } = useGetAllOrganizations(1, '');
   const [searchTerm, setSearchTerm] = useState('');
   const { slug } = useParams<{ slug: string }>();
-  const { organizations, hasFetched } = useOrganizationStore();
   const { isMobile, setOpenMobile, state, toggleSidebar } = useSidebar();
 
   const currentOrganization = organizations.find((org) => org.slug === slug);
@@ -88,7 +88,7 @@ export function AppSidebar() {
                     size={32}
                   />
                   <span className="flex-1 truncate font-medium">
-                    {!hasFetched
+                    {isPending && organizations.length === 0
                       ? 'Loading...'
                       : currentOrganization?.name || 'Select organization'}
                   </span>
@@ -111,6 +111,11 @@ export function AppSidebar() {
                     handleSearch={setSearchTerm}
                   />
                 </div>
+                {error && (
+                  <p className="px-2 py-1.5 text-xs text-red-400/70">
+                    Couldn&apos;t load organizations
+                  </p>
+                )}
                 {filteredOrgs.map((org) => (
                   <DropdownMenuItem key={org.id} asChild>
                     <Link
@@ -162,7 +167,7 @@ export function AppSidebar() {
 
       <SidebarContent className="pt-6 px-2 bg-background/50 border-y border-white/10">
         <SidebarMenu className="gap-2">
-          {getNavLinks(role !== 'MEMBER').map((link) => {
+          {getNavLinks(currentOrganization?.role !== 'MEMBER').map((link) => {
             const href = `/dashboard/org/${slug}/${link.segment}`;
             return (
               <SidebarMenuItem key={link.segment}>

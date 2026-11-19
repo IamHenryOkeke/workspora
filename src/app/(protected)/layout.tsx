@@ -1,8 +1,8 @@
 'use client';
 
 import Logo from '@/components/logo';
+import { useGetAllOrganizations } from '@/hooks/use-get-all-organizations';
 import { useAuthStore } from '@/stores/auth-store';
-import { useOrganizationStore } from '@/stores/org-store';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -15,23 +15,14 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const isHydrated = useAuthStore((s) => s.isHydrated);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const { fetchOrganizations } = useOrganizationStore();
+
+  useGetAllOrganizations(1, '');
 
   useEffect(() => {
     if (isHydrated && !isAuthenticated) {
       router.replace('/auth/login');
     }
   }, [isHydrated, isAuthenticated, pathname, router]);
-
-  useEffect(() => {
-    const handleFetchOrganizations = async () => {
-      await fetchOrganizations();
-    };
-
-    if (isHydrated && isAuthenticated) {
-      handleFetchOrganizations();
-    }
-  }, [isHydrated, isAuthenticated]);
 
   if (!isHydrated) {
     return (

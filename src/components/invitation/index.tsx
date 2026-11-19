@@ -18,7 +18,6 @@ import {
 import { formatDate } from '@/lib/utils';
 import { InvitationTokenService } from '@/services/invitation-token';
 import { useAuthStore } from '@/stores/auth-store';
-import { useOrganizationStore } from '@/stores/org-store';
 import { toast } from 'sonner';
 
 type AcceptResponse = { organization: { slug: string } };
@@ -117,8 +116,6 @@ export default function InvitationPreview({ token }: { token: string }) {
         queryClient.invalidateQueries({ queryKey: ['organizations'] }),
         queryClient.invalidateQueries({ queryKey: ['my-invitations'] }),
       ]);
-      // The sidebar reads its own copy of the list, so refresh it before navigating
-      await useOrganizationStore.getState().fetchOrganizations();
 
       const slug = res.data?.organization?.slug;
       router.replace(slug ? `/dashboard/org/${slug}/home` : '/dashboard/org');

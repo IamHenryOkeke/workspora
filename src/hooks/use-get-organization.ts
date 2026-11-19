@@ -39,9 +39,13 @@ export function useGetOrganization(slug: string) {
     error instanceof AxiosError && error.response?.status === 404;
 
   useEffect(() => {
-    if (isNotFound) {
+    if (!isNotFound) return;
+
+    const timeout = setTimeout(() => {
       router.replace('/dashboard/org');
-    }
+    }, 1500);
+
+    return () => clearTimeout(timeout);
   }, [isNotFound, router]);
 
   return { isPending, organization, error, isNotFound };

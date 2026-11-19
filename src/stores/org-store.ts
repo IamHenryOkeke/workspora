@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { z } from 'zod';
-import { OrganizationService } from '@/services/organization';
 import { queryClient } from '@/lib/queryClient';
 
 export const organizationSchema = z.object({
@@ -19,8 +18,6 @@ export type Organization = z.infer<typeof organizationSchema>;
 
 type OrganizationStore = {
   organizations: Organization[];
-  hasFetched: boolean;
-  fetchOrganizations: () => Promise<void>;
   setOrganizations: (payload: unknown) => void;
   getOrganizationBySlug: (slug: string) => Organization | undefined;
   updateOrganization: (
@@ -31,42 +28,10 @@ type OrganizationStore = {
   clear: () => void;
 };
 
-const organizationsQuery = {
-  queryKey: ['organizations'] as const,
-  queryFn: async () => {
-    const res = await OrganizationService.getOrganizations();
-    return res.data.data.organizations;
-  },
-};
-
-let generation = 0;
-
 export const useOrganizationStore = create<OrganizationStore>()(
   persist(
     (set, get) => ({
       organizations: [],
-      hasFetched: false,
-
-      fetchOrganizations: async () => {
-        const current = generation;
-        try {
-          const data = await queryClient.fetchQuery(organizationsQuery);
-          if (current !== generation) return;
-          const result = organizationListSchema.safeParse(data);
-
-          if (!result.success) {
-            console.error(
-              'Invalid organisations payload:',
-              result.error.flatten(),
-            );
-            return;
-          }
-
-          set({ organizations: result.data, hasFetched: true });
-        } catch (err) {
-          console.error('Failed to fetch organizations:', err);
-        }
-      },
 
       setOrganizations: (payload) => {
         const result = organizationListSchema.safeParse(payload);
@@ -77,7 +42,7 @@ export const useOrganizationStore = create<OrganizationStore>()(
           );
           return;
         }
-        set({ organizations: result.data, hasFetched: true });
+        set({ organizations: result.data });
       },
 
       getOrganizationBySlug: (slug) => {
@@ -99,9 +64,8 @@ export const useOrganizationStore = create<OrganizationStore>()(
       },
 
       clear: () => {
-        generation += 1;
-        set({ organizations: [], hasFetched: false });
-        queryClient.removeQueries({ queryKey: organizationsQuery.queryKey });
+        set({ organizations: [] });
+        queryClient.removeQueries({ queryKey: ['organizations'] });
       },
     }),
     {
@@ -109,7 +73,6 @@ export const useOrganizationStore = create<OrganizationStore>()(
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         organizations: state.organizations,
-        hasFetched: state.hasFetched,
       }),
     },
   ),

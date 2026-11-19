@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { ConfirmModal } from '../../modal';
 import { OrganizationService } from '@/services/organization';
-import { useCurrentOrganizationRole } from '@/hooks/use-current-organization-role';
+import { useCurrentOrganization } from '@/hooks/use-current-organization';
 import { useOrganizationStore } from '@/stores/org-store';
 import { ApiResponse, Organization } from '@/lib/types';
 
@@ -25,7 +25,7 @@ export default function LeaveOrganization({
 }: {
   organization: Organization;
 }) {
-  const { role } = useCurrentOrganizationRole();
+  const { role } = useCurrentOrganization();
   const queryClient = useQueryClient();
   const router = useRouter();
   const [open, setOpen] = useState(false);

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { ConfirmModal } from '../../modal';
 import { MemberService } from '@/services/member';
 import { Member } from '@/lib/types';
-import { useCurrentOrganizationRole } from '@/hooks/use-current-organization-role';
+import { useCurrentOrganization } from '@/hooks/use-current-organization';
 
 const removeMember = async (organizationId: string, memberId: string) => {
   const { data } = await MemberService.removeMember(organizationId, memberId);
@@ -17,7 +17,7 @@ const removeMember = async (organizationId: string, memberId: string) => {
 
 export default function RemoveMemberModal({ member }: { member: Member }) {
   const [open, setOpen] = useState(false);
-  const { role } = useCurrentOrganizationRole();
+  const { role } = useCurrentOrganization();
   const { id: memberId, organizationId } = member;
   const queryClient = useQueryClient();
 

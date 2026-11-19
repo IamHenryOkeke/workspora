@@ -23,7 +23,7 @@ import Modal from '../../modal';
 import RoleBadge, { ROLE_LABELS } from '../../role-badge';
 import MemberStatusBadge from '../../member-status';
 import { useState } from 'react';
-import { useCurrentOrganizationRole } from '@/hooks/use-current-organization-role';
+import { useCurrentOrganization } from '@/hooks/use-current-organization';
 
 type EditMemberFormType = z.infer<typeof editMemberSchema>;
 export type EditMemberPayload = Partial<EditMemberFormType>;
@@ -44,7 +44,7 @@ const updateMember = async (
 export default function EditMemberModal({ member }: { member: Member }) {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
-  const { role } = useCurrentOrganizationRole();
+  const { role } = useCurrentOrganization();
 
   const isOwner = role === 'OWNER';
   const isAdmin = role === 'ADMIN';

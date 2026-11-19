@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import { Invitation } from '@/lib/types';
 import { getEffectiveStatus } from '@/lib/utils';
 import { InvitationService } from '@/services/invitation';
-import { useOrganizationStore } from '@/stores/org-store';
 import { ConfirmModal } from '../modal';
 
 // Only a live, unexpired invite can be accepted
@@ -43,8 +42,6 @@ export default function AcceptInvitation({
         queryClient.invalidateQueries({ queryKey: ['my-invitations'] }),
         queryClient.invalidateQueries({ queryKey: ['organizations'] }),
       ]);
-
-      await useOrganizationStore.getState().fetchOrganizations();
 
       router.push(`/dashboard/org/${organization.slug}/home`);
     },

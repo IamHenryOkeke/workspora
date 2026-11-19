@@ -53,10 +53,11 @@ export default function CreateOrganizationForm() {
 
   const { mutate, isPending } = useMutation({
     mutationFn: createOrganisation,
-    onSuccess: () => {
-      toast.success('Organization created successfully');
+    onSuccess: (res) => {
+      const { message, data } = res;
+      toast.success(message || 'Organization created successfully');
       queryClient.invalidateQueries({ queryKey: ['organizations'] });
-      router.push('/dashboard/org');
+      router.push(`/dashboard/org/${data.organization.slug}/home`);
     },
     onError: (error: AxiosError<{ error: string }>) => {
       toast.error(

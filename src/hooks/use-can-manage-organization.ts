@@ -1,6 +1,6 @@
-import { useCurrentOrganizationRole } from './use-current-organization-role';
+import { useCurrentOrganization } from './use-current-organization';
 
 export function useCanManageOrganization() {
-  const { role } = useCurrentOrganizationRole();
+  const { role } = useCurrentOrganization();
   return role === 'OWNER' || role === 'ADMIN';
 }

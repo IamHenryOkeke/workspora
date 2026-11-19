@@ -7,12 +7,12 @@ import DeleteOrganization from './delete-organization';
 import LeaveOrganization from './leave-organization';
 import OrganizationOverview from './organization-overview';
 import { useCanManageOrganization } from '@/hooks/use-can-manage-organization';
-import { useCurrentOrganizationRole } from '@/hooks/use-current-organization-role';
+import { useCurrentOrganization } from '@/hooks/use-current-organization';
 
 export default function SettingsHome({ slug }: { slug: string }) {
   const { organization, isPending, isNotFound } = useGetOrganization(slug);
   const canManage = useCanManageOrganization();
-  const { role } = useCurrentOrganizationRole();
+  const { role } = useCurrentOrganization();
 
   usePageTitle(organization ? `Settings | ${organization.name}` : 'Loading');
 
