@@ -33,6 +33,7 @@ import { extractDetailsMessage } from '@/lib/utils';
 import { Checkbox } from '@/components/ui/checkbox';
 import { assignMembersSchema } from '@/lib/schemas';
 import { ProjectMemberService } from '@/services/project-member';
+import { useAuthStore } from '@/stores/auth-store';
 
 export type AssignMembersFormType = z.infer<typeof assignMembersSchema>;
 
@@ -70,6 +71,7 @@ export default function AssignMember({
   project: Project;
   assignedMembers: ProjectMember[];
 }) {
+  const { user } = useAuthStore();
   const organizationId = project.organizationId;
   const [open, setOpen] = useState(false);
   const canManage = useCanManageOrganization();
@@ -144,6 +146,8 @@ export default function AssignMember({
     if (!nextOpen) reset();
   };
 
+  const isLoading = assignMembersMutation.isPending || isMembersPending;
+
   return canManage ? (
     <Modal
       open={open}
@@ -205,11 +209,17 @@ export default function AssignMember({
                     {members.map((member) => {
                       const checkboxId = `member-${member.id}`;
                       const checked = field.value.includes(member.id);
+                      const isAssigned = assignedIds.includes(member.id);
                       return (
                         <Field key={member.id} orientation="horizontal">
                           <Checkbox
                             id={checkboxId}
                             checked={checked}
+                            disabled={
+                              isLoading ||
+                              isAssigned ||
+                              user?.id === member.user.id
+                            }
                             onCheckedChange={(value) =>
                               field.onChange(
                                 value
