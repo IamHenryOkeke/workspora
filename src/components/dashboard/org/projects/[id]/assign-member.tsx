@@ -138,7 +138,11 @@ export default function AssignMember({
   });
 
   const onSubmit = (data: AssignMembersFormType) => {
-    assignMembersMutation.mutate(data);
+    const payload = {
+      memberIds: data.memberIds.filter((item) => !assignedIds.includes(item)),
+    };
+
+    assignMembersMutation.mutate(payload);
   };
 
   const handleOpenChange = (nextOpen: boolean) => {

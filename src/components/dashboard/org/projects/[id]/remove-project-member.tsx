@@ -9,6 +9,8 @@ import { ProjectMemberService } from '@/services/project-member';
 import { ConfirmModal } from '@/components/dashboard/modal';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { AxiosError } from 'axios';
+import { extractDetailsMessage } from '@/lib/utils';
 
 const ROLE_RANK: Record<OrganizationRole, number> = {
   OWNER: 3,
@@ -47,6 +49,20 @@ export default function RemoveProjectMember({
         }),
         toast.success(res.data.message),
       ]);
+    },
+    onError: (
+      error: AxiosError<{
+        message: string;
+        details?: Record<string, string[]>;
+      }>,
+    ) => {
+      const details = error.response?.data?.details;
+      const detailMessages = extractDetailsMessage(details);
+      toast.error(error.response?.data?.message || 'Failed to remove member', {
+        description: detailMessages.length
+          ? detailMessages.join('. ')
+          : 'Please try again.',
+      });
     },
   });
 
